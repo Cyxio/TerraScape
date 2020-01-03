@@ -1,0 +1,9 @@
+author = Cyxio
+version = 1.2.1
+displayName = TerraScape
+homepage = https://forums.terraria.org/index.php?threads/terrascape.60431/
+hideCode = true
+hideResources = true
+includeSource = true
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
+includePDB = true

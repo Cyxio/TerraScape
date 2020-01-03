@@ -1,0 +1,10 @@
+**/bin
+**/obj
+**.vs/
+*.csproj
+*.sln
+*.dll
+*.png
+*.pdn
+*.wav
+*.mp3
