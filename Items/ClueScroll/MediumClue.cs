@@ -99,7 +99,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
             }
             if (player.GetModPlayer<OSRSplayer>().mediumClue == 33)
             {
-                player.GetModPlayer<OSRSplayer>().challengeAns = 8;
+                player.GetModPlayer<OSRSplayer>().challengeAns = 9;
                 player.GetModPlayer<OSRSplayer>().challengeDiff = 2;
             }
         }

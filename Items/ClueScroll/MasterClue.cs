@@ -115,7 +115,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
             }
             if (player.GetModPlayer<OSRSplayer>().masterClue == 12)
             {
-                player.GetModPlayer<OSRSplayer>().challengeAns = 20130;
+                player.GetModPlayer<OSRSplayer>().challengeAns = 43620;
                 player.GetModPlayer<OSRSplayer>().challengeDiff = 5;
             }
             if (player.GetModPlayer<OSRSplayer>().masterClue == 13)

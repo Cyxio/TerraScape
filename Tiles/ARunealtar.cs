@@ -28,7 +28,6 @@ namespace OldSchoolRuneScape.Tiles
             AddMapEntry(new Color(80, 80, 80), name);
             dustType = 30;
             Main.tileLighted[Type] = true;
-            adjTiles = new int[] { mod.TileType("Runealtar") };
         }
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
@@ -88,24 +87,6 @@ namespace OldSchoolRuneScape.Tiles
             item.useTurn = true;
             item.maxStack = 99;
             item.rare = 3;
-        }
-
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(null, "RunealtarItem");
-            recipe.AddIngredient(ItemID.HellstoneBar, 5);
-            recipe.AddIngredient(ItemID.CrimtaneBar, 5);
-            recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-            recipe = new ModRecipe(mod);
-            recipe.AddIngredient(null, "RunealtarItem");
-            recipe.AddIngredient(ItemID.HellstoneBar, 5);
-            recipe.AddIngredient(ItemID.DemoniteBar, 5);
-            recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
         }
     }
 }

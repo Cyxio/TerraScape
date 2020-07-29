@@ -5,12 +5,12 @@ using Microsoft.Xna.Framework;
 
 namespace OldSchoolRuneScape.Items.Magic
 {
-    public class Waterrune : ModItem
+    public class Wrathrune : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Water Rune");
-            Tooltip.SetDefault("'One of the 4 basic elemental Runes'");
+            DisplayName.SetDefault("Wrath Rune");
+            Tooltip.SetDefault("'Used for very high level missile spells'");
         }
         public override void SetDefaults()
         {

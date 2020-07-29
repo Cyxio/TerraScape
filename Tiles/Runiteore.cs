@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace OldSchoolRuneScape.Tiles
 {
@@ -12,7 +13,9 @@ namespace OldSchoolRuneScape.Tiles
             Main.tileMergeDirt[Type] = true;
             Main.tileBlockLight[Type] = true;
             Main.tileLighted[Type] = false;
-            Main.tileSpelunker[Type] = true;
+            TileID.Sets.Ore[Type] = true;
+            Main.tileSpelunker[Type] = true; // The tile will be affected by spelunker highlighting
+            Main.tileValue[Type] = 410; // Metal Detector value, see https://terraria.gamepedia.com/Metal_Detector
             this.minPick = 100;
             this.soundType = 21;
             dustType = mod.DustType("Runedust");

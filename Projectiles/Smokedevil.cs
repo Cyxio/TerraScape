@@ -21,9 +21,14 @@ namespace OldSchoolRuneScape.Projectiles
             projectile.scale = 1f;
             projectile.penetrate = -1;
             projectile.aiStyle = -1;
-            projectile.tileCollide = false;
+            projectile.tileCollide = true;
             projectile.timeLeft = 300;
             projectile.alpha = 100;
+        }
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            projectile.velocity *= 0f;
+            return false;
         }
         public override void AI()
         {
@@ -41,6 +46,7 @@ namespace OldSchoolRuneScape.Projectiles
                 }
                 projectile.frameCounter = 0;
             }
+            projectile.velocity *= 0.995f;
         }
     }
 }

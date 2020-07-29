@@ -117,29 +117,25 @@ namespace OldSchoolRuneScape.NPCs
         public override void NPCLoot()
         {
             int ch = Main.rand.Next(6);
-            if (ch == 0)
-            {
-                Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Ballistalimbs>());
-            }
-            if (ch == 1)
-            {
-                Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Ballistaspring>());
-            }
-            if (ch == 2)
-            {
-                Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Heavyframe>());
-            }
-            if (ch == 3)
-            {
-                Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Lightframe>());
-            }
-            if (ch == 4)
-            {
-                Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Monkeytail>());
-            }
-            if (ch == 5)
-            {
-                Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Zenyteshard>());
+            switch (ch) {
+                case 0:
+                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Ballistalimbs>());
+                    break;
+                case 1:
+                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Ballistaspring>());
+                    break;
+                case 2:
+                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Heavyframe>());
+                    break;
+                case 3:
+                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Lightframe>());
+                    break;
+                case 4:
+                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Monkeytail>());
+                    break;
+                default:
+                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Zenyteshard>());
+                    break;
             }
         }
 

@@ -19,13 +19,5 @@ namespace OldSchoolRuneScape.Items.Magic
             item.height = 28;
             item.value = 10;
         }
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.ItemType("aaRuneessence"), 1);
-            recipe.SetResult(this);
-            recipe.AddTile(null, "Runealtar");
-            recipe.AddRecipe();
-        }
     }
 }

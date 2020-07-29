@@ -20,13 +20,5 @@ namespace OldSchoolRuneScape.Items.Magic
             item.value = 10;
             item.rare = 4;
         }
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.ItemType("aDarkessence"));
-            recipe.SetResult(this);
-            recipe.AddTile(null, "ARunealtar");
-            recipe.AddRecipe();
-        }
     }
 }

@@ -15,7 +15,7 @@ namespace OldSchoolRuneScape.NPCs
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            return SpawnCondition.OverworldDayBirdCritter.Chance * 0.2f + SpawnCondition.TownCritter.Chance * 0.1f;
+            return 0.05f + (0.1f * (Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) * 2f / Main.maxTilesX));
         }
         public override void SetDefaults()
         {

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Terraria.GameContent.Generation;
 using System.Linq;
 using Terraria.ModLoader.IO;
+using static Terraria.ModLoader.ModContent;
 
 namespace OldSchoolRuneScape
 {
@@ -109,7 +110,7 @@ namespace OldSchoolRuneScape
             {
                 tasks.Insert(ShiniesIndex + 1, new PassLegacy("Runite ore", delegate (GenerationProgress progress)
                 {
-                    progress.Message = "Runite ore";
+                    progress.Message = "Generating Runite ore";
 
                     for (int k = 0; k < (int)((double)(Main.maxTilesX * Main.maxTilesY) * 6E-05); k++)
                     {
@@ -118,7 +119,81 @@ namespace OldSchoolRuneScape
                     }
                 }));
             }
+            int AltarsIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Altars"));
+            if (AltarsIndex != -1)
+            {
+                tasks.Insert(AltarsIndex + 1, new PassLegacy("Runecrafting Altars", RCAltars));
+            }
         }
-
+        private void RCAltars(GenerationProgress progress)
+        {
+            progress.Message = "Placing Rune Altars";
+            int surface = (int)WorldGen.worldSurfaceLow;
+            int step = (Main.maxTilesY - 200 - surface) / 3;
+            for (int i = 0; i < 15; i++)
+            {
+                if (i < 6)
+                {
+                    PlaceAltar(surface, surface + step, i);
+                }
+                else if (i < 10)
+                {
+                    PlaceAltar(surface + step, surface + step + step, i);
+                }
+                else
+                {
+                    PlaceAltar(surface + step + step, surface + step + step + step, i);
+                }
+            }
+        }
+        private void PlaceAltar(int upper, int lower, int index)
+        {
+            bool placeSuccessful = false;
+            while (!placeSuccessful)
+            {
+                int x = WorldGen.genRand.Next(200, Main.maxTilesX - 200);
+                int y = WorldGen.genRand.Next(upper, lower);
+                WorldGen.Place3x2(x, y, (ushort)(GetAltar(index)));
+                Tile tile = Main.tile[x, y];
+                placeSuccessful = tile.active() && tile.type == GetAltar(index);
+            }
+        }
+        private int GetAltar(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return TileType<Tiles.AirAltar>();
+                case 1:
+                    return TileType<Tiles.MindAltar>();
+                case 2:
+                    return TileType<Tiles.WaterAltar>();
+                case 3:
+                    return TileType<Tiles.EarthAltar>();
+                case 4:
+                    return TileType<Tiles.FireAltar>();
+                case 5:
+                    return TileType<Tiles.BodyAltar>();
+                case 6:
+                    return TileType<Tiles.CosmicAltar>();
+                case 7:
+                    return TileType<Tiles.ChaosAltar>();
+                case 8:
+                    return TileType<Tiles.NatureAltar>();
+                case 9:
+                    return TileType<Tiles.LawAltar>();
+                case 10:
+                    return TileType<Tiles.BloodAltar>();
+                case 11:
+                    return TileType<Tiles.SoulAltar>();
+                case 12:
+                    return TileType<Tiles.DeathAltar>();
+                case 13:
+                    return TileType<Tiles.WrathAltar>();
+                case 14:
+                default:
+                    return TileType<Tiles.AstralAltar>();
+            }
+        }
     }
 }

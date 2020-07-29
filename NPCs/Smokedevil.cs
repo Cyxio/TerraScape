@@ -46,28 +46,27 @@ namespace OldSchoolRuneScape.NPCs
         }
         public override void AI()
         {
-            if (Main.rand.Next(200) == 0 && npc.ai[3] == 0 && Main.netMode != 1)
-            {
-                npc.ai[3] = 1;
-                npc.netUpdate = true;
-            }
-            if (npc.ai[3] != 0)
+            npc.TargetClosest(true);
+            Player target = Main.player[npc.target];
+            if (Collision.CanHitLine(npc.position, npc.width, npc.height, target.position, target.width, target.height))
             {
                 npc.ai[3]++;
             }
-            if (npc.ai[3] > 30 && Main.netMode != 1)
+            if (npc.ai[3] > 120 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                npc.TargetClosest(true);
-                Player target = Main.player[npc.target];
                 float speedX = target.MountedCenter.X - npc.Center.X;
                 float speedY = target.MountedCenter.Y - npc.Center.Y;
                 Vector2 spd = new Vector2(speedX, speedY);
                 spd.Normalize();
                 spd *= 14;
                 Projectile.NewProjectile(npc.Center, spd, ModContent.ProjectileType<Projectiles.Smokedevil>(), npc.damage / 4, 0f);
-                npc.ai[3] = 0;
+                npc.ai[3] = Main.rand.Next(0, 30);
                 npc.netUpdate = true;
             }
+        }
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            npc.ai[3] += 10;
         }
         public override void HitEffect(int hitDirection, double damage)
         {
@@ -91,7 +90,7 @@ namespace OldSchoolRuneScape.NPCs
         public override void FindFrame(int frameHeight)
         {
             npc.spriteDirection = npc.direction;
-            if (npc.ai[3] == 0)
+            if (npc.ai[3] <= 90)
             {
                 int frameSpeed = 7;
                 npc.frameCounter++;
@@ -118,15 +117,15 @@ namespace OldSchoolRuneScape.NPCs
             }
             else
             {
-                if (npc.ai[3] < 10)
+                if (npc.ai[3] < 100)
                 {
                     npc.frame.Y = frameHeight * 3;
                 }
-                else if (npc.ai[3] < 20)
+                else if (npc.ai[3] < 110)
                 {
                     npc.frame.Y = frameHeight * 4;
                 }
-                else if (npc.ai[3] < 30)
+                else if (npc.ai[3] < 120)
                 {
                     npc.frame.Y = frameHeight * 5;
                 }

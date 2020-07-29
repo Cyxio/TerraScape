@@ -28,7 +28,6 @@ namespace OldSchoolRuneScape.Tiles
             name.SetDefault("Elemental rune altar");
             AddMapEntry(new Color(90, 90, 90), name);
             dustType = 30;
-            adjTiles = new int[] { mod.TileType("Runealtar"), mod.TileType("ARunealtar") };
         }
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
@@ -93,19 +92,6 @@ namespace OldSchoolRuneScape.Tiles
             item.useTurn = true;
             item.maxStack = 99;
             item.rare = 5;
-        }
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(null, "ARunealtarItem");
-            recipe.AddIngredient(ItemID.SoulofFright);
-            recipe.AddIngredient(ItemID.SoulofMight);
-            recipe.AddIngredient(ItemID.SoulofSight);
-            recipe.AddIngredient(ItemID.SoulofNight);
-            recipe.AddIngredient(ItemID.SoulofLight);
-            recipe.AddIngredient(ItemID.SoulofFlight);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
         }
     }
 }
