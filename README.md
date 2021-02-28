@@ -23,10 +23,10 @@ Read the forum post for more details.
 
 
 Current content includes:
-Total of 394 items
-70 Weapons (22 Melee, 10 Ranged, 37 Magic and 1 throwing)
-14 Armor sets + 95 vanity items
-20 Enemies
-14 Bosses
-One new Town NPC, with 5 variants based on progression
-One new ore
+- Total of 394 items
+- 70 Weapons (22 Melee, 10 Ranged, 37 Magic and 1 throwing)
+- 14 Armor sets + 95 vanity items
+- 20 Enemies
+- 14 Bosses
+- One new Town NPC, with 5 variants based on progression
+- One new ore
