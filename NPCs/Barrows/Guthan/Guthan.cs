@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,59 +16,29 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Guthan
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.consumable = true;
-            item.width = 24;
-            item.height = 24;
-            item.rare = 5;
-            item.expert = true;
+            Item.maxStack = 999;
+            Item.consumable = true;
+            Item.width = 24;
+            Item.height = 24;
+            Item.rare = ItemRarityID.Pink;
+            Item.expert = true;
         }
-
-        public override int BossBagNPC => mod.NPCType("Guthan");
-
         public override bool CanRightClick()
         {
             return true;
         }
 
-        public override void OpenBossBag(Player player)
+        public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            player.TryGettingDevArmor();
-            int helm = ModContent.ItemType<Items.Armor.Guthanhelm>();
-            int body = ModContent.ItemType<Items.Armor.Guthanbody>();
-            int legs = ModContent.ItemType<Items.Armor.Guthanlegs>();
-            int wep = ModContent.ItemType<Items.Guthanspear>();
-            int drop = 0;
-            for (int i = 0; i < 200; i++)
-            {
-                bool allcheck = false;
-                if (player.HasItem(helm) && player.HasItem(body) && player.HasItem(legs) && player.HasItem(wep))
-                {
-                    allcheck = true;
-                }
-                int ch = Main.rand.Next(4);
-                if (ch == 0 && (allcheck || !player.HasItem(helm)))
-                {
-                    drop = helm;
-                    break;
-                }
-                if (ch == 1 && (allcheck || !player.HasItem(body)))
-                {
-                    drop = body;
-                    break;
-                }
-                if (ch == 2 && (allcheck || !player.HasItem(legs)))
-                {
-                    drop = legs;
-                    break;
-                }
-                if (ch == 3 && (allcheck || !player.HasItem(wep)))
-                {
-                    drop = wep;
-                    break;
-                }
-            }
-            player.QuickSpawnItem(drop);
+            itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<Guthan>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Guthansummon>()));
+
+            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1,
+                ModContent.ItemType<Items.Weapons.Melee.Guthanspear>(),
+                ModContent.ItemType<Items.Armor.Guthanhelm>(),
+                ModContent.ItemType<Items.Armor.Guthanbody>(),
+                ModContent.ItemType<Items.Armor.Guthanlegs>()
+                ));
         }
     }
     [AutoloadBossHead]
@@ -76,44 +47,43 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Guthan
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Guthan the Infested");
-            Main.npcFrameCount[npc.type] = 5;
+            Main.npcFrameCount[NPC.type] = 5;
         }
         public override void SetDefaults()
         {
-            npc.width = 45;
-            npc.height = 100;
-            npc.aiStyle = -1;
-            npc.npcSlots = 15f;
-            npc.lavaImmune = true;
-            npc.damage = 80;
-            npc.defense = 50;
-            npc.lifeMax = 25000;
-            npc.scale = 1.5f;
-            npc.knockBackResist = 0f;
-            npc.boss = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath6;
-            npc.value = 35000f;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.Ichor] = true;
-            music = OldSchoolRuneScape.barrowsMusic;
-            bossBag = mod.ItemType("Guthanbag");
+            NPC.width = 45;
+            NPC.height = 100;
+            NPC.aiStyle = -1;
+            NPC.npcSlots = 15f;
+            NPC.lavaImmune = true;
+            NPC.damage = 80;
+            NPC.defense = 50;
+            NPC.lifeMax = 25000;
+            NPC.scale = 1.5f;
+            NPC.knockBackResist = 0f;
+            NPC.boss = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath6;
+            NPC.value = 35000f;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Ichor] = true;
+            Music = OldSchoolRuneScape.barrowsMusic;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit) // heal bby
         {
-            npc.HealEffect(damage * 10);
-            npc.life += damage * 10;
+            NPC.HealEffect(damage * 10);
+            NPC.life += damage * 10;
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = 35000 + 2500 * numPlayers;
-            npc.damage = (int)(npc.damage * 0.7f);
+            NPC.lifeMax = 35000 + 2500 * numPlayers;
+            NPC.damage = (int)(NPC.damage * 0.7f);
         }
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
@@ -127,46 +97,33 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Guthan
             name = "Guthan the Infested";
             potionType = ItemID.GreaterHealingPotion;
         }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Guthansummon>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Guthanbag>()));
 
-        public override void NPCLoot()
+            var notExpert = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpert.OnSuccess(ItemDropRule.OneFromOptionsNotScalingWithLuck(1,
+                ModContent.ItemType<Items.Weapons.Melee.Guthanspear>(),
+                ModContent.ItemType<Items.Armor.Guthanhelm>(),
+                ModContent.ItemType<Items.Armor.Guthanbody>(),
+                ModContent.ItemType<Items.Armor.Guthanlegs>()
+                ));
+
+            npcLoot.Add(notExpert);
+        }
+        public override void OnKill()
         {
             OSRSworld.downedGuthan = true;
-            Item.NewItem(npc.Hitbox, ModContent.ItemType<Guthansummon>());
-            if (Main.expertMode)
-            {
-                npc.DropBossBags();
-            }
-            else
-            {
-                int drop = 0;
-                switch (Main.rand.Next(4))
-                {
-                    case 0:
-                        drop = ModContent.ItemType<Items.Guthanspear>();
-                        break;
-                    case 1:
-                        drop = ModContent.ItemType<Items.Armor.Guthanhelm>();
-                        break;
-                    case 2:
-                        drop = ModContent.ItemType<Items.Armor.Guthanbody>();
-                        break;
-                    case 3:
-                        drop = ModContent.ItemType<Items.Armor.Guthanlegs>();
-                        break;
-                    default:
-                        break;
-                }
-                Item.NewItem(npc.Hitbox, drop);
-            }
         }
 
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (projectile.ranged)
+            if (projectile.CountsAsClass(DamageClass.Ranged))
             {
                 damage = (int)(damage * 0.9f);
             }
-            if (projectile.magic)
+            if (projectile.CountsAsClass(DamageClass.Magic))
             {
                 damage = (int)(damage * 1.1f);
             }
@@ -180,20 +137,20 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Guthan
 
         public float AI_State
         {
-            get { return npc.ai[AI_State_Slot]; }
-            set { npc.ai[AI_State_Slot] = value; }
+            get { return NPC.ai[AI_State_Slot]; }
+            set { NPC.ai[AI_State_Slot] = value; }
         }
 
         public float AI_Timer
         {
-            get { return npc.ai[AI_Timer_Slot]; }
-            set { npc.ai[AI_Timer_Slot] = value; }
+            get { return NPC.ai[AI_Timer_Slot]; }
+            set { NPC.ai[AI_Timer_Slot] = value; }
         }
 
         public int attacknum
         {
-            get { return (int)npc.ai[2]; }
-            set { npc.ai[2] = value; }
+            get { return (int)NPC.ai[2]; }
+            set { NPC.ai[2] = value; }
         }
 
         public float speed = 7f;
@@ -207,93 +164,93 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Guthan
             {
                 AI_State = Flee;
             }
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
-                Dust.NewDust(npc.position, npc.width, npc.height, 52);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.UnholyWater);
             }
-            Lighting.AddLight(npc.Center, new Vector3(116 * 0.01f, 35 * 0.01f, 78 * 0.01f));
-            if (npc.life < npc.lifeMax * 0.75f)
+            Lighting.AddLight(NPC.Center, new Vector3(116 * 0.01f, 35 * 0.01f, 78 * 0.01f));
+            if (NPC.life < NPC.lifeMax * 0.75f)
             {
                 healthmod = 1;
             }
-            if (npc.life < npc.lifeMax * 0.5f)
+            if (NPC.life < NPC.lifeMax * 0.5f)
             {
                 healthmod = 2;
             }
-            if (npc.life < npc.lifeMax * 0.2f)
+            if (NPC.life < NPC.lifeMax * 0.2f)
             {
                 healthmod = 3;
             }
             if (AI_State == Fly)
             {
-                while (npc.velocity.X > speed || npc.velocity.Y > speed || npc.velocity.X < -speed || npc.velocity.Y < -speed)
+                while (NPC.velocity.X > speed || NPC.velocity.Y > speed || NPC.velocity.X < -speed || NPC.velocity.Y < -speed)
                 {
-                    npc.velocity *= 0.97f;
+                    NPC.velocity *= 0.97f;
                 }
                 AI_Timer++;
-                npc.TargetClosest(true);
-                Player target = Main.player[npc.target];
-                if (target.MountedCenter.Y > npc.Center.Y && npc.velocity.Y < speed)
+                NPC.TargetClosest(true);
+                Player target = Main.player[NPC.target];
+                if (target.MountedCenter.Y > NPC.Center.Y && NPC.velocity.Y < speed)
                 {
-                    npc.velocity.Y += accelerate;
+                    NPC.velocity.Y += accelerate;
                 }
-                if (target.MountedCenter.Y < npc.Center.Y && npc.velocity.Y > -speed)
+                if (target.MountedCenter.Y < NPC.Center.Y && NPC.velocity.Y > -speed)
                 {
-                    npc.velocity.Y -= accelerate;
+                    NPC.velocity.Y -= accelerate;
                 }
-                if (target.MountedCenter.X > npc.Center.X && npc.velocity.X < speed)
+                if (target.MountedCenter.X > NPC.Center.X && NPC.velocity.X < speed)
                 {
-                    npc.velocity.X += accelerate;
+                    NPC.velocity.X += accelerate;
                 }
-                if (target.MountedCenter.X < npc.Center.X && npc.velocity.X > -speed)
+                if (target.MountedCenter.X < NPC.Center.X && NPC.velocity.X > -speed)
                 {
-                    npc.velocity.X -= accelerate;
+                    NPC.velocity.X -= accelerate;
                 }
-                if (AI_Timer > (180 - 40 * healthmod) && Main.netMode != 1)
+                if (AI_Timer > (180 - 40 * healthmod) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     AI_Timer = 0;
                     int meme = Main.rand.Next(1, 3 + healthmod);
                     if (meme == 1)
                     {
-                        npc.velocity = new Vector2(12 * npc.direction, 8 * Main.rand.Next(-1, 2));
+                        NPC.velocity = new Vector2(12 * NPC.direction, 8 * Main.rand.Next(-1, 2));
                         AI_State = Attack;
                         attacknum = meme;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     else if (meme == 2)
                     {
                         AI_State = Attack;
                         attacknum = meme;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     else if (meme == 3)
                     {
-                        npc.velocity *= 0f;
+                        NPC.velocity *= 0f;
                         AI_State = Attack;
                         attacknum = meme;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     else if (meme == 4)
                     {
-                        npc.velocity.X = npc.direction * 20;
+                        NPC.velocity.X = NPC.direction * 20;
                         AI_State = Attack;
                         attacknum = meme;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     else if (meme == 5)
                     {
                         AI_State = Attack;
                         attacknum = meme;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     else
                     {
                         AI_State = Fly;
                     }
                 }
-                if (!npc.HasValidTarget)
+                if (!NPC.HasValidTarget)
                 {
-                    npc.velocity *= 0;
+                    NPC.velocity *= 0;
                     AI_State = Flee;
                 }
             }
@@ -302,105 +259,105 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Guthan
                 AI_Timer++;
                 if (attacknum == 1)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 58, npc.velocity.X * 0.01f, npc.velocity.Y * 0.01f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Enchanted_Pink, NPC.velocity.X * 0.01f, NPC.velocity.Y * 0.01f);
                     if (AI_Timer == 1)
                     {
-                        npc.TargetClosest(true);
-                        Player target = Main.player[npc.target];
-                        float speedX = target.MountedCenter.X - npc.Center.X;
-                        float speedY = target.MountedCenter.Y - npc.Center.Y;
+                        NPC.TargetClosest(true);
+                        Player target = Main.player[NPC.target];
+                        float speedX = target.MountedCenter.X - NPC.Center.X;
+                        float speedY = target.MountedCenter.Y - NPC.Center.Y;
                         spd = new Vector2(speedX, speedY);
                         spd.Normalize();
                         spd *= 14;
                     }
                     if (AI_Timer % 8 == 0)
                     {
-                        if (Main.netMode != 1)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(npc.Center, spd.RotatedBy(MathHelper.ToRadians(AI_Timer)), mod.ProjectileType("Ghostspear"), (npc.damage / 4), 0f);
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spd.RotatedBy(MathHelper.ToRadians(AI_Timer)), Mod.Find<ModProjectile>("Ghostspear").Type, (NPC.damage / 4), 0f);
                         }
                     }
                     if (AI_Timer > 40)
                     {
                         AI_Timer = 0;
                         AI_State = Fly;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
                 if (attacknum == 2)
                 {
-                    npc.TargetClosest(true);
-                    Player target = Main.player[npc.target];
+                    NPC.TargetClosest(true);
+                    Player target = Main.player[NPC.target];
                     if (AI_Timer == 3)
                     {
-                        Projectile.NewProjectile(new Vector2(target.MountedCenter.X + 960, target.MountedCenter.Y), new Vector2(-20, 0), mod.ProjectileType("Ghostspear"), (npc.damage / 4), 0f, 0, 2, 0);
-                        Projectile.NewProjectile(new Vector2(target.MountedCenter.X - 960, target.MountedCenter.Y), new Vector2(20, 0), mod.ProjectileType("Ghostspear"), (npc.damage / 4), 0f, 0, 2, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2(target.MountedCenter.X + 960, target.MountedCenter.Y), new Vector2(-20, 0), Mod.Find<ModProjectile>("Ghostspear").Type, (NPC.damage / 4), 0f, 0, 2, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2(target.MountedCenter.X - 960, target.MountedCenter.Y), new Vector2(20, 0), Mod.Find<ModProjectile>("Ghostspear").Type, (NPC.damage / 4), 0f, 0, 2, 0);
                     }
                     if (AI_Timer > 5)
                     {
                         AI_Timer = 0;
                         AI_State = Fly;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
                 if (attacknum == 3)
                 {
                     if (AI_Timer == 2)
                     {
-                        npc.TargetClosest(true);
-                        Player target = Main.player[npc.target];
+                        NPC.TargetClosest(true);
+                        Player target = Main.player[NPC.target];
                         spd = new Vector2(target.MountedCenter.X + 960, target.MountedCenter.Y - 590);
                     }
                     if (AI_Timer % 6 == 0)
                     {
-                        Projectile.NewProjectile(new Vector2(spd.X - AI_Timer * 10, spd.Y), new Vector2(0, 16), mod.ProjectileType("Ghostspear"), (npc.damage / 4), 0f, 0, 1, 0);
-                        Projectile.NewProjectile(new Vector2((spd.X - 1920) + AI_Timer * 10, spd.Y), new Vector2(0, 16), mod.ProjectileType("Ghostspear"), (npc.damage / 4), 0f, 0, 1, 0);             
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2(spd.X - AI_Timer * 10, spd.Y), new Vector2(0, 16), Mod.Find<ModProjectile>("Ghostspear").Type, (NPC.damage / 4), 0f, 0, 1, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2((spd.X - 1920) + AI_Timer * 10, spd.Y), new Vector2(0, 16), Mod.Find<ModProjectile>("Ghostspear").Type, (NPC.damage / 4), 0f, 0, 1, 0);             
                     }
                     if (AI_Timer > 90)
                     {
                         AI_Timer = 0;
                         AI_State = Fly;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
                 if (attacknum == 4)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 58, npc.velocity.X * 0.01f, npc.velocity.Y * 0.01f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Enchanted_Pink, NPC.velocity.X * 0.01f, NPC.velocity.Y * 0.01f);
                     if (AI_Timer % 8 == 0)
                     {
-                        Projectile.NewProjectile(npc.Center, Vector2.Zero, mod.ProjectileType("Ghostspear"), (npc.damage / 4), 0f, 0, 3, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, Mod.Find<ModProjectile>("Ghostspear").Type, (NPC.damage / 4), 0f, 0, 3, 0);
                     }
                     if (AI_Timer > 40)
                     {
                         AI_Timer = 0;
                         AI_State = Fly;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
                 if (attacknum == 5)
                 {
                     if (AI_Timer == 2)
                     {
-                        npc.TargetClosest(true);
-                        Player target = Main.player[npc.target];
+                        NPC.TargetClosest(true);
+                        Player target = Main.player[NPC.target];
                         spd = target.MountedCenter;
                     }
                     if (AI_Timer > 2)
                     {
                         Vector2 rotat = new Vector2(0, 350);
-                        Projectile.NewProjectile(spd + rotat.RotatedBy(MathHelper.ToRadians(AI_Timer * 10)), -rotat.RotatedBy(MathHelper.ToRadians(AI_Timer * 10)) * 0.0001f, mod.ProjectileType("Ghostspear"), (npc.damage / 4), 0f, 0, 4, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), spd + rotat.RotatedBy(MathHelper.ToRadians(AI_Timer * 10)), -rotat.RotatedBy(MathHelper.ToRadians(AI_Timer * 10)) * 0.0001f, Mod.Find<ModProjectile>("Ghostspear").Type, (NPC.damage / 4), 0f, 0, 4, 0);
                     }
                     if (AI_Timer > 38)
                     {
                         AI_Timer = 0;
                         AI_State = Fly;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
             }
             if (AI_State == Flee)
             {
-                npc.velocity.Y += 0.05f;
+                NPC.velocity.Y += 0.05f;
             }
         }
 
@@ -413,39 +370,39 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Guthan
 
         public override void FindFrame(int frameHeight)
         {
-            npc.frameCounter++;
-            if (npc.frameCounter < 5)
+            NPC.frameCounter++;
+            if (NPC.frameCounter < 5)
             {
-                npc.frame.Y = Fly1 * frameHeight;
+                NPC.frame.Y = Fly1 * frameHeight;
             }
-            else if (npc.frameCounter < 10)
+            else if (NPC.frameCounter < 10)
             {
-                npc.frame.Y = Fly2 * frameHeight;
+                NPC.frame.Y = Fly2 * frameHeight;
             }
-            else if (npc.frameCounter < 15)
+            else if (NPC.frameCounter < 15)
             {
-                npc.frame.Y = Fly3 * frameHeight;
+                NPC.frame.Y = Fly3 * frameHeight;
             }
-            else if (npc.frameCounter < 20)
+            else if (NPC.frameCounter < 20)
             {
-                npc.frame.Y = Fly4 * frameHeight;
+                NPC.frame.Y = Fly4 * frameHeight;
             }
-            else if (npc.frameCounter < 25)
+            else if (NPC.frameCounter < 25)
             {
-                npc.frame.Y = Fly5 * frameHeight;
+                NPC.frame.Y = Fly5 * frameHeight;
             }
             else
             {
-                npc.frameCounter = 0;
+                NPC.frameCounter = 0;
             }
         }
 
-        public override bool PreNPCLoot()
+        public override bool PreKill()
         {
             for (int i = 0; i < 120; i++)
             {
                 Vector2 rotata = new Vector2(0, 8).RotatedBy(MathHelper.ToRadians(3 * i));
-                Dust.NewDust(npc.Center + rotata, 0, 0, 58, rotata.X, rotata.Y, 0, default(Color), 1.5f);
+                Dust.NewDust(NPC.Center + rotata, 0, 0, DustID.Enchanted_Pink, rotata.X, rotata.Y, 0, default(Color), 1.5f);
             }
             if (NPC.AnyNPCs(ModContent.NPCType<Barrowsspirit>()))
             {
@@ -453,9 +410,9 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Guthan
                 {
                     if (Main.npc[i].type == ModContent.NPCType<Barrowsspirit>())
                     {
-                        Vector2 spd = Main.npc[i].Center - npc.Center;
+                        Vector2 spd = Main.npc[i].Center - NPC.Center;
                         spd.Normalize();
-                        Projectile.NewProjectile(npc.Center, spd * 5f, ModContent.ProjectileType<Barrowsdamageproj>(), 100, 0, Main.player[npc.target].whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spd * 5f, ModContent.ProjectileType<Barrowsdamageproj>(), 100, 0, Main.player[NPC.target].whoAmI);
                     }
                 }
             }

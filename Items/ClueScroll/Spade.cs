@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System;
@@ -11,13 +12,11 @@ namespace OldSchoolRuneScape.Items.ClueScroll
     {
         public override void AddRecipes()
         {
-            ModRecipe r = new ModRecipe(mod);
-            r.AddIngredient(ItemID.IronBar, 2);
-            r.AddRecipeGroup("Wood", 10);
-            r.AddTile(TileID.Anvils);
-            r.SetResult(this);
-            r.anyIronBar = true;
-            r.AddRecipe();
+            CreateRecipe()
+                .AddRecipeGroup(RecipeGroupID.IronBar, 2)
+                .AddRecipeGroup(RecipeGroupID.Wood, 10)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
         public override void SetStaticDefaults()
         {
@@ -26,12 +25,12 @@ namespace OldSchoolRuneScape.Items.ClueScroll
         }
         public override void SetDefaults()
         {
-            item.width = 30;
-            item.height = 28;
-            item.useStyle = 5;
-            item.useTime = 25;
-            item.useAnimation = 25;
-            item.rare = 3;
+            Item.width = 30;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 25;
+            Item.useAnimation = 25;
+            Item.rare = ItemRarityID.Orange;
         }
         public override bool CanUseItem(Player player)
         {
@@ -41,23 +40,23 @@ namespace OldSchoolRuneScape.Items.ClueScroll
         {
             return true;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (player.altFunctionUse == 2)
             {
                 ClueStats(player);
-                item.noUseGraphic = true;
+                Item.noUseGraphic = true;
             }
             else
             {
-                item.noUseGraphic = false;
-                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Spade"), player.position);
-                int block = Main.tile[(int)player.position.X / 16, (int)player.Bottom.Y / 16].type;
+                Item.noUseGraphic = false;
+                SoundEngine.PlaySound(new SoundStyle("OldSchoolRuneScape/Sounds/Item/Spade"), player.position);
+                int block = Main.tile[(int)player.position.X / 16, (int)player.Bottom.Y / 16].TileType;
                 player.GetModPlayer<OSRSplayer>().ClueDig(block);
             }
             return true;
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             Vector2 fixVector = new Vector2(0, -8);
             if (player.direction == 1)
@@ -124,7 +123,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
             {
                 color = new Color(225, 6, 67);
             }
-            if (Main.netMode != 2)
+            if (Main.netMode != NetmodeID.Server)
             {
                 Main.NewText(string.Format("You have completed a total of {0} clues!", total), color);
                 Main.NewText(string.Format("Easy: {0} Medium: {1} Hard: {2} Elite: {3} Master: {4}", easy, medium, hard, elite, master), color);

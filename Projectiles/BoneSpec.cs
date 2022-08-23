@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using Terraria.ID;
 
@@ -14,17 +15,17 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = 1;
-            projectile.width = 7;
-            projectile.height = 7;
-            projectile.friendly = true;
-            projectile.ranged = true;
+            Projectile.aiStyle = 1;
+            Projectile.width = 7;
+            Projectile.height = 7;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Ranged;
         }
 
         public override void AI()
         {
-            projectile.velocity.Y = projectile.velocity.Y - 0.025f;
-            Lighting.AddLight(projectile.position, new Vector3(3, 0, 0));
+            Projectile.velocity.Y = Projectile.velocity.Y - 0.025f;
+            Lighting.AddLight(Projectile.position, new Vector3(3, 0, 0));
         }
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
@@ -34,14 +35,14 @@ namespace OldSchoolRuneScape.Projectiles
                 damage *= 3;
                 for(int i = 0; i<10; i++)
                 {
-                    Dust.NewDust(target.Center, 0, 0, 235);
+                    Dust.NewDust(target.Center, 0, 0, DustID.LifeDrain);
                 }
             }
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Main.PlaySound(SoundID.Dig, projectile.position);
+            SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
             return true;
         }
     }

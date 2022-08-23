@@ -1,8 +1,10 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
 
 namespace OldSchoolRuneScape.NPCs
 {
@@ -14,24 +16,24 @@ namespace OldSchoolRuneScape.NPCs
         }
         public override void SetDefaults()
         {
-            projectile.hostile = true;
-            projectile.width = 18;
-            projectile.height = 18;
-            projectile.scale = 1f;
-            projectile.penetrate = 6;
-            projectile.aiStyle = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 60;
-            projectile.alpha = 120;
+            Projectile.hostile = true;
+            Projectile.width = 18;
+            Projectile.height = 18;
+            Projectile.scale = 1f;
+            Projectile.penetrate = 6;
+            Projectile.aiStyle = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 60;
+            Projectile.alpha = 120;
         }
         public override void AI()
         {
-            projectile.rotation += MathHelper.ToRadians(projectile.velocity.X);
-            projectile.velocity = projectile.velocity.RotatedBy(projectile.ai[0]);
-            projectile.alpha += 2;
+            Projectile.rotation += MathHelper.ToRadians(Projectile.velocity.X);
+            Projectile.velocity = Projectile.velocity.RotatedBy(Projectile.ai[0]);
+            Projectile.alpha += 2;
             Dust dust;
-            Vector2 position = projectile.position;
-            dust = Main.dust[Terraria.Dust.NewDust(position, 18, 18, 109, 0f, 0f, projectile.alpha, new Color(255, 255, 255), 1f)];
+            Vector2 position = Projectile.position;
+            dust = Main.dust[Terraria.Dust.NewDust(position, 18, 18, DustID.Asphalt, 0f, 0f, Projectile.alpha, new Color(255, 255, 255), 1f)];
             dust.noGravity = true;
             dust.fadeIn = 1.2f;
         }
@@ -41,23 +43,23 @@ namespace OldSchoolRuneScape.NPCs
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Banshee");
-            Main.npcFrameCount[npc.type] = 3;
+            Main.npcFrameCount[NPC.type] = 3;
         }
         public override void SetDefaults()
         {
-            npc.scale = 1f;
-            npc.friendly = false;
-            npc.lifeMax = 180;
-            npc.defense = 10;
-            npc.damage = 20;
-            npc.knockBackResist = 0.4f;
-            npc.noGravity = true;
-            npc.width = 40;
-            npc.height = 80;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath52;
-            npc.value = 1000f;
-            npc.aiStyle = -1;
+            NPC.scale = 1f;
+            NPC.friendly = false;
+            NPC.lifeMax = 180;
+            NPC.defense = 10;
+            NPC.damage = 20;
+            NPC.knockBackResist = 0.4f;
+            NPC.noGravity = true;
+            NPC.width = 40;
+            NPC.height = 80;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath52;
+            NPC.value = 1000f;
+            NPC.aiStyle = -1;
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -69,37 +71,37 @@ namespace OldSchoolRuneScape.NPCs
 
         private void doAttack()
         {
-            Vector2 shootpos = npc.Center + new Vector2(0, -30);
+            Vector2 shootpos = NPC.Center + new Vector2(0, -30);
             Vector2 vel = targetpos - shootpos;
             vel.Normalize();
             float ai = Main.rand.NextFloat(-0.0015f, 0.0015f);
-            Projectile.NewProjectile(shootpos, vel * 6f, ModContent.ProjectileType<BansheeProj>(), npc.damage / 4, 1f, 0, ai, 0);
-            npc.ai[1] = 0;
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), shootpos, vel * 6f, ModContent.ProjectileType<BansheeProj>(), NPC.damage / 4, 1f, 0, ai, 0);
+            NPC.ai[1] = 0;
         }
         public override void AI()
         {
-            npc.TargetClosest(true);
-            Player target = Main.player[npc.target];
-            if (npc.ai[2] > 0)
+            NPC.TargetClosest(true);
+            Player target = Main.player[NPC.target];
+            if (NPC.ai[2] > 0)
             {
-                npc.velocity *= 0f;
-                if (npc.ai[2] % 4 == 0)
+                NPC.velocity *= 0f;
+                if (NPC.ai[2] % 4 == 0)
                 {
-                    Main.PlaySound(29, npc.Center, 97);
+                    SoundEngine.PlaySound(SoundID.Zombie97, NPC.Center);
                     doAttack();
                 }
-                npc.ai[2]--;
+                NPC.ai[2]--;
             }
-            else if (npc.ai[1] > 180)
+            else if (NPC.ai[1] > 180)
             {
-                npc.ai[2] = 45;
-                npc.ai[1] = 0;
+                NPC.ai[2] = 45;
+                NPC.ai[1] = 0;
                 targetpos = target.MountedCenter;
-                npc.netUpdate = true;
+                NPC.netUpdate = true;
             }
-            else if (!Collision.CanHitLine(npc.position, 20, 20, target.position, target.width, target.height))
+            else if (!Collision.CanHitLine(NPC.position, 20, 20, target.position, target.width, target.height))
             {
-                if (npc.ai[0] <= 0)
+                if (NPC.ai[0] <= 0)
                 {
                     Vector2 oldTarg = moveTarget;
                     for (int j = 100; j < 500; j+=10)
@@ -107,7 +109,7 @@ namespace OldSchoolRuneScape.NPCs
                         for (int i = 0; i < 8; i++)
                         {
                             Vector2 newpos = target.position + new Vector2(j, 0).RotatedBy(MathHelper.ToRadians(360 / 8 * i));
-                            if (Collision.CanHitLine(newpos, 20, 20, npc.position, npc.width, npc.height))
+                            if (Collision.CanHitLine(newpos, 20, 20, NPC.position, NPC.width, NPC.height))
                             {
                                 moveTarget = newpos;
                                 break;
@@ -122,85 +124,89 @@ namespace OldSchoolRuneScape.NPCs
                             break;
                         }
                     }
-                    npc.ai[0] = 60;
-                    npc.netUpdate = true;
+                    NPC.ai[0] = 60;
+                    NPC.netUpdate = true;
                 }
             }
             else
             {
-                if (npc.ai[1] > 120)
+                if (NPC.ai[1] > 120)
                 {
-                    npc.ai[2] = 90;
-                    npc.ai[1] = 0;
+                    NPC.ai[2] = 90;
+                    NPC.ai[1] = 0;
                     targetpos = target.MountedCenter;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
                 moveTarget = target.MountedCenter;
             }
-            npc.ai[0]--;
-            npc.ai[1]++;
+            NPC.ai[0]--;
+            NPC.ai[1]++;
             Dust dust;
             // You need to set position depending on what you are doing. You may need to subtract width/2 and height/2 as well to center the spawn rectangle.
             Vector2 position = moveTarget;
             dust = Terraria.Dust.NewDustPerfect(position, 66, new Vector2(0f, 0f), 0, new Color(255, 255, 255), 1.776316f);
             dust.noGravity = true;
-            Vector2 vel = moveTarget - npc.Center;
+            Vector2 vel = moveTarget - NPC.Center;
             vel.Normalize();
             vel *= 0.3f;
-            npc.velocity += vel;
-            if (npc.velocity.Length() > maxSpeed)
+            NPC.velocity += vel;
+            if (NPC.velocity.Length() > maxSpeed)
             {
-                Vector2 vel2 = npc.velocity;
+                Vector2 vel2 = NPC.velocity;
                 vel2.Normalize();
-                npc.velocity = vel2 * maxSpeed;
+                NPC.velocity = vel2 * maxSpeed;
             }
         }
         public override void HitEffect(int hitDirection, double damage)
         {
-            if (npc.life > 0)
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
+            if (NPC.life > 0)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 7, 1f, 1f, 0, Color.Black);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.WoodFurniture, 1f, 1f, 0, Color.Black);
                 }
             }
             else
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 7, 1f, 1f, 0, Color.DarkOliveGreen);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.WoodFurniture, 1f, 1f, 0, Color.DarkOliveGreen);
                 }
                 for (int i = 1; i < 5; i++)
                 {
-                    Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Banshee" + i), npc.scale);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Banshee" + i).Type, NPC.scale);
                 }
             }
         }
         public override void FindFrame(int frameHeight)
         {
-            npc.spriteDirection = npc.direction;
-            npc.rotation = npc.velocity.X * 0.04f;
+            NPC.spriteDirection = NPC.direction;
+            NPC.rotation = NPC.velocity.X * 0.04f;
             int frameSpeed = 7;
-            npc.frameCounter++;
-            if (npc.frameCounter < frameSpeed)
+            NPC.frameCounter++;
+            if (NPC.frameCounter < frameSpeed)
             {
-                npc.frame.Y = 0;
+                NPC.frame.Y = 0;
             }
-            else if (npc.frameCounter < frameSpeed * 2)
+            else if (NPC.frameCounter < frameSpeed * 2)
             {
-                npc.frame.Y = frameHeight;
+                NPC.frame.Y = frameHeight;
             }
-            else if (npc.frameCounter < frameSpeed * 3)
+            else if (NPC.frameCounter < frameSpeed * 3)
             {
-                npc.frame.Y = frameHeight * 2;
+                NPC.frame.Y = frameHeight * 2;
             }
-            else if (npc.frameCounter < frameSpeed * 4)
+            else if (NPC.frameCounter < frameSpeed * 4)
             {
-                npc.frame.Y = frameHeight;
+                NPC.frame.Y = frameHeight;
             }
             else
             {
-                npc.frameCounter = 0;
+                NPC.frameCounter = 0;
             }
         }
     }

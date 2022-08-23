@@ -10,37 +10,32 @@ namespace OldSchoolRuneScape.Items.Armor
     [AutoloadEquip(EquipType.Body)]
     public class Greendbody : ModItem
     {
-        public override void DrawHands(ref bool drawHands, ref bool drawArms)
-        {
-            drawHands = true;
-            drawArms = true;
-        }
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Green Dragonhide Body");
             Tooltip.SetDefault("6% increased ranged critical strike chance");
+            ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
         public override void SetDefaults()
         {
-            item.width = 22;
-            item.height = 28;
-            item.value = Item.sellPrice(0, 1, 0, 0);
-            item.rare = 3;
-            item.defense = 8;
+            Item.width = 22;
+            Item.height = 28;
+            Item.value = Item.sellPrice(0, 1, 0, 0);
+            Item.rare = ItemRarityID.Orange;
+            Item.defense = 8;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.rangedCrit += 6;
+            player.GetCritChance(DamageClass.Ranged) += 6;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Greendhide", 22);
             recipe.AddTile(TileID.Anvils);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

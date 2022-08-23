@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,59 +17,29 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.consumable = true;
-            item.width = 24;
-            item.height = 24;
-            item.rare = 5;
-            item.expert = true;
+            Item.maxStack = 999;
+            Item.consumable = true;
+            Item.width = 24;
+            Item.height = 24;
+            Item.rare = ItemRarityID.Pink;
+            Item.expert = true;
         }
-
-        public override int BossBagNPC => mod.NPCType("Torag");
-
         public override bool CanRightClick()
         {
             return true;
         }
 
-        public override void OpenBossBag(Player player)
+        public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            player.TryGettingDevArmor();
-            int helm = ModContent.ItemType<Items.Armor.Toraghelm>();
-            int body = ModContent.ItemType<Items.Armor.Toragbody>();
-            int legs = ModContent.ItemType<Items.Armor.Toraglegs>();
-            int wep = ModContent.ItemType<Items.Toraghammers>();
-            int drop = 0;
-            for (int i = 0; i < 200; i++)
-            {
-                bool allcheck = false;
-                if (player.HasItem(helm) && player.HasItem(body) && player.HasItem(legs) && player.HasItem(wep))
-                {
-                    allcheck = true;
-                }
-                int ch = Main.rand.Next(4);
-                if (ch == 0 && (allcheck || !player.HasItem(helm)))
-                {
-                    drop = helm;
-                    break;
-                }
-                if (ch == 1 && (allcheck || !player.HasItem(body)))
-                {
-                    drop = body;
-                    break;
-                }
-                if (ch == 2 && (allcheck || !player.HasItem(legs)))
-                {
-                    drop = legs;
-                    break;
-                }
-                if (ch == 3 && (allcheck || !player.HasItem(wep)))
-                {
-                    drop = wep;
-                    break;
-                }
-            }
-            player.QuickSpawnItem(drop);
+            itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<Torag>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Toragsummon>()));
+
+            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1,
+                ModContent.ItemType<Items.Weapons.Melee.Toraghammers>(),
+                ModContent.ItemType<Items.Armor.Toraghelm>(),
+                ModContent.ItemType<Items.Armor.Toragbody>(),
+                ModContent.ItemType<Items.Armor.Toraglegs>()
+                ));
         }
     }
     [AutoloadBossHead]
@@ -76,38 +48,37 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Torag the Corrupted");
-            Main.npcFrameCount[npc.type] = 4;
+            Main.npcFrameCount[NPC.type] = 4;
         }
         public override void SetDefaults()
         {
-            npc.width = 50;
-            npc.height = 100;
-            npc.aiStyle = -1;
-            npc.npcSlots = 15f;
-            npc.lavaImmune = true;
-            npc.damage = 70;
-            npc.defense = 60;
-            npc.lifeMax = 40000;
-            npc.scale = 1.5f;
-            npc.knockBackResist = 0f;
-            npc.boss = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath6;
-            npc.value = 35000f;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.Ichor] = true;
-            music = OldSchoolRuneScape.barrowsMusic;
-            bossBag = mod.ItemType("Toragbag");
+            NPC.width = 50;
+            NPC.height = 100;
+            NPC.aiStyle = -1;
+            NPC.npcSlots = 15f;
+            NPC.lavaImmune = true;
+            NPC.damage = 70;
+            NPC.defense = 60;
+            NPC.lifeMax = 40000;
+            NPC.scale = 1.5f;
+            NPC.knockBackResist = 0f;
+            NPC.boss = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath6;
+            NPC.value = 35000f;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Ichor] = true;
+            Music = OldSchoolRuneScape.barrowsMusic;
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = 50000 + 5000 * numPlayers;
-            npc.damage = (int)(npc.damage * 0.7f);
+            NPC.lifeMax = 50000 + 5000 * numPlayers;
+            NPC.damage = (int)(NPC.damage * 0.7f);
         }
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
@@ -121,46 +92,33 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
             name = "Torag the Corrupted";
             potionType = ItemID.GreaterHealingPotion;
         }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Toragsummon>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Toragbag>()));
 
-        public override void NPCLoot()
+            var notExpert = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpert.OnSuccess(ItemDropRule.OneFromOptionsNotScalingWithLuck(1,
+                ModContent.ItemType<Items.Weapons.Melee.Toraghammers>(),
+                ModContent.ItemType<Items.Armor.Toraghelm>(),
+                ModContent.ItemType<Items.Armor.Toragbody>(),
+                ModContent.ItemType<Items.Armor.Toraglegs>()
+                ));
+
+            npcLoot.Add(notExpert);
+        }
+        public override void OnKill()
         {
             OSRSworld.downedTorag = true;
-            Item.NewItem(npc.Hitbox, ModContent.ItemType<Toragsummon>());
-            if (Main.expertMode)
-            {
-                npc.DropBossBags();
-            }
-            else
-            {
-                int drop = 0;
-                switch (Main.rand.Next(4))
-                {
-                    case 0:
-                        drop = ModContent.ItemType<Items.Toraghammers>();
-                        break;
-                    case 1:
-                        drop = ModContent.ItemType<Items.Armor.Toraghelm>();
-                        break;
-                    case 2:
-                        drop = ModContent.ItemType<Items.Armor.Toragbody>();
-                        break;
-                    case 3:
-                        drop = ModContent.ItemType<Items.Armor.Toraglegs>();
-                        break;
-                    default:
-                        break;
-                }
-                Item.NewItem(npc.Hitbox, drop);
-            }
         }
 
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (projectile.ranged)
+            if (projectile.CountsAsClass(DamageClass.Ranged))
             {
                 damage = (int)(damage * 0.9f);
             }
-            if (projectile.magic)
+            if (projectile.CountsAsClass(DamageClass.Magic))
             {
                 damage = (int)(damage * 1.1f);
             }
@@ -174,20 +132,20 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
 
         public float AI_State
         {
-            get { return npc.ai[AI_State_Slot]; }
-            set { npc.ai[AI_State_Slot] = value; }
+            get { return NPC.ai[AI_State_Slot]; }
+            set { NPC.ai[AI_State_Slot] = value; }
         }
 
         public float AI_Timer
         {
-            get { return npc.ai[AI_Timer_Slot]; }
-            set { npc.ai[AI_Timer_Slot] = value; }
+            get { return NPC.ai[AI_Timer_Slot]; }
+            set { NPC.ai[AI_Timer_Slot] = value; }
         }
 
         public int attacknum
         {
-            get { return (int)npc.ai[2]; }
-            set { npc.ai[2] = value; }
+            get { return (int)NPC.ai[2]; }
+            set { NPC.ai[2] = value; }
         }
 
         public float speed = 7f;
@@ -201,49 +159,49 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
             {
                 AI_State = Flee;
             }
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
-                Dust.NewDust(npc.position, npc.width, npc.height, 52);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.UnholyWater);
             }
-            Lighting.AddLight(npc.Center, new Vector3(116 * 0.01f, 35 * 0.01f, 78 * 0.01f));
-            if (npc.life < npc.lifeMax * 0.75f)
+            Lighting.AddLight(NPC.Center, new Vector3(116 * 0.01f, 35 * 0.01f, 78 * 0.01f));
+            if (NPC.life < NPC.lifeMax * 0.75f)
             {
                 healthmod = 1;
             }
-            if (npc.life < npc.lifeMax * 0.5f)
+            if (NPC.life < NPC.lifeMax * 0.5f)
             {
                 healthmod = 2;
             }
-            if (npc.life < npc.lifeMax * 0.2f)
+            if (NPC.life < NPC.lifeMax * 0.2f)
             {
                 healthmod = 3;
             }
             if (AI_State == Fly)
             {
-                while (npc.velocity.X > speed || npc.velocity.Y > speed || npc.velocity.X < -speed || npc.velocity.Y < -speed)
+                while (NPC.velocity.X > speed || NPC.velocity.Y > speed || NPC.velocity.X < -speed || NPC.velocity.Y < -speed)
                 {
-                    npc.velocity *= 0.97f;
+                    NPC.velocity *= 0.97f;
                 }
                 AI_Timer++;
-                npc.TargetClosest(true);
-                Player target = Main.player[npc.target];
-                if (target.MountedCenter.Y > npc.Center.Y && npc.velocity.Y < speed)
+                NPC.TargetClosest(true);
+                Player target = Main.player[NPC.target];
+                if (target.MountedCenter.Y > NPC.Center.Y && NPC.velocity.Y < speed)
                 {
-                    npc.velocity.Y += accelerate;
+                    NPC.velocity.Y += accelerate;
                 }
-                if (target.MountedCenter.Y < npc.Center.Y && npc.velocity.Y > -speed)
+                if (target.MountedCenter.Y < NPC.Center.Y && NPC.velocity.Y > -speed)
                 {
-                    npc.velocity.Y -= accelerate;
+                    NPC.velocity.Y -= accelerate;
                 }
-                if (target.MountedCenter.X > npc.Center.X && npc.velocity.X < speed)
+                if (target.MountedCenter.X > NPC.Center.X && NPC.velocity.X < speed)
                 {
-                    npc.velocity.X += accelerate;
+                    NPC.velocity.X += accelerate;
                 }
-                if (target.MountedCenter.X < npc.Center.X && npc.velocity.X > -speed)
+                if (target.MountedCenter.X < NPC.Center.X && NPC.velocity.X > -speed)
                 {
-                    npc.velocity.X -= accelerate;
+                    NPC.velocity.X -= accelerate;
                 }
-                if (AI_Timer > (180 - 40 * healthmod) && Main.netMode != 1)
+                if (AI_Timer > (180 - 40 * healthmod) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     AI_Timer = 0;
                     int meme = Main.rand.Next(1, 3 + healthmod);
@@ -251,46 +209,46 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
                     {
                         AI_State = Attack;
                         attacknum = meme;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     else if (meme == 2)
                     {
                         AI_State = Attack;
                         attacknum = meme;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     else if (meme == 3)
                     {
                         AI_State = Attack;
                         attacknum = meme;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     else if (meme == 4)
                     {
-                        npc.velocity *= 0;
+                        NPC.velocity *= 0;
                         AI_State = Attack;
                         attacknum = meme;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     else if (meme == 5)
                     {
                         AI_State = Attack;
                         attacknum = meme;
-                        npc.velocity *= 0;
+                        NPC.velocity *= 0;
                         if (NPC.FindFirstNPC(ModContent.NPCType<Ghostshield>()) > -1)
                         {
                             attacknum = 4;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     else
                     {
                         AI_State = Fly;
                     }
                 }
-                if (!npc.HasValidTarget)
+                if (!NPC.HasValidTarget)
                 {
-                    npc.velocity *= 0;
+                    NPC.velocity *= 0;
                     AI_State = Flee;
                 }
             }
@@ -301,89 +259,89 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
                 {
                     if (AI_Timer == 3)
                     {
-                        Projectile.NewProjectile(npc.Center, new Vector2(npc.direction * 3, -15).RotatedBy(MathHelper.ToRadians(Main.rand.Next(61) * npc.direction)), ModContent.ProjectileType<Ghosthammer>(), (npc.damage / 4), 0f, 0, 1, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, new Vector2(NPC.direction * 3, -15).RotatedBy(MathHelper.ToRadians(Main.rand.Next(61) * NPC.direction)), ModContent.ProjectileType<Ghosthammer>(), (NPC.damage / 4), 0f, 0, 1, 0);
                         if (healthmod > 0)
                         {
-                            Projectile.NewProjectile(npc.Center, new Vector2(npc.direction * 6, -20).RotatedBy(MathHelper.ToRadians(Main.rand.Next(61) * npc.direction)), ModContent.ProjectileType<Ghosthammer>(), (npc.damage / 4), 0f, 0, 1, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, new Vector2(NPC.direction * 6, -20).RotatedBy(MathHelper.ToRadians(Main.rand.Next(61) * NPC.direction)), ModContent.ProjectileType<Ghosthammer>(), (NPC.damage / 4), 0f, 0, 1, 0);
                         }
                         if (healthmod > 1)
                         {
-                            Projectile.NewProjectile(npc.Center, new Vector2(npc.direction * 9, -25).RotatedBy(MathHelper.ToRadians(Main.rand.Next(61) * npc.direction)), ModContent.ProjectileType<Ghosthammer>(), (npc.damage / 4), 0f, 0, 1, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, new Vector2(NPC.direction * 9, -25).RotatedBy(MathHelper.ToRadians(Main.rand.Next(61) * NPC.direction)), ModContent.ProjectileType<Ghosthammer>(), (NPC.damage / 4), 0f, 0, 1, 0);
                         }
                     }
                     if (AI_Timer > 10)
                     {
                         AI_Timer = 0;
                         AI_State = Fly;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
                 if (attacknum == 2)
                 {
                     if (AI_Timer == 3)
                     {
-                        npc.TargetClosest(true);
-                        Player target = Main.player[npc.target];
-                        float speedX = target.MountedCenter.X - npc.Center.X;
-                        float speedY = target.MountedCenter.Y - npc.Center.Y;
+                        NPC.TargetClosest(true);
+                        Player target = Main.player[NPC.target];
+                        float speedX = target.MountedCenter.X - NPC.Center.X;
+                        float speedY = target.MountedCenter.Y - NPC.Center.Y;
                         spd = new Vector2(speedX, speedY);
                         spd.Normalize();
                         spd *= 22;
-                        Projectile.NewProjectile(npc.Center, new Vector2(spd.X, spd.Y - 3), ModContent.ProjectileType<Ghosthammer>(), npc.damage / 4, 0f, 0, 0, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, new Vector2(spd.X, spd.Y - 3), ModContent.ProjectileType<Ghosthammer>(), NPC.damage / 4, 0f, 0, 0, 0);
                         if (healthmod > 0)
                         {
-                            Projectile.NewProjectile(npc.Center, new Vector2(spd.X, spd.Y - 4), ModContent.ProjectileType<Ghosthammer>(), npc.damage / 4, 0f, 0, 0, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, new Vector2(spd.X, spd.Y - 4), ModContent.ProjectileType<Ghosthammer>(), NPC.damage / 4, 0f, 0, 0, 0);
                         }
                         if (healthmod > 1)
                         {
-                            Projectile.NewProjectile(npc.Center, new Vector2(spd.X, spd.Y - 5), ModContent.ProjectileType<Ghosthammer>(), npc.damage / 4, 0f, 0, 0, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, new Vector2(spd.X, spd.Y - 5), ModContent.ProjectileType<Ghosthammer>(), NPC.damage / 4, 0f, 0, 0, 0);
                         }
                     }
                     if (AI_Timer > 5)
                     {
                         AI_Timer = 0;
                         AI_State = Fly;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
                 if (attacknum == 3)
                 {
                     if (AI_Timer == 3)
                     {
-                        npc.TargetClosest(true);
-                        Player target = Main.player[npc.target];
-                        float speedX = target.MountedCenter.X - npc.Center.X;
-                        float speedY = target.MountedCenter.Y - npc.Center.Y;
+                        NPC.TargetClosest(true);
+                        Player target = Main.player[NPC.target];
+                        float speedX = target.MountedCenter.X - NPC.Center.X;
+                        float speedY = target.MountedCenter.Y - NPC.Center.Y;
                         spd = new Vector2(speedX, speedY);
                         spd.Normalize();
                         spd *= 30;
                     }
                     if (AI_Timer % 10 == 0)
                     {
-                        Projectile.NewProjectile(npc.Center, spd.RotatedBy(MathHelper.ToRadians(-30 + AI_Timer)), ModContent.ProjectileType<Ghosthammer>(), (npc.damage / 4), 0f, 0, 2, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spd.RotatedBy(MathHelper.ToRadians(-30 + AI_Timer)), ModContent.ProjectileType<Ghosthammer>(), (NPC.damage / 4), 0f, 0, 2, 0);
                     }
                     if (AI_Timer > 50 + healthmod * 10)
                     {
                         AI_Timer = 0;
                         AI_State = Fly;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
                 if (attacknum == 4)
                 {
                     if (AI_Timer % 5 == 0)
                     {
-                        npc.TargetClosest(true);
-                        Player target = Main.player[npc.target];
-                        spd = new Vector2(160 * npc.direction, 0).RotatedBy(MathHelper.ToRadians(-75 + AI_Timer * 5));
-                        NPC.NewNPC((int)(npc.position.X + spd.X), (int)(npc.position.Y + spd.Y), ModContent.NPCType<Ghostshield>());
-                        Main.PlaySound(SoundID.Item1.WithPitchVariance(0.5f), npc.Center);
+                        NPC.TargetClosest(true);
+                        Player target = Main.player[NPC.target];
+                        spd = new Vector2(160 * NPC.direction, 0).RotatedBy(MathHelper.ToRadians(-75 + AI_Timer * 5));
+                        NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + spd.X), (int)(NPC.position.Y + spd.Y), ModContent.NPCType<Ghostshield>());
+                        SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
                     }
                     if (AI_Timer > 25)
                     {
                         AI_Timer = 50;
                         AI_State = Fly;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
                 if (attacknum == 5)
@@ -393,25 +351,25 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
                         for (int i = 0; i < 120; i++)
                         {
                             Vector2 rotata = new Vector2(0, 8).RotatedBy(MathHelper.ToRadians(3 * i));
-                            Dust.NewDust(npc.Center + rotata, 0, 0, 58, rotata.X * 0.01f, rotata.Y * 0.01f, 0, default(Color), 1.5f);
+                            Dust.NewDust(NPC.Center + rotata, 0, 0, DustID.Enchanted_Pink, rotata.X * 0.01f, rotata.Y * 0.01f, 0, default(Color), 1.5f);
                         }
-                        NPC.NewNPC((int)(npc.position.X), (int)(npc.position.Y), ModContent.NPCType<Ghostshield>(), 0, 1, npc.whoAmI, 0);
-                        NPC.NewNPC((int)(npc.position.X), (int)(npc.position.Y), ModContent.NPCType<Ghostshield>(), 0, 1, npc.whoAmI, 72);
-                        NPC.NewNPC((int)(npc.position.X), (int)(npc.position.Y), ModContent.NPCType<Ghostshield>(), 0, 1, npc.whoAmI, 144);
-                        NPC.NewNPC((int)(npc.position.X), (int)(npc.position.Y), ModContent.NPCType<Ghostshield>(), 0, 1, npc.whoAmI, 216);
-                        NPC.NewNPC((int)(npc.position.X), (int)(npc.position.Y), ModContent.NPCType<Ghostshield>(), 0, 1, npc.whoAmI, 288);
+                        NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X), (int)(NPC.position.Y), ModContent.NPCType<Ghostshield>(), 0, 1, NPC.whoAmI, 0);
+                        NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X), (int)(NPC.position.Y), ModContent.NPCType<Ghostshield>(), 0, 1, NPC.whoAmI, 72);
+                        NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X), (int)(NPC.position.Y), ModContent.NPCType<Ghostshield>(), 0, 1, NPC.whoAmI, 144);
+                        NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X), (int)(NPC.position.Y), ModContent.NPCType<Ghostshield>(), 0, 1, NPC.whoAmI, 216);
+                        NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X), (int)(NPC.position.Y), ModContent.NPCType<Ghostshield>(), 0, 1, NPC.whoAmI, 288);
                     }
                     if (AI_Timer > 5)
                     {
                         AI_Timer = 50;
                         AI_State = Fly;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
             }
             if (AI_State == Flee)
             {
-                npc.velocity.Y += 0.05f;
+                NPC.velocity.Y += 0.05f;
             }
         }
 
@@ -423,36 +381,36 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
 
         public override void FindFrame(int frameHeight)
         {
-            npc.spriteDirection = -npc.direction;
-            npc.frameCounter++;
-            if (npc.frameCounter < 7)
+            NPC.spriteDirection = -NPC.direction;
+            NPC.frameCounter++;
+            if (NPC.frameCounter < 7)
             {
-                npc.frame.Y = Fly1 * frameHeight;
+                NPC.frame.Y = Fly1 * frameHeight;
             }
-            else if (npc.frameCounter < 14)
+            else if (NPC.frameCounter < 14)
             {
-                npc.frame.Y = Fly2 * frameHeight;
+                NPC.frame.Y = Fly2 * frameHeight;
             }
-            else if (npc.frameCounter < 21)
+            else if (NPC.frameCounter < 21)
             {
-                npc.frame.Y = Fly3 * frameHeight;
+                NPC.frame.Y = Fly3 * frameHeight;
             }
-            else if (npc.frameCounter < 28)
+            else if (NPC.frameCounter < 28)
             {
-                npc.frame.Y = Fly4 * frameHeight;
+                NPC.frame.Y = Fly4 * frameHeight;
             }
             else
             {
-                npc.frameCounter = 0;
+                NPC.frameCounter = 0;
             }
         }
 
-        public override bool PreNPCLoot()
+        public override bool PreKill()
         {
             for (int i = 0; i < 120; i++)
             {
                 Vector2 rotata = new Vector2(0, 8).RotatedBy(MathHelper.ToRadians(3 * i));
-                Dust.NewDust(npc.Center + rotata, 0, 0, 58, rotata.X, rotata.Y, 0, default(Color), 1.5f);
+                Dust.NewDust(NPC.Center + rotata, 0, 0, DustID.Enchanted_Pink, rotata.X, rotata.Y, 0, default(Color), 1.5f);
             }
             if (NPC.AnyNPCs(ModContent.NPCType<Barrowsspirit>()))
             {
@@ -460,9 +418,9 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
                 {
                     if (Main.npc[i].type == ModContent.NPCType<Barrowsspirit>())
                     {
-                        Vector2 spd = Main.npc[i].Center - npc.Center;
+                        Vector2 spd = Main.npc[i].Center - NPC.Center;
                         spd.Normalize();
-                        Projectile.NewProjectile(npc.Center, spd * 5f, ModContent.ProjectileType<Barrowsdamageproj>(), 100, 0, Main.player[npc.target].whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spd * 5f, ModContent.ProjectileType<Barrowsdamageproj>(), 100, 0, Main.player[NPC.target].whoAmI);
                     }
                 }
             }

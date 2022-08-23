@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System;
@@ -15,41 +16,41 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void SetDefaults()
         {
-            item.damage = 55;
-            item.magic = true;
-            item.mana = 12;
-            item.crit = 5;
-            item.width = 58;
-            item.height = 60;
-            item.useTime = 20;
-            item.useAnimation = 20;
-            item.useStyle = 5;
-            item.noMelee = true;
-            item.noUseGraphic = false;
-            item.knockBack = 1f;
-            item.value = Item.sellPrice(0, 7, 0, 0);
-            item.rare = 6;
-            item.autoReuse = true;
-            item.shoot = 0;
-            item.shootSpeed = 10f;
-            item.scale = 0.8f;
+            Item.damage = 55;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 12;
+            Item.crit = 5;
+            Item.width = 58;
+            Item.height = 60;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true;
+            Item.noUseGraphic = false;
+            Item.knockBack = 1f;
+            Item.value = Item.sellPrice(0, 7, 0, 0);
+            Item.rare = ItemRarityID.LightPurple;
+            Item.autoReuse = true;
+            Item.shoot = ProjectileID.None;
+            Item.shootSpeed = 10f;
+            Item.scale = 0.8f;
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             if (player.itemAnimation < 20 && player.itemAnimation > 9)
             {
-                item.shoot = 0;
+                Item.shoot = ProjectileID.None;
                 for (int j = 0; j < 8; j++)
                 {
                     Vector2 velo = new Vector2(0, 4 * player.itemAnimation).RotatedBy(MathHelper.ToRadians(45 * j));
-                    int dust = Dust.NewDust(player.MountedCenter + velo, 0, 0, 127, -velo.X * 0.05f, -velo.Y * 0.05f, 0, Color.Red, 1.4f);
+                    int dust = Dust.NewDust(player.MountedCenter + velo, 0, 0, DustID.Flare, -velo.X * 0.05f, -velo.Y * 0.05f, 0, Color.Red, 1.4f);
                     Main.dust[dust].noGravity = true;
                 }
             }
             if (player.itemAnimation == 8)
             {
-                Main.PlaySound(SoundID.Item20, player.MountedCenter);
-                item.shoot = ModContent.ProjectileType<Projectiles.Ibanblast>();
+                SoundEngine.PlaySound(SoundID.Item20, player.MountedCenter);
+                Item.shoot = ModContent.ProjectileType<Projectiles.Ibanblast>();
             }
         }
         public override Vector2? HoldoutOffset()

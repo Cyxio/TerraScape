@@ -9,6 +9,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.Localization;
+using Terraria.Audio;
+using Terraria.GameInput;
+using OldSchoolRuneScape.Items.Magic;
+using OldSchoolRuneScape.UI;
 
 namespace OldSchoolRuneScape
 {
@@ -38,11 +42,14 @@ namespace OldSchoolRuneScape
         public ModDust MessageDust;
         public bool shouldBC = false;
 
+        public SpellCopy? selectedSpell;
+        public int spellCooldown = 0;
+
         public override void UpdateLifeRegen()
         {
-            if (player.bleed)
+            if (Player.bleed)
             {
-                player.lifeRegen = 0;
+                Player.lifeRegen = 0;
             }
         }
 
@@ -67,25 +74,59 @@ namespace OldSchoolRuneScape
             Necklaceanguish = false;
             RingCoins = false;
             RingNature = false;
+            HidePlayer = false;
             BloodHound = false;
             shouldBC = false;
+        }
+        public override bool CanUseItem(Item item)
+        {
+            if (spellCooldown > 0)
+            {
+                return false;
+            }
+            return base.CanUseItem(item);
+        }
+        public override void ProcessTriggers(TriggersSet triggersSet)
+        {
+            if (triggersSet.MouseLeft && selectedSpell != null)
+            {
+                var item = selectedSpell.Item;
+                if (Main.myPlayer == Player.whoAmI && selectedSpell.ConsumeRunes(Main.LocalPlayer))
+                {
+                    Vector2 velocity = (Main.MouseWorld - Player.Center).SafeNormalize(Vector2.One);
+                    SoundEngine.PlaySound(item.UseSound, Player.Center);
+                    Projectile.NewProjectile(Player.GetSource_ItemUse(item), Player.Center, velocity * item.shootSpeed, item.shoot,
+                        item.damage, item.knockBack, Player.whoAmI, 0f, 0f);
+                }
+                selectedSpell = null;
+                spellCooldown = 15;
+            }
+            if (OldSchoolRuneScape.ToggleSpellbookHotKey.JustPressed)
+            {
+                SpellbookUI.Visible = !SpellbookUI.Visible;
+            }
         }
 
         public override void PostUpdate()
         {
+            if (spellCooldown > 0)
+            {
+                spellCooldown--;
+            }
             if (TortureTime > 0)
             {
                 TortureTime--;
             }
             if (MessageTime > 0)
             {
-                Dust.NewDust(new Vector2(player.Center.X - MessageDust.Texture.Width * 0.375f, player.position.Y - 40), 0, 0, MessageDust.Type);
+                Dust.NewDust(new Vector2(Player.Center.X - MessageDust.Texture2D.Width() * 0.375f, Player.position.Y - 40), 0, 0, MessageDust.Type);
                 MessageTime--;
             }
             if (slayerText.Equals(""))
             {
                 SlayerTextUpdate();
             }
+
         }
 
         public override void OnHitByNPC(NPC npc, int damage, bool crit)
@@ -94,27 +135,27 @@ namespace OldSchoolRuneScape
             {
                 AnguishTime = 0;
             }
-            if (Amulettorture && TortureTime == 0 && player.statLife < 150)
+            if (Amulettorture && TortureTime == 0 && Player.statLife < 150)
             {
                 TortureTime = 18000;
-                player.HealEffect(player.statLifeMax2 - player.statLife);
-                player.statLife = player.statLifeMax2;
-                player.AddBuff(BuffID.Wrath, 18000);
-                player.AddBuff(BuffID.Rage, 18000);
+                Player.HealEffect(Player.statLifeMax2 - Player.statLife);
+                Player.statLife = Player.statLifeMax2;
+                Player.AddBuff(BuffID.Wrath, 18000);
+                Player.AddBuff(BuffID.Rage, 18000);
             }
             if (Vengeance)
             {
                 MessageTime = 90;
                 MessageDust = ModContent.GetInstance<Dusts.VengMessage>();
-                Dust.NewDust(new Vector2(player.Center.X - 86, player.position.Y - 40), 0, 0, ModContent.DustType<Dusts.VengMessage>());
-                player.ApplyDamageToNPC(npc, damage * 10, 0f, 0, false);
+                Dust.NewDust(new Vector2(Player.Center.X - 86, Player.position.Y - 40), 0, 0, ModContent.DustType<Dusts.VengMessage>());
+                Player.ApplyDamageToNPC(npc, damage * 10, 0f, 0, false);
                 npc.netUpdate = true;
                 Vengeance = false;
-                player.ClearBuff(ModContent.BuffType<Buffs.Vengeance>());
+                Player.ClearBuff(ModContent.BuffType<Buffs.Vengeance>());
                 for (int o = 0; o < 36; o++)
                 {
                     Vector2 rotate = new Vector2(2).RotatedBy(MathHelper.ToRadians(10 * o));
-                    int dust = Dust.NewDust(player.Center, 0, 0, 90);
+                    int dust = Dust.NewDust(Player.Center, 0, 0, DustID.GemRuby);
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].scale = 1f;
                     Main.dust[dust].velocity = rotate;
@@ -126,7 +167,7 @@ namespace OldSchoolRuneScape
         {
             if (target.GetModPlayer<OSRSplayer>().Vengeance)
             {
-                player.Hurt(PlayerDeathReason.ByCustomReason(player.name + " got killed by vengeance lmao"), damage * 10, 0, true);
+                Player.Hurt(PlayerDeathReason.ByCustomReason(Player.name + " got killed by vengeance lmao"), damage * 10, 0, true);
                 target.GetModPlayer<OSRSplayer>().Vengeance = false;
                 target.ClearBuff(ModContent.BuffType<Buffs.Vengeance>());
                 target.GetModPlayer<OSRSplayer>().MessageDust = ModContent.GetInstance<Dusts.VengMessage>();
@@ -134,7 +175,7 @@ namespace OldSchoolRuneScape
                 for (int o = 0; o < 36; o++)
                 {
                     Vector2 rotate = new Vector2(2).RotatedBy(MathHelper.ToRadians(10 * o));
-                    int dust = Dust.NewDust(player.Center, 0, 0, 90);
+                    int dust = Dust.NewDust(Player.Center, 0, 0, DustID.GemRuby);
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].scale = 1f;
                     Main.dust[dust].velocity = rotate;
@@ -146,7 +187,7 @@ namespace OldSchoolRuneScape
         {
             if (target.GetModPlayer<OSRSplayer>().Vengeance)
             {
-                player.Hurt(PlayerDeathReason.ByCustomReason(player.name + " got killed by vengeance lmao"), damage * 10, 0, true);
+                Player.Hurt(PlayerDeathReason.ByCustomReason(Player.name + " got killed by vengeance lmao"), damage * 10, 0, true);
                 target.GetModPlayer<OSRSplayer>().Vengeance = false;
                 target.ClearBuff(ModContent.BuffType<Buffs.Vengeance>());
                 target.GetModPlayer<OSRSplayer>().MessageDust = ModContent.GetInstance<Dusts.VengMessage>();
@@ -154,7 +195,7 @@ namespace OldSchoolRuneScape
                 for (int o = 0; o < 36; o++)
                 {
                     Vector2 rotate = new Vector2(2).RotatedBy(MathHelper.ToRadians(10 * o));
-                    int dust = Dust.NewDust(player.Center, 0, 0, 90);
+                    int dust = Dust.NewDust(Player.Center, 0, 0, DustID.GemRuby);
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].scale = 1f;
                     Main.dust[dust].velocity = rotate;
@@ -162,18 +203,18 @@ namespace OldSchoolRuneScape
             }
         }
 
-        public override bool Shoot(Item item, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Item item, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (Karilset && item.ranged && Main.rand.Next(60) < item.useTime)
+            if (Karilset && item.CountsAsClass(DamageClass.Ranged) && Main.rand.Next(60) < item.useTime)
             {
-                Projectile.NewProjectile(position + new Vector2(speedX, speedY) * 2, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI);
+                Projectile.NewProjectile(source, position + velocity * 2, velocity, type, damage, knockback, Player.whoAmI);
             }
             return true;
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
         {
-            if (Guthanset && item.melee && (Main.rand.Next(10) == 0 || (Amuletdamned && Main.rand.Next(7) == 0)) && target.type != NPCID.TargetDummy)
+            if (Guthanset && item.CountsAsClass(DamageClass.Melee) && (Main.rand.NextBool(10)|| (Amuletdamned && Main.rand.NextBool(7))) && target.type != NPCID.TargetDummy)
             {
                 int heal = damage / 10;
                 if (heal > 10 && !Amuletdamned)
@@ -184,17 +225,17 @@ namespace OldSchoolRuneScape
                 {
                     heal = 20;
                 }
-                player.HealEffect(heal);
-                player.statLife += heal;
+                Player.HealEffect(heal);
+                Player.statLife += heal;
                 Dust.NewDust(target.Center, 0, 0, ModContent.DustType<Dusts.Guthanset>());
             }
         }
 
         public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if (Tormentedbracelet && Main.rand.Next(10) == 0 && proj.magic)
+            if (Tormentedbracelet && Main.rand.NextBool(10)&& proj.CountsAsClass(DamageClass.Magic))
             {
-                float amount = player.statLifeMax2 / (float)player.statLife;
+                float amount = Player.statLifeMax2 / (float)Player.statLife;
                 if (amount > 6)
                 {
                     amount = 6;
@@ -204,14 +245,14 @@ namespace OldSchoolRuneScape
                     Vector2 rotate = new Vector2(target.height / 2).RotateRandom(Math.PI);
                     Vector2 spd = rotate;
                     spd.Normalize();
-                    Projectile.NewProjectile(target.Center + rotate, spd * 3, ModContent.ProjectileType<Projectiles.Tormentedsoul>(), 75, 0f, player.whoAmI, target.whoAmI);
+                    Projectile.NewProjectile(Player.GetSource_FromThis(), target.Center + rotate, spd * 3, ModContent.ProjectileType<Projectiles.Tormentedsoul>(), 75, 0f, Player.whoAmI, target.whoAmI);
                 }
             }
-            if (proj.ranged && Necklaceanguish && AnguishTime < 48)
+            if (proj.CountsAsClass(DamageClass.Ranged) && Necklaceanguish && AnguishTime < 48)
             {
                 AnguishTime++;
             }
-            if (Guthanset && proj.melee && (Main.rand.Next(20) == 0 || (Amuletdamned && Main.rand.Next(10) == 0)) && target.type != NPCID.TargetDummy)
+            if (Guthanset && proj.CountsAsClass(DamageClass.Melee) && (Main.rand.NextBool(20)|| (Amuletdamned && Main.rand.NextBool(10))) && target.type != NPCID.TargetDummy)
             {
                 int heal = damage / 10;
                 if (heal > 10 && !Amuletdamned)
@@ -222,15 +263,15 @@ namespace OldSchoolRuneScape
                 {
                     heal = 20;
                 }
-                player.HealEffect(heal);
-                player.statLife += heal;
+                Player.HealEffect(heal);
+                Player.statLife += heal;
                 Dust.NewDust(target.Center, 0, 0, ModContent.DustType<Dusts.Guthanset>());
             }
-            if (Ahrimset && proj.magic)
+            if (Ahrimset && proj.CountsAsClass(DamageClass.Magic))
             {
                 target.AddBuff(BuffID.ShadowFlame, 360);
             }
-            if (TomeFire && proj.magic)
+            if (TomeFire && proj.CountsAsClass(DamageClass.Magic))
             {
                 target.AddBuff(BuffID.OnFire, 120);
                 target.AddBuff(BuffID.Frostburn, 120);
@@ -271,7 +312,7 @@ namespace OldSchoolRuneScape
                 default:
                     break;
             }
-            if (master > 0 && Main.rand.Next(3) == 0)
+            if (master > 0 && Main.rand.NextBool(3))
             {
                 master--;
             }
@@ -284,7 +325,7 @@ namespace OldSchoolRuneScape
             string name = Lang.GetNPCName(slayerMob).ToString();
             name = FixEndings(name, slayerLeft);
             Main.npcChatText = "Your new task is to slay " + slayerLeft + " " + name + ".";
-            player.GetModPlayer<OSRSplayer>().SlayerTextUpdate();
+            Player.GetModPlayer<OSRSplayer>().SlayerTextUpdate();
         }
 
         private int[] SlayerMobs(int master)
@@ -442,7 +483,7 @@ namespace OldSchoolRuneScape
 
         public void SlayerReward(string master)
         {
-            player.GetModPlayer<OSRSplayer>().slayTasksComplete++;
+            Player.GetModPlayer<OSRSplayer>().slayTasksComplete++;
             int amount = 2;
             switch (master)
             {
@@ -482,7 +523,7 @@ namespace OldSchoolRuneScape
                         break;
                 }
             }
-            player.QuickSpawnItem(ModContent.ItemType<Items.SlayerToken>(), amount);
+            Player.QuickSpawnItem(Player.GetSource_FromThis(), ModContent.ItemType<Items.SlayerToken>(), amount);
             Color color = Color.White;
             switch (slayerDifficulty)
             {
@@ -516,7 +557,7 @@ namespace OldSchoolRuneScape
                     break;
             }
             Main.NewText("You have completed your " + slayTasksComplete + end + " slayer task and are rewarded " + amount + " Slayer Tokens.", color);
-            player.GetModPlayer<OSRSplayer>().ResetSlayer();
+            Player.GetModPlayer<OSRSplayer>().ResetSlayer();
         }
 
         public void ResetSlayer()
@@ -525,7 +566,7 @@ namespace OldSchoolRuneScape
             slayerLeft = 0;
             slayerGiven = 0;
             slayerDifficulty = 0;
-            player.GetModPlayer<OSRSplayer>().SlayerTextUpdate();
+            Player.GetModPlayer<OSRSplayer>().SlayerTextUpdate();
         }
 
         public void SlayerTextUpdate()
@@ -577,27 +618,36 @@ namespace OldSchoolRuneScape
                 }
             }
         }
-
+        
         //clueshit goes HERE
         public bool RingCoins = false;
         public bool RingNature = false;
         public bool BloodHound = false;
-        public override void ModifyDrawLayers(List<PlayerLayer> layers)
+        public bool HidePlayer = false;
+
+        public override void HideDrawLayers(PlayerDrawSet drawInfo)
         {
-            if (RingCoins || RingNature)
+            if (RingCoins || RingNature || HidePlayer)
             {
-                foreach (PlayerLayer p in layers)
+                foreach (PlayerDrawLayer layer in PlayerDrawLayerLoader.Layers)
                 {
-                    p.visible = false;
+                    layer.Hide();
                 }
+            }
+        }
+        public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
+        {
+            if (RingCoins || RingNature || HidePlayer)
+            {
                 if (RingCoins)
                 {
-                    Main.spriteBatch.Draw(mod.GetTexture("Items/ClueScroll/ClueRewards/Master/Coinstack"),
+                    Main.spriteBatch.Draw(Mod.Assets.Request<Texture2D>("Items/ClueScroll/ClueRewards/Master/Coinstack").Value,
                     new Vector2(Main.screenWidth / 2 - 30, Main.screenHeight / 2 - 7), null, Color.White, 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
                 }
                 else if (RingNature)
                 {
-                    Main.spriteBatch.Draw(mod.GetTexture("Items/ClueScroll/ClueRewards/Elite/NatureBush"),
+                    
+                    Main.spriteBatch.Draw(Mod.Assets.Request<Texture2D>("Items/ClueScroll/ClueRewards/Elite/NatureBush").Value,
                     new Vector2(Main.screenWidth / 2 - 24, Main.screenHeight / 2 - 9), null, Color.White, 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
                 }
             }
@@ -626,9 +676,8 @@ namespace OldSchoolRuneScape
         public int challengeAns = 0;
         public int challengeDiff = 0;
 
-        public override TagCompound Save()
+        public override void SaveData(TagCompound tag)
         {
-            TagCompound tag = new TagCompound();
             tag.Set("slayTasksComplete", slayTasksComplete);
             tag.Set("slayerDifficulty", slayerDifficulty);
             tag.Set("slayerMob", slayerMob);
@@ -656,9 +705,8 @@ namespace OldSchoolRuneScape
             tag.Set("completedMaster", completedMaster);
             tag.Set("challengeAns", challengeAns);
             tag.Set("challengeDiff", challengeDiff);
-            return tag;
         }
-        public override void Load(TagCompound tag)
+        public override void LoadData(TagCompound tag)
         {
             slayTasksComplete = tag.GetInt("slayTasksComplete");
             slayerDifficulty = tag.GetInt("slayerDifficulty");
@@ -691,7 +739,7 @@ namespace OldSchoolRuneScape
 
         public void ClueMessage(string message)
         {
-            NetMessage.SendChatMessageFromClient(new Terraria.Chat.ChatMessage("/ClueMessage " + message));
+            Terraria.Chat.ChatHelper.SendChatMessageFromClient(new Terraria.Chat.ChatMessage("/ClueMessage " + message));
         }
         public void ClueAnswer(Player player)
         {
@@ -701,9 +749,9 @@ namespace OldSchoolRuneScape
         }
         public override void AnglerQuestReward(float rareMultiplier, List<Item> rewardItems)
         {
-            if (player.GetModPlayer<OSRSplayer>().mediumClue == 29)
+            if (Player.GetModPlayer<OSRSplayer>().mediumClue == 29)
             {
-                player.GetModPlayer<OSRSplayer>().cluestep = 2;
+                Player.GetModPlayer<OSRSplayer>().cluestep = 2;
             }
         }
 
@@ -765,14 +813,14 @@ namespace OldSchoolRuneScape
         }
         public override void PreUpdate()
         {
-            if (player.talkNPC != 1 || player.chest != 1 || player.trashItem.width == 62)
+            if (Player.talkNPC != 1 || Player.chest != 1 || Player.trashItem.width == 62)
             {
                 int[] clues = { ModContent.ItemType<Items.ClueScroll.EasyClue>(), ModContent.ItemType<Items.ClueScroll.MediumClue>(), ModContent.ItemType<Items.ClueScroll.HardClue>(), ModContent.ItemType<Items.ClueScroll.EliteClue>(), ModContent.ItemType<Items.ClueScroll.MasterClue>() };
                 List<int> cluess = new List<int>(clues);
-                if (cluess.Contains(player.trashItem.type))
+                if (cluess.Contains(Player.trashItem.type))
                 {
-                    ClueReset(player.trashItem.type, player);
-                    player.trashItem.TurnToAir();
+                    ClueReset(Player.trashItem.type, Player);
+                    Player.trashItem.TurnToAir();
                 }
                 if (Main.npcShop != 0)
                 {
@@ -780,52 +828,52 @@ namespace OldSchoolRuneScape
                     {
                         if (cluess.Contains(Main.instance.shop[Main.npcShop].item[i].type))
                         {
-                            ClueReset(Main.instance.shop[Main.npcShop].item[i].type, player);
+                            ClueReset(Main.instance.shop[Main.npcShop].item[i].type, Player);
                             Main.instance.shop[Main.npcShop].item[i].TurnToAir();
                         }
                     }
                 }
-                if (player.chest > -1)
+                if (Player.chest > -1)
                 {
                     for (int i = 0; i < 40; i++)
                     {
-                        if (cluess.Contains(Main.chest[player.chest].item[i].type))
+                        if (cluess.Contains(Main.chest[Player.chest].item[i].type))
                         {
-                            ClueReset(Main.chest[player.chest].item[i].type, player);
-                            Main.chest[player.chest].item[i].TurnToAir();
+                            ClueReset(Main.chest[Player.chest].item[i].type, Player);
+                            Main.chest[Player.chest].item[i].TurnToAir();
                         }
                     }
                 }
-                if (player.chest == -2)
+                if (Player.chest == -2)
                 {
                     for (int i = 0; i < 40; i++)
                     {
-                        if (cluess.Contains(player.bank.item[i].type))
+                        if (cluess.Contains(Player.bank.item[i].type))
                         {
-                            ClueReset(player.bank.item[i].type, player);
-                            player.bank.item[i].TurnToAir();
+                            ClueReset(Player.bank.item[i].type, Player);
+                            Player.bank.item[i].TurnToAir();
                         }
                     }
                 }
-                if (player.chest == -3)
+                if (Player.chest == -3)
                 {
                     for (int i = 0; i < 40; i++)
                     {
-                        if (cluess.Contains(player.bank2.item[i].type))
+                        if (cluess.Contains(Player.bank2.item[i].type))
                         {
-                            ClueReset(player.bank2.item[i].type, player);
-                            player.bank2.item[i].TurnToAir();
+                            ClueReset(Player.bank2.item[i].type, Player);
+                            Player.bank2.item[i].TurnToAir();
                         }
                     }
                 }
-                if (player.chest == -4)
+                if (Player.chest == -4)
                 {
                     for (int i = 0; i < 40; i++)
                     {
-                        if (cluess.Contains(player.bank3.item[i].type))
+                        if (cluess.Contains(Player.bank3.item[i].type))
                         {
-                            ClueReset(player.bank3.item[i].type, player);
-                            player.bank3.item[i].TurnToAir();
+                            ClueReset(Player.bank3.item[i].type, Player);
+                            Player.bank3.item[i].TurnToAir();
                         }
                     }
                 }
@@ -833,47 +881,47 @@ namespace OldSchoolRuneScape
         }
         public void ClueDig(int blockType)
         {
-            if (player.GetModPlayer<OSRSplayer>().easyClue == 1 && blockType == TileID.Grass)
+            if (Player.GetModPlayer<OSRSplayer>().easyClue == 1 && blockType == TileID.Grass)
             {
                 cluestep = 1;
             }
-            if (player.GetModPlayer<OSRSplayer>().easyClue == 2 && blockType == TileID.IceBlock && player.ZoneSnow)
+            if (Player.GetModPlayer<OSRSplayer>().easyClue == 2 && blockType == TileID.IceBlock && Player.ZoneSnow)
             {
                 cluestep = 1;
             }
-            if (player.GetModPlayer<OSRSplayer>().easyClue == 3 && blockType == TileID.Sand && player.ZoneDesert)
+            if (Player.GetModPlayer<OSRSplayer>().easyClue == 3 && blockType == TileID.Sand && Player.ZoneDesert)
             {
                 cluestep = 1;
             }
-            if (player.GetModPlayer<OSRSplayer>().mediumClue == 19 && blockType == TileID.Sunplate && player.ZoneSkyHeight)
+            if (Player.GetModPlayer<OSRSplayer>().mediumClue == 19 && blockType == TileID.Sunplate && Player.ZoneSkyHeight)
             {
                 cluestep = 2;
             }
-            if (player.GetModPlayer<OSRSplayer>().mediumClue == 20 && (blockType == TileID.BlueDungeonBrick || blockType == TileID.GreenDungeonBrick || blockType == TileID.PinkDungeonBrick))
+            if (Player.GetModPlayer<OSRSplayer>().mediumClue == 20 && (blockType == TileID.BlueDungeonBrick || blockType == TileID.GreenDungeonBrick || blockType == TileID.PinkDungeonBrick))
             {
                 cluestep = 2;
             }
-            if (player.GetModPlayer<OSRSplayer>().mediumClue == 21 && blockType == TileID.Sand && player.ZoneBeach)
+            if (Player.GetModPlayer<OSRSplayer>().mediumClue == 21 && blockType == TileID.Sand && Player.ZoneBeach)
             {
                 cluestep = 2;
             }
-            if (player.GetModPlayer<OSRSplayer>().mediumClue == 22 && blockType == TileID.JungleGrass && player.ZoneJungle)
+            if (Player.GetModPlayer<OSRSplayer>().mediumClue == 22 && blockType == TileID.JungleGrass && Player.ZoneJungle)
             {
                 cluestep = 2;
             }
-            if (player.GetModPlayer<OSRSplayer>().mediumClue == 23 && blockType == TileID.ObsidianBrick && player.ZoneUnderworldHeight)
+            if (Player.GetModPlayer<OSRSplayer>().mediumClue == 23 && blockType == TileID.ObsidianBrick && Player.ZoneUnderworldHeight)
             {
                 cluestep = 2;
             }
-            if (player.GetModPlayer<OSRSplayer>().mediumClue == 24 && blockType == TileID.MushroomGrass && player.ZoneGlowshroom)
+            if (Player.GetModPlayer<OSRSplayer>().mediumClue == 24 && blockType == TileID.MushroomGrass && Player.ZoneGlowshroom)
             {
                 cluestep = 2;
             }
-            if (player.GetModPlayer<OSRSplayer>().mediumClue == 25 && blockType == TileID.Marble && !player.ZoneOverworldHeight)
+            if (Player.GetModPlayer<OSRSplayer>().mediumClue == 25 && blockType == TileID.Marble && !Player.ZoneOverworldHeight)
             {
                 cluestep = 2;
             }
-            if (player.GetModPlayer<OSRSplayer>().mediumClue == 26 && blockType == TileID.Granite && !player.ZoneOverworldHeight)
+            if (Player.GetModPlayer<OSRSplayer>().mediumClue == 26 && blockType == TileID.Granite && !Player.ZoneOverworldHeight)
             {
                 cluestep = 2;
             }

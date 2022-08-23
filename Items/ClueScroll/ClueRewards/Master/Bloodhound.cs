@@ -12,29 +12,29 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Master
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bloodhound");
-            Main.projFrames[projectile.type] = 11;
-            Main.projPet[projectile.type] = true;
+            Main.projFrames[Projectile.type] = 11;
+            Main.projPet[Projectile.type] = true;
         }
         public override void SetDefaults()
         {
-            projectile.CloneDefaults(ProjectileID.Puppy);
-            projectile.width = 38;
-            projectile.height = 42;
-            aiType = ProjectileID.Puppy;
+            Projectile.CloneDefaults(ProjectileID.Puppy);
+            Projectile.width = 38;
+            Projectile.height = 42;
+            AIType = ProjectileID.Puppy;
         }
         public override bool PreAI()
         {
-            Player player = Main.player[projectile.owner];
+            Player player = Main.player[Projectile.owner];
             player.puppy = false;
             return true;
         }
         public override void AI()
         {
-            drawOffsetX = -19;
-            Player player = Main.player[projectile.owner];
+            DrawOffsetX = -19;
+            Player player = Main.player[Projectile.owner];
             if (!player.active)
             {
-                projectile.active = false;
+                Projectile.active = false;
                 return;
             }
             if (player.dead)
@@ -43,7 +43,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Master
             }
             if (player.GetModPlayer<OSRSplayer>().BloodHound)
             {
-                projectile.timeLeft = 2;
+                Projectile.timeLeft = 2;
             }
         }
         public override bool OnTileCollide(Vector2 oldVelocity)

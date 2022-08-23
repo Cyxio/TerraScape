@@ -5,7 +5,7 @@ namespace OldSchoolRuneScape.Buffs
 {
     public class ZGSfreeze : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Frozen");
             Main.debuff[Type] = true;

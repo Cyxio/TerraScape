@@ -14,10 +14,10 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Medium
         }
         public override void SetDefaults()
         {
-            item.width = 30;
-            item.height = 18;
-            item.value = Item.sellPrice(0, 0, 12, 0);
-            item.defense = 6;
+            Item.width = 30;
+            Item.height = 18;
+            Item.value = Item.sellPrice(0, 0, 12, 0);
+            Item.defense = 6;
         }
     }
 }

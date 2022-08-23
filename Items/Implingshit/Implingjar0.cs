@@ -2,6 +2,8 @@
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
+using OldSchoolRuneScape.Items.Weapons.Melee;
+using OldSchoolRuneScape.Items.Weapons.Ranged;
 
 namespace OldSchoolRuneScape.Items.Implingshit
 {
@@ -14,9 +16,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 1;
-            item.value = Item.sellPrice(0, 0, 0, 50);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = Item.sellPrice(0, 0, 0, 50);
         }
         public override bool CanRightClick()
         {
@@ -64,7 +66,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     item = ItemID.FishingSeaweed;
                     break;
             }
-            player.QuickSpawnItem(item, stack);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
         }
     }
     public class Implingjar1 : ModItem
@@ -76,9 +78,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 1;
-            item.value = Item.sellPrice(0, 0, 1, 50);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = Item.sellPrice(0, 0, 1, 50);
         }
         public override bool CanRightClick()
         {
@@ -126,7 +128,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     item = ItemID.SwiftnessPotion;
                     break;
             }
-            player.QuickSpawnItem(item, stack);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
         }
     }
     public class Implingjar2 : ModItem
@@ -138,9 +140,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 2;
-            item.value = Item.sellPrice(0, 0, 5);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Green;
+            Item.value = Item.sellPrice(0, 0, 5);
         }
         public override bool CanRightClick()
         {
@@ -185,7 +187,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     item = ItemID.DoubleCod;
                     break;
             }
-            player.QuickSpawnItem(item, stack);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
         }
     }
     public class Implingjar3 : ModItem
@@ -197,9 +199,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 3;
-            item.value = Item.sellPrice(0, 0, 10);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Orange;
+            Item.value = Item.sellPrice(0, 0, 10);
         }
         public override bool CanRightClick()
         {
@@ -237,7 +239,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     item = ItemID.FishingSeaweed;
                     break;
             }
-            player.QuickSpawnItem(item, stack);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
         }
     }
     public class Implingjar4 : ModItem
@@ -249,9 +251,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 4;
-            item.value = Item.sellPrice(0, 0, 25);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.LightRed;
+            Item.value = Item.sellPrice(0, 0, 25);
         }
         public override bool CanRightClick()
         {
@@ -265,7 +267,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
             switch (ch)
             {
                 case 0:
-                    item = ModContent.ItemType<Magic.aaRuneessence>();
+                    item = ModContent.ItemType<Magic.RuneEssence>();
                     stack = 50;
                     break;
                 case 1:
@@ -279,11 +281,11 @@ namespace OldSchoolRuneScape.Items.Implingshit
                 case 3:
                     item = ModContent.ItemType<Magic.Airrune>();
                     stack = 50;
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ModContent.ItemType<Magic.Waterrune>();
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ModContent.ItemType<Magic.Earthrune>();
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ModContent.ItemType<Magic.Firerune>();
                     break;
                 case 4:
@@ -311,7 +313,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     stack = 10;
                     break;
             }
-            player.QuickSpawnItem(item, stack);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
         }
     }
     public class Implingjar5 : ModItem
@@ -323,9 +325,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 5;
-            item.value = Item.sellPrice(0, 0, 50);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Pink;
+            Item.value = Item.sellPrice(0, 0, 50);
         }
         public override bool CanRightClick()
         {
@@ -378,7 +380,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     stack = 20;
                     break;
             }
-            player.QuickSpawnItem(item, stack);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
         }
     }
     public class Implingjar6 : ModItem
@@ -390,9 +392,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 6;
-            item.value = Item.sellPrice(0, 1);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.value = Item.sellPrice(0, 1);
         }
         public override bool CanRightClick()
         {
@@ -462,7 +464,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     stack = 10;
                     break;
             }
-            player.QuickSpawnItem(item, stack);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
         }
     }
     public class Implingjar7 : ModItem
@@ -474,9 +476,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 7;
-            item.value = Item.sellPrice(0, 2);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Lime;
+            Item.value = Item.sellPrice(0, 2);
         }
         public override bool CanRightClick()
         {
@@ -519,9 +521,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     break;
                 case 7:
                     item = ItemID.MechanicalEye;
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ItemID.MechanicalWorm;
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ItemID.MechanicalSkull;
                     break;
                 case 8:
@@ -531,7 +533,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     item = ItemID.NaughtyPresent;
                     break;
             }
-            player.QuickSpawnItem(item, stack);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
         }
     }
     public class Implingjar8 : ModItem
@@ -543,9 +545,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 8;
-            item.value = Item.sellPrice(0, 5);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Yellow;
+            Item.value = Item.sellPrice(0, 5);
         }
         public override bool CanRightClick()
         {
@@ -574,9 +576,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
                 case 4:
                     item = ItemID.SoulofFright;
                     stack = 20;
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ItemID.SoulofSight;
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ItemID.SoulofMight;
                     break;
                 case 5:
@@ -600,7 +602,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     stack = 3;
                     break;
             }
-            player.QuickSpawnItem(item, stack);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
         }
     }
     public class Implingjar9 : ModItem
@@ -612,9 +614,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 9;
-            item.value = Item.sellPrice(0, 10);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Cyan;
+            Item.value = Item.sellPrice(0, 10);
         }
         public override bool CanRightClick()
         {
@@ -648,9 +650,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
                 case 4:
                     item = ModContent.ItemType<Magic.Astralrune>();
                     stack = 250;
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ModContent.ItemType<Magic.Bloodrune>();
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ModContent.ItemType<Magic.Soulrune>();
                     break;
                 case 5:
@@ -659,7 +661,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                 case 6:
                     item = ItemID.SuperHealingPotion;
                     stack = 30;
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ItemID.SuperManaPotion;
                     break;
                 case 7:
@@ -671,15 +673,15 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     break;
                 default:
                     item = ItemID.FragmentNebula;
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ItemID.FragmentStardust;
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ItemID.FragmentVortex;
-                    player.QuickSpawnItem(item, stack);
+                    player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
                     item = ItemID.FragmentSolar;
                     break;
             }
-            player.QuickSpawnItem(item, stack);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item, stack);
         }
     }
     public class Implingjar10 : ModItem
@@ -691,9 +693,9 @@ namespace OldSchoolRuneScape.Items.Implingshit
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 10;
-            item.value = Item.sellPrice(0, 15);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Red;
+            Item.value = Item.sellPrice(0, 15);
         }
         public override bool CanRightClick()
         {
@@ -718,7 +720,7 @@ namespace OldSchoolRuneScape.Items.Implingshit
                     item = ItemID.OldShoe;
                     break;
             }
-            player.QuickSpawnItem(item);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), item);
         }
     }
 }

@@ -15,11 +15,11 @@ namespace OldSchoolRuneScape.Items.Armor
         }
         public override void SetDefaults()
         {
-            item.width = 16;
-            item.height = 22;
-            item.value = Item.sellPrice(0, 0, 20);
-            item.rare = 2;
-            item.defense = 3;
+            Item.width = 16;
+            Item.height = 22;
+            Item.value = Item.sellPrice(0, 0, 20);
+            Item.rare = ItemRarityID.Green;
+            Item.defense = 3;
         }
     }
 }

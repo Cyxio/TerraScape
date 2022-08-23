@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
@@ -14,20 +15,20 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void SetDefaults()
         {
-            item.mana = 10;
-            item.width = 20;
-            item.height = 20;
-            item.useTime = 10;
-            item.useAnimation = 10;
-            item.channel = true;
-            item.useStyle = 5;
-            item.noUseGraphic = true;
-            item.noMelee = true;
-            item.rare = 7;
-            item.autoReuse = false;
+            Item.mana = 10;
+            Item.width = 20;
+            Item.height = 20;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
+            Item.channel = true;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.rare = ItemRarityID.Lime;
+            Item.autoReuse = false;
         }
         int counter = 0;
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             if (player.channel && player.statMana > 9)
             {
@@ -38,7 +39,7 @@ namespace OldSchoolRuneScape.Items.Magic
                 player.velocity.X *= 0.5f;
                 player.itemTime = 2;
                 player.itemAnimation = 2;
-                item.mana = 10;
+                Item.mana = 10;
                 counter++;
                 if (counter >= 600)
                 {
@@ -47,11 +48,11 @@ namespace OldSchoolRuneScape.Items.Magic
                 }
                 if (counter % 30 == 0)
                 {
-                    Main.PlaySound(SoundID.Item15, player.position);
-                    player.statMana -= item.mana;
+                    SoundEngine.PlaySound(SoundID.Item15, player.position);
+                    player.statMana -= Item.mana;
                     for (int o = 0; o < counter / 30; o++)
                     {
-                        int dust = Dust.NewDust(player.Center, 0, 0, 267, 0, 0, 0, Color.LightGreen, 1f);
+                        int dust = Dust.NewDust(player.Center, 0, 0, DustID.RainbowMk2, 0, 0, 0, Color.LightGreen, 1f);
                         Main.dust[dust].noGravity = true;
                         Main.dust[dust].scale = 1.5f;
                         Main.dust[dust].velocity *= 0f;
@@ -75,13 +76,12 @@ namespace OldSchoolRuneScape.Items.Magic
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Cosmicrune", 20);
             recipe.AddIngredient(null, "Astralrune", 20);
             recipe.AddIngredient(null, "Lawrune", 10);
-            recipe.SetResult(this);
             recipe.AddTile(TileID.WorkBenches);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

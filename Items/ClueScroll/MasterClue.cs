@@ -10,28 +10,18 @@ using OldSchoolRuneScape.UI;
 
 namespace OldSchoolRuneScape.Items.ClueScroll
 {
-    public class Masterrecipe : ModRecipe
-    {
-        public Masterrecipe(Mod mod) : base(mod)
-        {
-        }
-        public override bool RecipeAvailable()
-        {
-            return !Main.player[Main.myPlayer].HasItem(ModContent.ItemType<MasterClue>());
-        }
-    }
     public class MasterClue : Clue
     {
         public override void AddRecipes()
         {
-            Masterrecipe r = new Masterrecipe(mod);
-            r.AddIngredient(ModContent.ItemType<EasyClue>());
-            r.AddIngredient(ModContent.ItemType<MediumClue>());
-            r.AddIngredient(ModContent.ItemType<HardClue>());
-            r.AddIngredient(ModContent.ItemType<EliteClue>());
-            r.AddTile(TileID.LunarCraftingStation);
-            r.SetResult(this);
-            r.AddRecipe();
+            Recipe.Create(Type)
+                .AddIngredient(ModContent.ItemType<EasyClue>())
+                .AddIngredient(ModContent.ItemType<MediumClue>())
+                .AddIngredient(ModContent.ItemType<HardClue>())
+                .AddIngredient(ModContent.ItemType<EliteClue>())
+                .AddTile(TileID.LunarCraftingStation)
+                .AddCondition(NetworkText.FromFormattable("No master clue"), r => Main.LocalPlayer.HasItem(ModContent.ItemType<MasterClue>()))
+                .Register();
         }
         public override bool CanPickup(Player player)
         {
@@ -53,11 +43,11 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 player.GetModPlayer<OSRSplayer>().masterStage++;
                 if (player.GetModPlayer<OSRSplayer>().masterStage >= player.GetModPlayer<OSRSplayer>().masterSteps)
                 {
-                    item.TurnToAir();
-                    player.QuickSpawnItem(ModContent.ItemType<CasketMaster>());
+                    Item.TurnToAir();
+                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CasketMaster>());
                     player.GetModPlayer<OSRSplayer>().ClueReset(ModContent.ItemType<MasterClue>(), player);
                     player.GetModPlayer<OSRSplayer>().CompleteClue(5, player);
-                    if (Main.netMode == 1)
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         player.GetModPlayer<OSRSplayer>().ClueMessage(player.name + "_has_completed_a_Master_Clue_Scroll! 10");
                     }
@@ -68,7 +58,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 }
                 else
                 {
-                    if (Main.netMode == 1)
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         player.GetModPlayer<OSRSplayer>().ClueMessage(player.name + "_completed_a_step_of_a_Master_Clue_Scroll 5");
                     }
@@ -85,7 +75,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
         {
             return true;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             if (player.altFunctionUse == 2)
             {
@@ -93,20 +83,20 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 player.itemAnimation = 30;
                 player.itemTime = 30;
             }
-            return true;
+            return null;
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             ClueUI.texture = "OldSchoolRuneScape/Items/ClueScroll/Master/Master" + player.GetModPlayer<OSRSplayer>().masterClue;
             if (player.channel && player.altFunctionUse != 2)
             {
                 player.itemAnimation = 2;
                 player.itemTime = 2;
-                ClueUI.visible = true;
+                //ClueUI.visible = true;
             }
             else
             {
-                ClueUI.visible = false;
+                //ClueUI.visible = false;
             }
             if (player.GetModPlayer<OSRSplayer>().masterClue == 3)
             {

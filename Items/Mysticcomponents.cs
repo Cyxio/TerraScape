@@ -14,9 +14,9 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.rare = 1;
-            item.value = Item.sellPrice(0, 0, 7, 0);
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = Item.sellPrice(0, 0, 7, 0);
         }
     }
 }

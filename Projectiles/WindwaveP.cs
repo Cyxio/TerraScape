@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System;
@@ -12,83 +13,104 @@ namespace OldSchoolRuneScape.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Windwave");
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
-            Main.projFrames[projectile.type] = 3;
+            Main.projFrames[Projectile.type] = 3;
         }
         public override void SetDefaults()
         {
-            projectile.width = 30;
-            projectile.height = 30;
-            projectile.timeLeft = 1200;
-            projectile.penetrate = 1;
-            projectile.friendly = true;
-            projectile.magic = true;
-            projectile.tileCollide = true;
-            projectile.ignoreWater = true;
-            projectile.aiStyle = -1;
-            projectile.scale = 1f;
-            projectile.light = 0.2f;
-        }
-
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
-        {
-            //Redraw the projectile with the color not influenced by light
-            Vector2 drawOrigin = new Vector2(Main.projectileTexture[projectile.type].Width * 0.5f, projectile.height * 0.5f);
-            for (int k = 0; k < projectile.oldPos.Length; k++)
-            {
-                Vector2 drawPos = projectile.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, projectile.gfxOffY) - projectile.velocity;
-                Color color = projectile.GetAlpha(lightColor) * ((float)(projectile.oldPos.Length - k) / (float)projectile.oldPos.Length);
-                float scale = projectile.scale * ((float)(projectile.oldPos.Length - k) / (float)projectile.oldPos.Length);
-                spriteBatch.Draw(mod.GetTexture("Projectiles/Wavetrail"), drawPos, new Rectangle(0, 0, 30, 18), color, projectile.rotation, drawOrigin, scale, SpriteEffects.None, 0f);
-            }
-            return true;
+            Projectile.width = 30;
+            Projectile.height = 30;
+            Projectile.timeLeft = 300;
+            Projectile.penetrate = -1;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = true;
+            Projectile.ignoreWater = true;
+            Projectile.aiStyle = -1;
+            Projectile.scale = 1f;
+            Projectile.light = 0.2f;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
         Vector3 x = new Vector3(150, 150, 150);
         public override void AI()
         {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 4)
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 4)
             {
-                projectile.frame++;
-                if (projectile.frame >= Main.projFrames[projectile.type])
+                Projectile.frame++;
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
             }
-            projectile.rotation = projectile.velocity.ToRotation() + (float)(Math.PI / 2f);
-            Lighting.AddLight(projectile.position, x * 0.005f);
-            projectile.damage = 0;
-            for (int i = 0; i < 200; i++)
+            Projectile.rotation = Projectile.velocity.ToRotation() + (float)(Math.PI / 2f);
+            Lighting.AddLight(Projectile.position, x * 0.005f);
+            if (Projectile.timeLeft % 5 == 0)
             {
-                NPC target = Main.npc[i];
-                if (projectile.Colliding(projectile.Hitbox, target.Hitbox) && target.active && !target.friendly)
+                Vector2 position = Projectile.Center;
+                Vector2 spd = Projectile.velocity;
+                spd.Normalize();
+                spd *= 7.5f;
+                for (int i = 0; i < 18; i++)
                 {
-                    Player p = Main.player[projectile.owner];
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Wave"), projectile.position);
-                    Projectile.NewProjectile(projectile.Center, new Vector2(0), mod.ProjectileType("WaveExplode"), p.GetWeaponDamage(p.inventory[p.selectedItem]), 0f, projectile.owner, 4);
-                    for (int o = 0; o < 18; ++o)
-                    {
-                        Vector2 perturbedSpeed = new Vector2(projectile.velocity.X, projectile.velocity.Y).RotatedByRandom(MathHelper.ToRadians(360));
-                        Dust.NewDust(projectile.position, projectile.width, projectile.height, mod.DustType("Windwave"), perturbedSpeed.X * 0.7f, perturbedSpeed.Y * 0.7f, 50);
-                    }
-                    Lighting.AddLight(projectile.position, x * 0.005f);
-                    projectile.active = false;
+                    Dust dust;
+                    float strength = 1f - Math.Abs((i - 9f) / 9f);
+                    Vector2 spawn = position + (spd.RotatedBy((Math.PI / 18f) * i) * (1f + strength));
+                    Vector2 speed = Projectile.Center - spawn;
+                    speed.Normalize();
+                    dust = Terraria.Dust.NewDustPerfect(spawn, 263, speed, 0, new Color(255, 255, 255), 1f);
+                    dust.noGravity = true;
+                    spawn = position + (spd.RotatedBy((Math.PI / 18f) * -i) * (1f + strength));
+                    speed = Projectile.Center - spawn;
+                    speed.Normalize();
+                    dust = Terraria.Dust.NewDustPerfect(spawn, 263, speed, 0, new Color(255, 255, 255), 1f);
+                    dust.noGravity = true;
                 }
+            }
+            if (Projectile.timeLeft < 19)
+            {
+                if (Projectile.alpha != 255)
+                {
+                    Projectile.alpha = 255;
+                    SoundEngine.PlaySound(new SoundStyle("OldSchoolRuneScape/Sounds/Item/Windhit4"), Projectile.position);
+                }
+                Projectile.width = 112;
+                Projectile.height = 112;
             }
         }
-        public override void Kill(int timeLeft)
+        public override void PostDraw(Color lightColor)
         {
-            Player p = Main.player[projectile.owner];
-            Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Wave"), projectile.position);
-            Projectile.NewProjectile(projectile.Center, new Vector2(0), mod.ProjectileType("WaveExplode"), p.GetWeaponDamage(p.inventory[p.selectedItem]), 0f, projectile.owner, 4);
-            for (int i = 0; i < 18; ++i)
+            if (Projectile.timeLeft < 18)
             {
-                Vector2 perturbedSpeed = new Vector2(projectile.velocity.X, projectile.velocity.Y).RotatedByRandom(MathHelper.ToRadians(360));
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, mod.DustType("Windwave"), perturbedSpeed.X * 0.7f, perturbedSpeed.Y * 0.7f);
+                int frame = 5 - (int)(Projectile.timeLeft / 3f);
+                Main.EntitySpriteDraw(ModContent.Request<Texture2D>("Projectiles/WaveExplode").Value, Projectile.position - Main.screenPosition, new Rectangle(0, 112 * frame, 112, 112), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
             }
-            Lighting.AddLight(projectile.position, x * 0.005f);
+        }
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            if (Projectile.timeLeft > 18)
+            {
+                Projectile.timeLeft = 18;
+                Projectile.velocity *= 0f;
+                Projectile.tileCollide = false;
+                Projectile.position -= new Vector2(41, 41);
+                Projectile.alpha = 254;
+                Projectile.netUpdate = true;
+            }          
+        }
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Projectile.timeLeft > 18)
+            {
+                Projectile.timeLeft = 18;
+                Projectile.velocity *= 0f;
+                Projectile.tileCollide = false;
+                Projectile.position -= new Vector2(41, 41);
+                Projectile.alpha = 254;
+                Projectile.netUpdate = true;            
+            }
+            return false;
         }
     }
 }

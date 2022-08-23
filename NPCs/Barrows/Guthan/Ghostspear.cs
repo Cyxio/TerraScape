@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,88 +15,88 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Guthan
         }
         public override void SetDefaults()
         {
-            projectile.hostile = true;
-            projectile.width = 20;
-            projectile.height = 20;
-            projectile.scale = 1.5f;
-            projectile.damage = 0;
-            projectile.penetrate = -1;
-            projectile.aiStyle = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 480;
-            projectile.alpha = 0;
-            projectile.ai[0] = 0;
-            projectile.ai[1] = 0;
+            Projectile.hostile = true;
+            Projectile.width = 20;
+            Projectile.height = 20;
+            Projectile.scale = 1.5f;
+            Projectile.damage = 0;
+            Projectile.penetrate = -1;
+            Projectile.aiStyle = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 480;
+            Projectile.alpha = 0;
+            Projectile.ai[0] = 0;
+            Projectile.ai[1] = 0;
         }
         public override void AI()
         {
-            if (projectile.alpha == 0)
+            if (Projectile.alpha == 0)
             {
-                Main.PlaySound(SoundID.Item20.WithPitchVariance(0.5f), projectile.position);
+                SoundEngine.PlaySound(SoundID.Item20, Projectile.position);
             }
-            Lighting.AddLight(projectile.Center + projectile.velocity, new Vector3(116 * 0.01f, 35 * 0.01f, 78 * 0.01f));
-            if (projectile.alpha < 10)
+            Lighting.AddLight(Projectile.Center + Projectile.velocity, new Vector3(116 * 0.01f, 35 * 0.01f, 78 * 0.01f));
+            if (Projectile.alpha < 10)
             {
-                projectile.ai[1] = 9;
+                Projectile.ai[1] = 9;
             }
-            if (projectile.alpha > 200)
+            if (Projectile.alpha > 200)
             {
-                projectile.ai[1] = -9;
+                Projectile.ai[1] = -9;
             }
-            projectile.alpha += (int)projectile.ai[1];
-            if(projectile.ai[0] == 0)
+            Projectile.alpha += (int)Projectile.ai[1];
+            if(Projectile.ai[0] == 0)
             {
-                projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, 58);
+                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Enchanted_Pink);
             }
-            if (projectile.ai[0] == 1)
+            if (Projectile.ai[0] == 1)
             {
-                projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
-                projectile.height = 120;
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, 58);
+                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+                Projectile.height = 120;
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Enchanted_Pink);
             }
-            if (projectile.ai[0] == 2)
+            if (Projectile.ai[0] == 2)
             {
                 // useless lmao
-                projectile.ai[0] = 0;
+                Projectile.ai[0] = 0;
             }
-            if (projectile.ai[0] == 3)
+            if (Projectile.ai[0] == 3)
             {
-                projectile.width = 120;
-                projectile.height = 120;
-                projectile.rotation += 0.25f;
-                if (projectile.timeLeft < 200)
+                Projectile.width = 120;
+                Projectile.height = 120;
+                Projectile.rotation += 0.25f;
+                if (Projectile.timeLeft < 200)
                 {
-                    projectile.width = 30;
-                    projectile.height = 30;
+                    Projectile.width = 30;
+                    Projectile.height = 30;
                     Player target = Main.player[0];
-                    for (int k = 0; k < Main.ActivePlayersCount; k++)
+                    for (int k = 0; k < Main.CurrentFrameFlags.ActivePlayersCount; k++)
                     {
-                        if (projectile.Distance(Main.player[k].position) < projectile.Distance(target.position))
+                        if (Projectile.Distance(Main.player[k].position) < Projectile.Distance(target.position))
                         {
                             target = Main.player[k];
                         }
                     }
-                    float speedX = target.MountedCenter.X - projectile.Center.X;
-                    float speedY = target.MountedCenter.Y - projectile.Center.Y;
+                    float speedX = target.MountedCenter.X - Projectile.Center.X;
+                    float speedY = target.MountedCenter.Y - Projectile.Center.Y;
                     Vector2 spd = new Vector2(speedX, speedY);
                     spd.Normalize();
-                    projectile.velocity = spd * 16f;
-                    projectile.ai[0] = 0;
+                    Projectile.velocity = spd * 16f;
+                    Projectile.ai[0] = 0;
                 }
             }
-            if (projectile.ai[0] == 4)
+            if (Projectile.ai[0] == 4)
             {
-                projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
-                projectile.timeLeft = 36;
-                projectile.ai[0] = 0;
+                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+                Projectile.timeLeft = 36;
+                Projectile.ai[0] = 0;
             }
         }
         public override void Kill(int timeLeft)
         {
             for (int i = 0; i < 20; i++)
             {
-                Dust.NewDust(projectile.Center, 0, 0, 58, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2));
+                Dust.NewDust(Projectile.Center, 0, 0, DustID.Enchanted_Pink, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2));
             }
         }
     }

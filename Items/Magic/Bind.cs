@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace OldSchoolRuneScape.Items.Magic
 {
-    public class Bind : ModItem
+    /*public class Bind : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -37,5 +37,5 @@ namespace OldSchoolRuneScape.Items.Magic
             recipe.AddTile(TileID.WorkBenches);
             recipe.AddRecipe();
         }
-    }
+    }*/
 }

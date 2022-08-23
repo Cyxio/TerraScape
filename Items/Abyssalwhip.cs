@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
@@ -15,28 +16,28 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.melee = true;
-            item.damage = 55;
-            item.knockBack = 2f;
-            item.rare = 7;
-            item.width = 52;
-            item.height = 58;
-            item.useAnimation = 25;
-            item.useTime = 25;
-            item.reuseDelay = 10;
-            item.autoReuse = true;
-            item.useStyle = 5;
-            item.value = Item.sellPrice(0, 8);
-            item.noMelee = true;
-            item.noUseGraphic = true;
-            item.UseSound = mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Abyssalwhip");
-            item.shoot = ModContent.ProjectileType<Projectiles.Abyssalwhip>();
-            item.shootSpeed = 20f;
+            Item.DamageType = DamageClass.MeleeNoSpeed;
+            Item.damage = 55;
+            Item.knockBack = 2f;
+            Item.rare = ItemRarityID.Lime;
+            Item.width = 52;
+            Item.height = 58;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
+            Item.reuseDelay = 10;
+            Item.autoReuse = true;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.value = Item.sellPrice(0, 8);
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
+            Item.UseSound = new SoundStyle("OldSchoolRuneScape/Sounds/Item/Abyssalwhip");
+            Item.shoot = ModContent.ProjectileType<Projectiles.Abyssalwhip>();
+            Item.shootSpeed = 20f;
         }
 
         public override bool CanUseItem(Player player)
         {
-            return player.ownedProjectileCounts[item.shoot] < 1;
+            return player.ownedProjectileCounts[Item.shoot] < 1;
         }
     }
 }

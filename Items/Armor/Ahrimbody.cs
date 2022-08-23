@@ -15,23 +15,23 @@ namespace OldSchoolRuneScape.Items.Armor
         }
         public override void UpdateEquip(Player player)
         {
-            player.magicDamage += 0.10f;
+            player.GetDamage(DamageClass.Magic) += 0.10f;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            Player player = Main.player[item.owner];
+            Player player = Main.player[Item.playerIndexTheItemIsReservedFor];
             if (player.GetModPlayer<OSRSplayer>().Ahrimset && player.GetModPlayer<OSRSplayer>().Amuletdamned)
             {
-                tooltips.Add(new TooltipLine(mod, "Damned", "[c/5cdb7d:Amulet of the damned: Ahrim's staff fires additional homing projectiles]"));
+                tooltips.Add(new TooltipLine(Mod, "Damned", "[c/5cdb7d:Amulet of the damned: Ahrim's staff fires additional homing projectiles]"));
             }
         }
         public override void SetDefaults()
         {
-            item.width = 30;
-            item.height = 24;
-            item.value = Item.sellPrice(0, 4, 0, 0);
-            item.rare = 7;
-            item.defense = 18;
+            Item.width = 30;
+            Item.height = 24;
+            Item.value = Item.sellPrice(0, 4, 0, 0);
+            Item.rare = ItemRarityID.Lime;
+            Item.defense = 18;
         }
     }
 }

@@ -15,11 +15,11 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Elite
         }
         public override void SetDefaults()
         {
-            item.vanity = true;
-            item.rare = 2;
-            item.width = 28;
-            item.height = 26;
-            item.accessory = true;
+            Item.vanity = true;
+            Item.rare = ItemRarityID.Green;
+            Item.width = 28;
+            Item.height = 26;
+            Item.accessory = true;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
@@ -20,7 +21,7 @@ namespace OldSchoolRuneScape.UI
         internal static string texture = "OldSchoolRuneScape/Items/ClueScroll/ClueReward";
         public override void OnInitialize()
         {
-            UIimage parent = new UIimage();
+            UIclueImage parent = new UIclueImage();
             parent.Height.Set(296, 0f);
             parent.Width.Set(324, 0f);
             parent.Left.Set(Main.screenWidth / 2 - parent.Width.Pixels / 2, 0f);
@@ -35,7 +36,7 @@ namespace OldSchoolRuneScape.UI
             Point point1 = new Point((int)dimensions.X, (int)dimensions.Y);
             int width = (int)Math.Ceiling(dimensions.Width);
             int height = (int)Math.Ceiling(dimensions.Height);
-            spriteBatch.Draw(ModContent.GetTexture(texture), new Rectangle(point1.X, point1.Y, width, height), Color.White);
+            spriteBatch.Draw(ModContent.Request<Texture2D>(texture).Value, new Rectangle(point1.X, point1.Y, width, height), Color.White);
             for (int i = 0; i < 9; i++)
             {
                 if (rewards[i] != 0)
@@ -52,28 +53,28 @@ namespace OldSchoolRuneScape.UI
                     }
                     if (rewards[i] == ItemID.SoulofLight || rewards[i] == ItemID.SoulofNight)
                     {
-                        spriteBatch.Draw(Main.itemTexture[rewards[i]], new Vector2(point1.X + (width / 2) + positionX, point1.Y + positionY),
+                        spriteBatch.Draw(TextureAssets.Item[rewards[i]].Value, new Vector2(point1.X + (width / 2) + positionX, point1.Y + positionY),
                             new Rectangle(0, 0, 22, 22), Color.White, 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
                     }
                     else
                     {
                         float widthScale = 1f;
                         float heightScale = 1f;
-                        while (Main.itemTexture[rewards[i]].Width * widthScale > 36)
+                        while (TextureAssets.Item[rewards[i]].Value.Width * widthScale > 36)
                         {
                             widthScale *= 0.99f;
                         }
-                        while (Main.itemTexture[rewards[i]].Height * heightScale > 36)
+                        while (TextureAssets.Item[rewards[i]].Value.Height * heightScale > 36)
                         {
                             heightScale *= 0.99f;
                         }
                         float scale = Math.Min(widthScale, heightScale);
-                        spriteBatch.Draw(Main.itemTexture[rewards[i]], new Vector2(point1.X + (width / 2) + positionX, point1.Y + positionY),
+                        spriteBatch.Draw(TextureAssets.Item[rewards[i]].Value, new Vector2(point1.X + (width / 2) + positionX, point1.Y + positionY),
                             null, Color.White, 0f, default(Vector2), scale, SpriteEffects.None, 0f);
                     }
                     if (stacks[i] > 1)
                     {
-                        spriteBatch.DrawString(Main.fontItemStack, stacks[i].ToString(), new Vector2(point1.X + (width / 2) + positionX, point1.Y + positionY + 19), Color.White);
+                        spriteBatch.DrawString(FontAssets.ItemStack.Value, stacks[i].ToString(), new Vector2(point1.X + (width / 2) + positionX, point1.Y + positionY + 19), Color.White);
                     }
                 }
             }
@@ -95,7 +96,7 @@ namespace OldSchoolRuneScape.UI
             {
                 if (rewards[i] != 0)
                 {
-                    Main.player[Main.myPlayer].QuickSpawnItem(rewards[i], stacks[i]);
+                    Main.player[Main.myPlayer].QuickSpawnItem(Main.player[Main.myPlayer].GetSource_Loot(), rewards[i], stacks[i]);
                     rewards[i] = 0;
                 }
             }
@@ -121,32 +122,32 @@ namespace OldSchoolRuneScape.UI
             Mod mod = ModLoader.GetMod("OldSchoolRuneScape");
             int t = 0;
             int y = 1;
-            if (Main.rand.Next(3000 - 500 * Diff) == 0)
+            if (Main.rand.NextBool(3000 - 500 * Diff))
             {
                 switch (Main.rand.Next(6))
                 {
                     case 0:
-                        t = mod.ItemType("Bluepartyhat");
+                        t = mod.Find<ModItem>("Bluepartyhat").Type;
                         break;
                     case 1:
-                        t = mod.ItemType("Redpartyhat");
+                        t = mod.Find<ModItem>("Redpartyhat").Type;
                         break;
                     case 2:
-                        t = mod.ItemType("Yellowpartyhat");
+                        t = mod.Find<ModItem>("Yellowpartyhat").Type;
                         break;
                     case 3:
-                        t = mod.ItemType("Purplepartyhat");
+                        t = mod.Find<ModItem>("Purplepartyhat").Type;
                         break;
                     case 4:
-                        t = mod.ItemType("Greenpartyhat");
+                        t = mod.Find<ModItem>("Greenpartyhat").Type;
                         break;
                     default:
-                        t = mod.ItemType("Whitepartyhat");
+                        t = mod.Find<ModItem>("Whitepartyhat").Type;
                         break;
                 }
                 return new int[] { t, y };
             }
-            if (Main.rand.Next(16) == 0)
+            if (Main.rand.NextBool(16))
             {
                 string s = "";
                 switch (Main.rand.Next(6))
@@ -171,10 +172,10 @@ namespace OldSchoolRuneScape.UI
                         break;
                 }
                 s = s + Main.rand.Next(1, 5);
-                t = mod.ItemType(s);
+                t = mod.Find<ModItem>(s).Type;
                 return new int[] { t, y };
             }
-            if (Main.rand.Next(8) == 0)
+            if (Main.rand.NextBool(8))
             {
                 int ch = Main.rand.Next(7);
                 y = Main.rand.Next(5, 21);
@@ -258,7 +259,7 @@ namespace OldSchoolRuneScape.UI
             }
             if (Diff == 2)
             {
-                if (Main.rand.Next(256) == 0)
+                if (Main.rand.NextBool(256))
                 {
                     switch (Main.rand.Next(3))
                     {
@@ -303,7 +304,7 @@ namespace OldSchoolRuneScape.UI
             }
             if (Diff == 3)
             {
-                if (Main.rand.Next(128) == 0)
+                if (Main.rand.NextBool(128))
                 {
                     switch (Main.rand.Next(4))
                     {
@@ -368,15 +369,15 @@ namespace OldSchoolRuneScape.UI
             }
             if (Diff == 4)
             {
-                if (Main.rand.Next(1000) == 0)
+                if (Main.rand.NextBool(1000))
                 {
                     switch (Main.rand.Next(2))
                     {
                         case 0:
-                            t = ModContent.ItemType<Items._3rdagebow>();
+                            t = ModContent.ItemType<Items.Weapons.Ranged._3rdagebow>();
                             break;
                         case 1:
-                            t = ModContent.ItemType<Items._3rdagelong>();
+                            t = ModContent.ItemType<Items.Weapons.Melee._3rdagelong>();
                             break;
                         case 2:
                             t = ModContent.ItemType<Items._3rdagewand>();
@@ -384,7 +385,7 @@ namespace OldSchoolRuneScape.UI
                     }
                     return new int[] { t, y };
                 }
-                if (Main.rand.Next(128) == 0)
+                if (Main.rand.NextBool(128))
                 {
                     return new int[] { ModContent.ItemType<Items.ClueScroll.ClueRewards.Elite.Rangerstunic>(), y };
                 }
@@ -403,7 +404,7 @@ namespace OldSchoolRuneScape.UI
             }
             if (Diff == 5)
             {
-                if (Main.rand.Next(1000) == 0)
+                if (Main.rand.NextBool(1000))
                 {
                     return new int[] { ModContent.ItemType<Items.ClueScroll.ClueRewards.Master.BloodhoundItem>(), 1 };
                 }

@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace OldSchoolRuneScape.Items.Magic
 {
-    public class Earthbolt : ModItem
+    /*public class Earthbolt : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -41,4 +41,5 @@ namespace OldSchoolRuneScape.Items.Magic
             recipe.AddRecipe();
         }
     }
+    */
 }

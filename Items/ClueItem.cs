@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.UI;
 using Terraria.DataStructures;
 using Terraria.GameContent.UI;
+using OldSchoolRuneScape.Items.Weapons.Ranged;
 
 namespace OldSchoolRuneScape.Items
 {
@@ -35,10 +36,14 @@ namespace OldSchoolRuneScape.Items
             }
             return base.OnPickup(item, player);
         }
-        public override void OnCraft(Item item, Recipe recipe)
+        public override void OnCreate(Item item, ItemCreationContext context)
         {
-            Player player = Main.player[item.owner];
-            if ((player.GetModPlayer<OSRSplayer>().easyClue != 0 || player.GetModPlayer<OSRSplayer>().mediumClue != 0 || player.GetModPlayer<OSRSplayer>().hardClue != 0 || player.GetModPlayer<OSRSplayer>().eliteClue != 0 || player.GetModPlayer<OSRSplayer>().masterClue != 0))
+            Player player = Main.player[item.playerIndexTheItemIsReservedFor];
+            if ((player.GetModPlayer<OSRSplayer>().easyClue != 0 || 
+                player.GetModPlayer<OSRSplayer>().mediumClue != 0 || 
+                player.GetModPlayer<OSRSplayer>().hardClue != 0 || 
+                player.GetModPlayer<OSRSplayer>().eliteClue != 0 || 
+                player.GetModPlayer<OSRSplayer>().masterClue != 0))
             {
                 if (item.type == ItemID.ShroomiteBar && player.GetModPlayer<OSRSplayer>().eliteClue == 15)
                 {
@@ -58,20 +63,20 @@ namespace OldSchoolRuneScape.Items
                 }
             }
         }
-        public override bool ConsumeAmmo(Item item, Player player)
+        public override bool CanConsumeAmmo(Item weapon, Item ammo, Player player)
         {
             if (player.GetModPlayer<OSRSplayer>().easyClue != 0 || player.GetModPlayer<OSRSplayer>().mediumClue != 0 || player.GetModPlayer<OSRSplayer>().hardClue != 0 || player.GetModPlayer<OSRSplayer>().eliteClue != 0 || player.GetModPlayer<OSRSplayer>().masterClue != 0)
             {
-                if (item.type == ItemID.PlatinumCoin && player.GetModPlayer<OSRSplayer>().masterClue == 11)
+                if (ammo.type == ItemID.PlatinumCoin && player.GetModPlayer<OSRSplayer>().masterClue == 11)
                 {
                     player.GetModPlayer<OSRSplayer>().cluestep = 5;
                 }
-                if (item.type == ItemID.GreenSolution && player.GetModPlayer<OSRSplayer>().hardClue == 19)
+                if (ammo.type == ItemID.GreenSolution && player.GetModPlayer<OSRSplayer>().hardClue == 19)
                 {
                     player.GetModPlayer<OSRSplayer>().cluestep = 3;
                 }
             }
-            return base.ConsumeAmmo(item, player);
+            return base.CanConsumeAmmo(weapon, ammo, player);
         }
         public override bool ConsumeItem(Item item, Player player)
         {
@@ -85,7 +90,7 @@ namespace OldSchoolRuneScape.Items
                 {
                     player.GetModPlayer<OSRSplayer>().cluestep = 1;
                 }
-                if ((item.type >= 1977 && item.type <= 1986) || (item.type == 2863 || item.type == 3259) && player.GetModPlayer<OSRSplayer>().mediumClue == 22)
+                if ((item.type >= ItemID.LifeHairDye && item.type <= ItemID.SpeedHairDye) || (item.type == ItemID.MartianHairDye || item.type == ItemID.TwilightHairDye) && player.GetModPlayer<OSRSplayer>().mediumClue == 22)
                 {
                     player.GetModPlayer<OSRSplayer>().cluestep = 2;
                 }
@@ -221,7 +226,7 @@ namespace OldSchoolRuneScape.Items
                 }
             }
         }
-        public override void UseStyle(Item item, Player player)
+        public override void UseStyle(Item item, Player player, Rectangle heldItemFrame)
         {
             if ((player.GetModPlayer<OSRSplayer>().easyClue != 0 || player.GetModPlayer<OSRSplayer>().mediumClue != 0 || player.GetModPlayer<OSRSplayer>().hardClue != 0 || player.GetModPlayer<OSRSplayer>().eliteClue != 0 || player.GetModPlayer<OSRSplayer>().masterClue != 0))
             {
@@ -319,7 +324,7 @@ namespace OldSchoolRuneScape.Items
                 {
                     player.GetModPlayer<OSRSplayer>().cluestep = 4;
                 }
-                if ((item.type >= 3536 && item.type <= 3539) && player.GetModPlayer<OSRSplayer>().masterClue == 14)
+                if ((item.type >= ItemID.VortexMonolith && item.type <= ItemID.SolarMonolith) && player.GetModPlayer<OSRSplayer>().masterClue == 14)
                 {
                     player.GetModPlayer<OSRSplayer>().cluestep = 5;
                 }
@@ -328,14 +333,14 @@ namespace OldSchoolRuneScape.Items
     }
     public class ClueTile : GlobalTile
     {
-        public override void PlaceInWorld(int i, int j, Item item)
+        public override void PlaceInWorld(int i, int j, int type, Item item)
         {
 
         }
         public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
             Player player = Main.player[0];
-            for (int s = 0; s < Main.ActivePlayersCount; s++)
+            for (int s = 0; s < Main.CurrentFrameFlags.ActivePlayersCount; s++)
             {
                 if (Main.player[s].Distance(new Vector2(i*16, j*16)) < player.Distance(new Vector2(i * 16, j * 16)))
                 {

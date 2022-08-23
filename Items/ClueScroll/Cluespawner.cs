@@ -10,48 +10,42 @@ namespace OldSchoolRuneScape.Items.ClueScroll
 {
     public class Cluespawner : ModItem
     {
-        public override string Texture
-        {
-            get
-            {
-                return "OldSchoolRuneScape/Items/ClueScroll/Clue";
-            }
-        }
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("ClueSpawner");
         }
         public override void SetDefaults()
         {
-            item.width = 62;
-            item.height = 54;
-            item.rare = 3;
-            item.useStyle = 4;
-            item.useTime = 30;
-            item.useAnimation = 30;
+            Item.width = 62;
+            Item.height = 54;
+            Item.rare = ItemRarityID.Orange;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             int ch = Main.rand.Next(5);
+            var source = player.GetSource_ItemUse(Item);
             if (ch == 0)
             {
-                Item.NewItem(new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 1, 1), ModContent.ItemType<MasterClue>());
+                Item.NewItem(source, new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 1, 1), ModContent.ItemType<MasterClue>());
             }
             if (ch == 1)
             {
-                Item.NewItem(new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 1, 1), ModContent.ItemType<EliteClue>());
+                Item.NewItem(source, new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 1, 1), ModContent.ItemType<EliteClue>());
             }
             if (ch == 2)
             {
-                Item.NewItem(new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 1, 1), ModContent.ItemType<HardClue>());
+                Item.NewItem(source, new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 1, 1), ModContent.ItemType<HardClue>());
             }
             if (ch == 3)
             {
-                Item.NewItem(new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 1, 1), ModContent.ItemType<MediumClue>());
+                Item.NewItem(source, new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 1, 1), ModContent.ItemType<MediumClue>());
             }
             if (ch == 4)
             {
-                Item.NewItem(new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 1, 1), ModContent.ItemType<EasyClue>());
+                Item.NewItem(source, new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 1, 1), ModContent.ItemType<EasyClue>());
             }
             return true;
         }

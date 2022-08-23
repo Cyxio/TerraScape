@@ -15,11 +15,11 @@ namespace OldSchoolRuneScape.Items.Accessories
         }
         public override void SetDefaults()
         {
-            item.accessory = true;
-            item.width = 22;
-            item.height = 31;
-            item.value = Item.sellPrice(0, 5, 0, 0);
-            item.rare = 5;
+            Item.accessory = true;
+            Item.width = 22;
+            Item.height = 31;
+            Item.value = Item.sellPrice(0, 5, 0, 0);
+            Item.rare = ItemRarityID.Pink;
         }
         public override void UpdateEquip(Player player)
         {
@@ -27,20 +27,18 @@ namespace OldSchoolRuneScape.Items.Accessories
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldBar, 4);
             recipe.AddIngredient(null, "Dragonstone", 1);
             recipe.AddIngredient(null, "Enchantdragonstn");
             recipe.AddTile(TileID.Furnaces);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-            recipe = new ModRecipe(mod);
+            recipe.Register();
+            recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.PlatinumBar, 4);
             recipe.AddIngredient(null, "Dragonstone", 1);
             recipe.AddIngredient(null, "Enchantdragonstn");
             recipe.AddTile(TileID.Furnaces);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

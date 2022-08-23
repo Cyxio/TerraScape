@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,60 +12,60 @@ namespace OldSchoolRuneScape.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("WaveExplode");
-            Main.projFrames[projectile.type] = 6;
+            Main.projFrames[Projectile.type] = 6;
         }
         public override void SetDefaults()
         {
-            projectile.width = 112;
-            projectile.height = 112;
-            projectile.damage = 100;
-            projectile.friendly = true;
-            projectile.tileCollide = false;
-            projectile.aiStyle = -1;
-            projectile.magic = true;
-            projectile.ignoreWater = true;
-            projectile.light = 0.2f;
-            projectile.penetrate = -1;
-            projectile.alpha = 30;
-            projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 19;
+            Projectile.width = 112;
+            Projectile.height = 112;
+            Projectile.damage = 100;
+            Projectile.friendly = true;
+            Projectile.tileCollide = false;
+            Projectile.aiStyle = -1;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.ignoreWater = true;
+            Projectile.light = 0.2f;
+            Projectile.penetrate = -1;
+            Projectile.alpha = 30;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 19;
         }
 
         public override void AI()
         {
-            projectile.velocity *= 0f;
-            projectile.alpha += 12;
-            projectile.frameCounter++;
-            if (projectile.frameCounter == 3)
+            Projectile.velocity *= 0f;
+            Projectile.alpha += 12;
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter == 3)
             {
-                projectile.frame++;
-                if(projectile.frame >= Main.projFrames[projectile.type])
+                Projectile.frame++;
+                if(Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                    projectile.Kill();
+                    Projectile.Kill();
                 }
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
             }
         }
-
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            if (projectile.ai[0] == 1)
+            switch (Projectile.ai[0])
             {
-                Main.projectileTexture[projectile.type] = mod.GetTexture("Projectiles/WaveExplode1");
+                case 0:
+                    lightColor = Color.White;
+                    break;
+                case 1:
+                    lightColor = Color.ForestGreen;
+                    break;
+                case 2:
+                    lightColor = Color.OrangeRed;
+                    break;
+                case 3:
+                    lightColor = Color.MediumBlue;
+                    break;
+                default:
+                    break;
             }
-            if (projectile.ai[0] == 2)
-            {
-                Main.projectileTexture[projectile.type] = mod.GetTexture("Projectiles/WaveExplode2");
-            }
-            if (projectile.ai[0] == 3)
-            {
-                Main.projectileTexture[projectile.type] = mod.GetTexture("Projectiles/WaveExplode3");
-            }
-            if (projectile.ai[0] == 4)
-            {
-                Main.projectileTexture[projectile.type] = mod.GetTexture("Projectiles/WaveExplode");
-            }
-            return true;
+            return base.PreDraw(ref lightColor);
         }
     }
 }

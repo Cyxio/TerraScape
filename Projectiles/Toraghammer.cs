@@ -1,5 +1,6 @@
 ﻿using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
@@ -12,23 +13,23 @@ namespace OldSchoolRuneScape.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Torag's hammer");
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
         public override void SetDefaults()
         {
-            projectile.CloneDefaults(ProjectileID.PaladinsHammerFriendly);
-            aiType = ProjectileID.PaladinsHammerFriendly;
-            projectile.penetrate = -1;
-            projectile.extraUpdates = 1;
+            Projectile.CloneDefaults(ProjectileID.PaladinsHammerFriendly);
+            AIType = ProjectileID.PaladinsHammerFriendly;
+            Projectile.penetrate = -1;
+            Projectile.extraUpdates = 1;
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Vector2 drawOrigin = new Vector2(Main.projectileTexture[projectile.type].Width * 0.5f, projectile.height * 0.5f);
-            for (int k = 0; k < projectile.oldPos.Length; k++)
+            Vector2 drawOrigin = new Vector2(TextureAssets.Projectile[Projectile.type].Value.Width * 0.5f, Projectile.height * 0.5f);
+            for (int k = 0; k < Projectile.oldPos.Length; k++)
             {
-                Vector2 drawPos = projectile.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, projectile.gfxOffY);
-                spriteBatch.Draw(Main.projectileTexture[projectile.type], drawPos, null, projectile.GetAlpha(new Color(160, 160, 160, 0)), projectile.rotation, drawOrigin, (4f / (4f + k)), SpriteEffects.None, 0f);
+                Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
+                Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, drawPos, null, Projectile.GetAlpha(new Color(160, 160, 160, 0)), Projectile.rotation, drawOrigin, (4f / (4f + k)), SpriteEffects.None, 0);
             }
             return true;
         }
@@ -38,7 +39,7 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (Main.player[projectile.owner].GetModPlayer<OSRSplayer>().Toragset && Main.player[projectile.owner].GetModPlayer<OSRSplayer>().Amuletdamned && Main.rand.Next(10) == 0)
+            if (Main.player[Projectile.owner].GetModPlayer<OSRSplayer>().Toragset && Main.player[Projectile.owner].GetModPlayer<OSRSplayer>().Amuletdamned && Main.rand.NextBool(10))
             {
                 target.velocity *= 0f;
                 target.netUpdate = true;

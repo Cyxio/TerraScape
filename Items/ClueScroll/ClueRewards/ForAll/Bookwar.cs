@@ -15,26 +15,25 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.ForAll
         }
         public override void SetDefaults()
         {
-            item.width = 32;
-            item.height = 30;
-            item.rare = 3;
-            item.accessory = true;
-            item.value = Item.sellPrice(0, 10);
+            Item.width = 32;
+            Item.height = 30;
+            Item.rare = ItemRarityID.Orange;
+            Item.accessory = true;
+            Item.value = Item.sellPrice(0, 10);
         }
         public override void UpdateEquip(Player player)
         {
-            player.meleeDamage += 0.25f;
+            player.GetDamage(DamageClass.Melee) += 0.25f;
         }
         public override void AddRecipes()
         {
-            ModRecipe r = new ModRecipe(mod);
+            Recipe r = CreateRecipe();
             r.AddIngredient(ModContent.ItemType<Bandospage1>());
             r.AddIngredient(ModContent.ItemType<Bandospage2>());
             r.AddIngredient(ModContent.ItemType<Bandospage3>());
             r.AddIngredient(ModContent.ItemType<Bandospage4>());
             r.AddTile(TileID.WorkBenches);
-            r.SetResult(this);
-            r.AddRecipe();
+            r.Register();
         }
     }
 }

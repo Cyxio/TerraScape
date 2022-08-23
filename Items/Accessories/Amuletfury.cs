@@ -16,32 +16,31 @@ namespace OldSchoolRuneScape.Items.Accessories
         }
         public override void SetDefaults()
         {
-            item.accessory = true;
-            item.width = 18;
-            item.height = 29;
-            item.value = Item.sellPrice(0, 10, 0, 0);
-            item.rare = 8;
-            item.defense = 3;
+            Item.accessory = true;
+            Item.width = 18;
+            Item.height = 29;
+            Item.value = Item.sellPrice(0, 10, 0, 0);
+            Item.rare = ItemRarityID.Yellow;
+            Item.defense = 3;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.thrownDamage += 0.14f;
-            player.minionDamage += 0.14f;
-            player.meleeDamage += 0.14f;
-            player.magicDamage += 0.14f;
-            player.rangedDamage += 0.14f;
+            player.GetDamage(DamageClass.Throwing) += 0.14f;
+            player.GetDamage(DamageClass.Summon) += 0.14f;
+            player.GetDamage(DamageClass.Melee) += 0.14f;
+            player.GetDamage(DamageClass.Magic) += 0.14f;
+            player.GetDamage(DamageClass.Ranged) += 0.14f;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Enchantonyx");
             recipe.AddIngredient(null, "Onyx");
             recipe.AddIngredient(ItemID.AvengerEmblem);
             recipe.AddTile(TileID.Furnaces);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

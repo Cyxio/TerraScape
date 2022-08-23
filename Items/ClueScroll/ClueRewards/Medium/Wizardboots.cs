@@ -15,15 +15,15 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Medium
         }
         public override void SetDefaults()
         {
-            item.width = 26;
-            item.height = 24;
-            item.accessory = true;
-            item.rare = 3;
-            item.value = Item.sellPrice(0, 5);
+            Item.width = 26;
+            Item.height = 24;
+            Item.accessory = true;
+            Item.rare = ItemRarityID.Orange;
+            Item.value = Item.sellPrice(0, 5);
         }
         public override void UpdateEquip(Player player)
         {
-            player.magicDamage += 0.2f;
+            player.GetDamage(DamageClass.Magic) += 0.2f;
         }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
 
 namespace OldSchoolRuneScape.NPCs
 {
@@ -11,22 +14,22 @@ namespace OldSchoolRuneScape.NPCs
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Greater Demon");
-            Main.npcFrameCount[npc.type] = 4;
+            Main.npcFrameCount[NPC.type] = 4;
         }
         public override void SetDefaults()
         {
-            npc.width = 32;
-            npc.height = 76;
-            npc.aiStyle = -1;
-            npc.damage = 40;
-            npc.defense = 15;
-            npc.lifeMax = 200;
-            npc.scale = 1.25f;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Demon");
-            npc.value = 500f;
-            npc.knockBackResist = 0.3f;
-            npc.lavaImmune = true;
+            NPC.width = 32;
+            NPC.height = 76;
+            NPC.aiStyle = -1;
+            NPC.damage = 40;
+            NPC.defense = 15;
+            NPC.lifeMax = 200;
+            NPC.scale = 1.25f;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = new SoundStyle("OldSchoolRuneScape/Sounds/Item/Demon");
+            NPC.value = 500f;
+            NPC.knockBackResist = 0.3f;
+            NPC.lavaImmune = true;
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -50,127 +53,114 @@ namespace OldSchoolRuneScape.NPCs
 
         public float AI_State
         {
-            get { return npc.ai[AI_State_Slot]; }
-            set { npc.ai[AI_State_Slot] = value; }
+            get { return NPC.ai[AI_State_Slot]; }
+            set { NPC.ai[AI_State_Slot] = value; }
         }
 
         public float AI_Timer
         {
-            get { return npc.ai[AI_Timer_Slot]; }
-            set { npc.ai[AI_Timer_Slot] = value; }
+            get { return NPC.ai[AI_Timer_Slot]; }
+            set { NPC.ai[AI_Timer_Slot] = value; }
         }
 
         public override void HitEffect(int hitDirection, double damage)
         {
             AI_State = State_Jump;
-            if (npc.life > 0)
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
+            if (NPC.life > 0)
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 5);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
                 }
             }
             else
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 5);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
                 }
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Greaterdemon"), npc.scale);
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Lesserdemon2"), npc.scale);
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Lesserdemon3"), npc.scale);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Greaterdemon").Type, NPC.scale);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Lesserdemon2").Type, NPC.scale);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Lesserdemon3").Type, NPC.scale);
             }
         }
-
-        public override void NPCLoot()
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            int ch = Main.rand.Next(100);
-            if (ch < 20)
-            {
-                Item.NewItem(npc.position, new Vector2(44, 58), mod.ItemType("Firerune"), Main.rand.Next(30, 120)); 
-            }
-            else if (ch < 30)
-            {
-                Item.NewItem(npc.position, new Vector2(44, 58), mod.ItemType("Chaosrune"), 5);
-            }
-            else if (ch < 34)
-            {
-                Item.NewItem(npc.position, new Vector2(44, 58), mod.ItemType("Deathrune"), 3);
-            }
-            else if (ch < 35)
-            {
-                Item.NewItem(npc.position, new Vector2(44, 58), ItemID.DemonScythe);
-            }
-            else if (ch < 36)
-            {
-                Item.NewItem(npc.position, new Vector2(44, 58), mod.ItemType("Runeplatelegs"));
-            }
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Magic.Firerune>(), 5, 30, 120));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Magic.Chaosrune>(), 10, 12, 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Magic.Deathrune>(), 25, 3, 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Armor.Runeplatelegs>(), 100));
+            npcLoot.Add(ItemDropRule.Common(ItemID.DemonScythe, 100));
         }
         int i = 0;
         public override void AI()
         {
             if (AI_State == State_Walk)
             {
-                while (npc.velocity.X > 2f || npc.velocity.X < -2f)
+                while (NPC.velocity.X > 2f || NPC.velocity.X < -2f)
                 {
-                    npc.velocity *= 0.9f;
+                    NPC.velocity *= 0.9f;
                 }
-                npc.TargetClosest(true);
-                if (npc.velocity.X == 0)
+                NPC.TargetClosest(true);
+                if (NPC.velocity.X == 0)
                 {
                     i++;
                     if(i > 600)
                     {
-                        npc.direction *= -1;
+                        NPC.direction *= -1;
                         AI_State = State_Flee;
                         i = 0;
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
-                if (Main.player[npc.target].position.Y > npc.Bottom.Y)
+                if (Main.player[NPC.target].position.Y > NPC.Bottom.Y)
                 {
-                    int x = (int)(npc.position.X / 16f);
-                    int y = (int)(npc.BottomLeft.Y / 16f);
-                    if (TileID.Sets.Platforms[Main.tile[x, y].type])
+                    int x = (int)(NPC.position.X / 16f);
+                    int y = (int)(NPC.BottomLeft.Y / 16f);
+                    if (TileID.Sets.Platforms[Main.tile[x, y].TileType])
                     {
-                        npc.position.Y += 1;
+                        NPC.position.Y += 1;
                     }
                 }
-                if (npc.HasValidTarget)
+                if (NPC.HasValidTarget)
                 {
-                    if (npc.velocity.X < 2f && npc.direction == 1)
+                    if (NPC.velocity.X < 2f && NPC.direction == 1)
                     {
-                        npc.velocity.X += 0.14f;
+                        NPC.velocity.X += 0.14f;
                     }
-                    if (npc.velocity.X > -2f && npc.direction == -1)
+                    if (NPC.velocity.X > -2f && NPC.direction == -1)
                     {
-                        npc.velocity.X -= 0.14f;
+                        NPC.velocity.X -= 0.14f;
                     }
                 }
-                if (Main.player[npc.target].Distance(npc.Center) < 25f)
+                if (Main.player[NPC.target].Distance(NPC.Center) < 25f)
                 {
                     AI_State = State_Attack;
                     AI_Timer = 0;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
-                if (Main.player[npc.target].Distance(npc.Center) < 350f && Main.player[npc.target].Distance(npc.Center) > 300f && npc.velocity.Y == 0)
+                if (Main.player[NPC.target].Distance(NPC.Center) < 350f && Main.player[NPC.target].Distance(NPC.Center) > 300f && NPC.velocity.Y == 0)
                 {
-                    npc.velocity = new Vector2(npc.direction * 5f, -5f);
+                    NPC.velocity = new Vector2(NPC.direction * 5f, -5f);
                     AI_State = State_Jump;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
-                if (npc.collideX || (npc.velocity.X == 0 && Main.rand.Next(4) == 0 && Main.netMode != 1))
+                if (NPC.collideX || (NPC.velocity.X == 0 && Main.rand.NextBool(4)&& Main.netMode != NetmodeID.MultiplayerClient))
                 {
-                    npc.velocity.Y = -6f;
-                    npc.velocity.X = npc.direction * 2f;
+                    NPC.velocity.Y = -6f;
+                    NPC.velocity.X = NPC.direction * 2f;
                     AI_State = State_Jump;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
-                if (!npc.HasValidTarget || Main.dayTime)
+                if (!NPC.HasValidTarget || Main.dayTime)
                 {
-                    npc.direction *= -1;
+                    NPC.direction *= -1;
                     AI_State = State_Flee;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
             }
             else if (AI_State == State_Attack)
@@ -178,69 +168,69 @@ namespace OldSchoolRuneScape.NPCs
                 AI_Timer++;
                 if (AI_Timer < 27)
                 {
-                    npc.velocity.X = 0;
+                    NPC.velocity.X = 0;
                 }
                 else
                 {
                     AI_State = State_Walk;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
             }
             else if (AI_State == State_Jump)
             {
-                if (npc.velocity.X < 2 && npc.velocity.X > -2)
+                if (NPC.velocity.X < 2 && NPC.velocity.X > -2)
                 {
-                    npc.velocity.X = 2 * npc.direction;
+                    NPC.velocity.X = 2 * NPC.direction;
                 }
-                if (npc.velocity.Y == 0)
+                if (NPC.velocity.Y == 0)
                 {
                     AI_State = State_Walk;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
             }
             else if (AI_State == State_Flee)
             {
-                npc.velocity.X = npc.direction * 2f;
-                if (Main.rand.Next(600) == 0 && !Main.dayTime)
+                NPC.velocity.X = NPC.direction * 2f;
+                if (Main.rand.NextBool(600)&& !Main.dayTime)
                 {
                     AI_State = State_Walk;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
-                if (npc.collideX || (npc.velocity.X == 0 && Main.rand.Next(4) == 0 && Main.netMode != 1))
+                if (NPC.collideX || (NPC.velocity.X == 0 && Main.rand.NextBool(4)&& Main.netMode != NetmodeID.MultiplayerClient))
                 {
-                    npc.velocity.Y = -6f;
-                    npc.velocity.X = npc.direction * 2f;
+                    NPC.velocity.Y = -6f;
+                    NPC.velocity.X = NPC.direction * 2f;
                     AI_State = State_Jump;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
             }
         }
 
         public override void FindFrame(int frameHeight)
         {
-            npc.spriteDirection = -npc.direction;
-            if (npc.velocity.Y != 0)
+            NPC.spriteDirection = -NPC.direction;
+            if (NPC.velocity.Y != 0)
             {
-                npc.frame.Y = 3 * frameHeight;
+                NPC.frame.Y = 3 * frameHeight;
             }
             else
             {
-                npc.frameCounter++;
-                if (npc.frameCounter < 8)
+                NPC.frameCounter++;
+                if (NPC.frameCounter < 8)
                 {
-                    npc.frame.Y = 0 * frameHeight;
+                    NPC.frame.Y = 0 * frameHeight;
                 }
-                else if (npc.frameCounter < 16)
+                else if (NPC.frameCounter < 16)
                 {
-                    npc.frame.Y = 1 * frameHeight;
+                    NPC.frame.Y = 1 * frameHeight;
                 }
-                else if (npc.frameCounter < 24)
+                else if (NPC.frameCounter < 24)
                 {
-                    npc.frame.Y = 2 * frameHeight;
+                    NPC.frame.Y = 2 * frameHeight;
                 }
                 else
                 {
-                    npc.frameCounter = 0;
+                    NPC.frameCounter = 0;
                 }
             }
         }

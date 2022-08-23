@@ -1,4 +1,5 @@
 ﻿using System;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,27 +14,26 @@ namespace OldSchoolRuneScape.Items.Ammo
         }
         public override void SetDefaults()
         {
-            item.damage = 15;
-            item.ranged = true;
-            item.width = 12;
-            item.height = 20;
-            item.maxStack = 999;
-            item.consumable = true;
-            item.value = 10;
-            item.rare = 3;
-            item.shoot = mod.ProjectileType("Diamondbolt");
-            item.shootSpeed = 16f;
-            item.ammo = 1;
+            Item.damage = 15;
+            Item.DamageType = DamageClass.Ranged;
+            Item.width = 12;
+            Item.height = 20;
+            Item.maxStack = 999;
+            Item.consumable = true;
+            Item.value = 10;
+            Item.rare = ItemRarityID.Orange;
+            Item.shoot = Mod.Find<ModProjectile>("Diamondbolt").Type;
+            Item.shootSpeed = 16f;
+            Item.ammo = 1;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Runebolt");
             recipe.AddIngredient(null, "Diamondbolttips");
             recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

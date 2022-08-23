@@ -14,17 +14,17 @@ namespace OldSchoolRuneScape.Items.Ammo
         }
         public override void SetDefaults()
         {
-            item.damage = 20;
-            item.ranged = true;
-            item.width = 30;
-            item.height = 26;
-            item.maxStack = 999;
-            item.consumable = true;
-            item.value = 10;
-            item.rare = 7;
-            item.shoot = mod.ProjectileType("Boltrack");
-            item.shootSpeed = 16f;
-            item.ammo = 1;
+            Item.damage = 20;
+            Item.DamageType = DamageClass.Ranged;
+            Item.width = 30;
+            Item.height = 26;
+            Item.maxStack = 999;
+            Item.consumable = true;
+            Item.value = 10;
+            Item.rare = ItemRarityID.Lime;
+            Item.shoot = Mod.Find<ModProjectile>("Boltrack").Type;
+            Item.shootSpeed = 16f;
+            Item.ammo = 1;
         }
     }
 }

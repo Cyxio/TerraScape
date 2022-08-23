@@ -3,19 +3,20 @@ using System;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using System.Collections.Generic;
-using Terraria.World.Generation;
 using Terraria.GameContent.Generation;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria.WorldBuilding;
 
 namespace OldSchoolRuneScape.Tiles
 {
     public class ERunealtar : ModTile
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.tileFrameImportant[Type] = true;
             Main.tileLighted[Type] = true;
@@ -27,11 +28,11 @@ namespace OldSchoolRuneScape.Tiles
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Elemental rune altar");
             AddMapEntry(new Color(90, 90, 90), name);
-            dustType = 30;
+            DustType = 30;
         }
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            Item.NewItem(i * 16, j * 16, 48, 32, ModContent.ItemType<ERunealtarItem>());
+            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 48, 32, ModContent.ItemType<ERunealtarItem>());
         }
         public override void AnimateTile(ref int frame, ref int frameCounter)
         {
@@ -49,7 +50,7 @@ namespace OldSchoolRuneScape.Tiles
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
         {
             Tile tile = Main.tile[i, j];
-            Texture2D texture = Main.tileTexture[Type];
+            Texture2D texture = TextureAssets.Tile[Type].Value;
             Vector2 zero = new Vector2(Main.offScreenRange, Main.offScreenRange);
             if (Main.drawToScreen)
             {
@@ -59,7 +60,7 @@ namespace OldSchoolRuneScape.Tiles
             Main.spriteBatch.Draw(
                 texture,
                 new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y + 2) + zero,
-                new Rectangle(tile.frameX, tile.frameY + animate, 16, 16),
+                new Rectangle(tile.TileFrameX, tile.TileFrameY + animate, 16, 16),
                 Lighting.GetColor(i, j), 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
             return false;
         }
@@ -80,18 +81,18 @@ namespace OldSchoolRuneScape.Tiles
         }
         public override void SetDefaults()
         {
-            item.width = 36;
-            item.height = 24;
-            item.createTile = mod.TileType("ERunealtar");
-            item.useStyle = 1;
-            item.useTime = 10;
-            item.useAnimation = 15;
-            item.consumable = true;
-            item.autoReuse = true;
-            item.placeStyle = 0;
-            item.useTurn = true;
-            item.maxStack = 99;
-            item.rare = 5;
+            Item.width = 36;
+            Item.height = 24;
+            Item.createTile = Mod.Find<ModTile>("ERunealtar").Type;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 10;
+            Item.useAnimation = 15;
+            Item.consumable = true;
+            Item.autoReuse = true;
+            Item.placeStyle = 0;
+            Item.useTurn = true;
+            Item.maxStack = 99;
+            Item.rare = ItemRarityID.Pink;
         }
     }
 }

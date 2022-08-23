@@ -7,14 +7,14 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using System.Collections.Generic;
-using Terraria.World.Generation;
 using Terraria.GameContent.Generation;
+using Terraria.WorldBuilding;
 
 namespace OldSchoolRuneScape.Tiles
 {
     public class Lectern : ModTile
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
@@ -25,11 +25,11 @@ namespace OldSchoolRuneScape.Tiles
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Lectern");
             AddMapEntry(new Color(94, 70, 43), name);
-            dustType = 22;
+            DustType = 22;
         }
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            Item.NewItem(i * 16, j * 16, 32, 32, ModContent.ItemType<LecternItem>());
+            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<LecternItem>());
         }
     }
     class LecternItem : ModItem
@@ -41,27 +41,26 @@ namespace OldSchoolRuneScape.Tiles
         }
         public override void SetDefaults()
         {
-            item.width = 21;
-            item.height = 30;
-            item.createTile = mod.TileType("Lectern");
-            item.useTime = 10;
-            item.useAnimation = 15;
-            item.useStyle = 1;
-            item.useTurn = true;
-            item.autoReuse = true;
-            item.maxStack = 99;
-            item.consumable = true;
-            item.placeStyle = 0;
-            item.rare = 1;
+            Item.width = 21;
+            Item.height = 30;
+            Item.createTile = Mod.Find<ModTile>("Lectern").Type;
+            Item.useTime = 10;
+            Item.useAnimation = 15;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTurn = true;
+            Item.autoReuse = true;
+            Item.maxStack = 99;
+            Item.consumable = true;
+            Item.placeStyle = 0;
+            Item.rare = ItemRarityID.Blue;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Book);
             recipe.AddRecipeGroup("Wood", 10);
             recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

@@ -12,7 +12,7 @@ namespace OldSchoolRuneScape.Buffs
 {
     public class Vengeance : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Vengeance");
             Description.SetDefault("Getting hit will reflect 1000% damage back to the attacker");

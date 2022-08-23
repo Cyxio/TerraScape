@@ -1,4 +1,5 @@
 ﻿using System;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,21 +13,20 @@ namespace OldSchoolRuneScape.Items.Ammo
         }
         public override void SetDefaults()
         {
-            item.width = 24;
-            item.height = 26;
-            item.maxStack = 999;
-            item.value = 10;
-            item.rare = 5;
+            Item.width = 24;
+            Item.height = 26;
+            Item.maxStack = 999;
+            Item.value = 10;
+            Item.rare = ItemRarityID.Pink;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe(50);
             recipe.AddIngredient(null, "Dragonstone");
             recipe.AddIngredient(null, "Enchantdragonstn");
             recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this, 50);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

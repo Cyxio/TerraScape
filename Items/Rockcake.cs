@@ -14,18 +14,18 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.width = 26;
-            item.height = 24;
-            item.useStyle = 2;
-            item.useTime = 30;
-            item.useAnimation = 30;
-            item.UseSound = SoundID.Item2;
+            Item.width = 26;
+            Item.height = 24;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
+            Item.UseSound = SoundID.Item2;
         }
         public override bool CanUseItem(Player player)
         {
             return player.statLife > 1;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             player.Hurt(Terraria.DataStructures.PlayerDeathReason.LegacyDefault(), player.statLife - 1 + (int)(player.statDefense * 0.75), 0);
             player.statLife = 1;

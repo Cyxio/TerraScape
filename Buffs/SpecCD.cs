@@ -5,7 +5,7 @@ namespace OldSchoolRuneScape.Buffs
 {
 	public class SpecCD : ModBuff
 	{
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
 		{
             DisplayName.SetDefault("Fatique");
             Description.SetDefault("Can't use special attacks");

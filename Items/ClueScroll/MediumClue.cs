@@ -32,11 +32,11 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 player.GetModPlayer<OSRSplayer>().mediumStage++;
                 if (player.GetModPlayer<OSRSplayer>().mediumStage >= player.GetModPlayer<OSRSplayer>().mediumSteps)
                 {
-                    item.TurnToAir();
-                    player.QuickSpawnItem(ModContent.ItemType<CasketMedium>());
+                    Item.TurnToAir();
+                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CasketMedium>());
                     player.GetModPlayer<OSRSplayer>().ClueReset(ModContent.ItemType<MediumClue>(), player);
                     player.GetModPlayer<OSRSplayer>().CompleteClue(2, player);
-                    if (Main.netMode == 1)
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         player.GetModPlayer<OSRSplayer>().ClueMessage(player.name + "_has_completed_a_Medium_Clue_Scroll! 7");
                     }
@@ -47,7 +47,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 }
                 else
                 {
-                    if (Main.netMode == 1)
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         player.GetModPlayer<OSRSplayer>().ClueMessage(player.name + "_completed_a_step_of_a_Medium_Clue_Scroll 2");
                     }
@@ -64,7 +64,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
         {
             return true;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (player.altFunctionUse == 2)
             {
@@ -74,7 +74,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
             }
             return true;
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             ClueUI.texture = "OldSchoolRuneScape/Items/ClueScroll/Medium/Medium" + player.GetModPlayer<OSRSplayer>().mediumClue;
             if (player.channel && player.altFunctionUse != 2)

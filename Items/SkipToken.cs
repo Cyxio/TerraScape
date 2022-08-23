@@ -14,18 +14,18 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.UseSound = SoundID.Item37;
-            item.consumable = true;
-            item.maxStack = 999;
-            item.width = 52;
-            item.height = 52;
-            item.rare = -11;
-            item.value = 0;
-            item.useStyle = 4;
-            item.useAnimation = 25;
-            item.useTime = 25;
+            Item.UseSound = SoundID.Item37;
+            Item.consumable = true;
+            Item.maxStack = 999;
+            Item.width = 52;
+            Item.height = 52;
+            Item.rare = -11;
+            Item.value = 0;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             player.GetModPlayer<OSRSplayer>().ResetSlayer();
             Main.NewText("Your current slayer task has been cleared; return to a slayer master for a new assignment", Colors.RarityAmber);

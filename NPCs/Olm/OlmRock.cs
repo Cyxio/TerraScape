@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,51 +14,51 @@ namespace OldSchoolRuneScape.NPCs.Olm
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Olm's Boulder");
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
         public override void SetDefaults()
         {
-            projectile.width = 60;
-            projectile.height = 60;
-            projectile.aiStyle = -1;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 60;
+            Projectile.width = 60;
+            Projectile.height = 60;
+            Projectile.aiStyle = -1;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 60;
         }
         public override void AI()
         {
-            if (projectile.alpha == 0)
+            if (Projectile.alpha == 0)
             {
-                Main.PlaySound(SoundID.Item80, projectile.position);
-                projectile.alpha = 20;
+                SoundEngine.PlaySound(SoundID.Item80, Projectile.position);
+                Projectile.alpha = 20;
             }
-            projectile.rotation += 0.12f;
-            Lighting.AddLight(projectile.Center, new Vector3(0, 0.8f, 0));
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 5)
+            Projectile.rotation += 0.12f;
+            Lighting.AddLight(Projectile.Center, new Vector3(0, 0.8f, 0));
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 5)
             {
-                projectile.frame++;
-                if (projectile.frame >= Main.projFrames[projectile.type])
+                Projectile.frame++;
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.timeLeft < 5 && projectile.alpha == 20)
+            if (Projectile.timeLeft < 5 && Projectile.alpha == 20)
             {
-                projectile.position -= projectile.Size;
-                projectile.width *= 2;
-                projectile.height *= 2;
-                projectile.alpha = 255;
+                Projectile.position -= Projectile.Size;
+                Projectile.width *= 2;
+                Projectile.height *= 2;
+                Projectile.alpha = 255;
             }
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item14, projectile.position);
+            SoundEngine.PlaySound(SoundID.Item14, Projectile.position);
             for (int o = 0; o < 36; o++)
             {
-                int dust = Dust.NewDust(projectile.Center, 0, 0, 107);
+                int dust = Dust.NewDust(Projectile.Center, 0, 0, DustID.TerraBlade);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].scale = 2f;
                 Main.dust[dust].velocity = new Vector2(6).RotatedBy(MathHelper.ToRadians(10 * o));

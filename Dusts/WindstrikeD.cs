@@ -12,17 +12,20 @@ namespace OldSchoolRuneScape.Dusts
             dust.noGravity = true;
             dust.noLight = true;
             dust.alpha = 0;
-            dust.frame.Height = 10;
-            dust.frame.Width = 10;
+            dust.frame = new Rectangle(0, 0, 38, 38);
+            dust.scale = 0.2f;
+            dust.alpha = 50;
         }
+        private const float TimeToLive = 16f;
         public override bool Update(Dust dust)
         {
-            dust.scale *= 1.11f;
-            dust.position -= new Vector2(0.1f * dust.scale, 0.1f * dust.scale);
-            dust.alpha += 12;
-            float light = 0.2f;
-            Lighting.AddLight(dust.position, light, light, light);
-            if (dust.scale > 4f)
+            float changePerTick = 0.8f / TimeToLive;
+            dust.scale += changePerTick;
+            float sizeChange = dust.frame.Width * changePerTick;
+            dust.position -= new Vector2(sizeChange) * dust.scale / 2f;
+            Vector3 light = Color.White.ToVector3() * 0.5f * dust.scale;
+            Lighting.AddLight(dust.position, light);
+            if (dust.scale > 1f)
             {
                 dust.active = false;
             }

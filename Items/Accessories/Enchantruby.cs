@@ -15,20 +15,19 @@ namespace OldSchoolRuneScape.Items.Accessories
         }
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 28;
-            item.rare = 1;
-            item.maxStack = 999;
+            Item.width = 28;
+            Item.height = 28;
+            Item.rare = ItemRarityID.Blue;
+            Item.maxStack = 999;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Cosmicrune", 10);
             recipe.AddIngredient(null, "Firerune", 10);
             recipe.AddIngredient(ItemID.ClayBlock);
             recipe.AddTile(null, "Lectern");
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

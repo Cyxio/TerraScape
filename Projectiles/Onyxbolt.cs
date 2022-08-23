@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using Terraria.ID;
 
@@ -14,58 +15,58 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = -1;
-            projectile.width = 7;
-            projectile.height = 7;
-            projectile.friendly = true;
-            projectile.ranged = true;
-            projectile.localAI[0] = 0;
-            projectile.timeLeft = 2400;
+            Projectile.aiStyle = -1;
+            Projectile.width = 7;
+            Projectile.height = 7;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.localAI[0] = 0;
+            Projectile.timeLeft = 2400;
         }
 
         public override void AI()
         {
-            if (projectile.localAI[0] == 0 && projectile.timeLeft == 2399)
+            if (Projectile.localAI[0] == 0 && Projectile.timeLeft == 2399)
             {
-                if (Main.rand.Next(10) == 0 || (Main.player[projectile.owner].GetModPlayer<OSRSplayer>().Boltenchant && Main.rand.Next(4) == 0))
+                if (Main.rand.NextBool(10)|| (Main.player[Projectile.owner].GetModPlayer<OSRSplayer>().Boltenchant && Main.rand.NextBool(4)))
                 {
-                    projectile.damage = (int)(projectile.damage * 0.75);
-                    projectile.localAI[0] = 1;
+                    Projectile.damage = (int)(Projectile.damage * 0.75);
+                    Projectile.localAI[0] = 1;
                 }
             }
-            while (projectile.velocity.X >= 16f || projectile.velocity.X <= -16f || projectile.velocity.Y >= 16f || projectile.velocity.Y < -16f)
+            while (Projectile.velocity.X >= 16f || Projectile.velocity.X <= -16f || Projectile.velocity.Y >= 16f || Projectile.velocity.Y < -16f)
             {
-                Projectile projectile2 = projectile;
+                Projectile projectile2 = Projectile;
                 projectile2.velocity.X = projectile2.velocity.X * 0.97f;
-                Projectile projectile3 = projectile;
+                Projectile projectile3 = Projectile;
                 projectile3.velocity.Y = projectile3.velocity.Y * 0.97f;
             }
-            projectile.velocity.Y += 0.025f;
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
-            if (projectile.localAI[0] == 1)
+            Projectile.velocity.Y += 0.025f;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+            if (Projectile.localAI[0] == 1)
             {
-                Dust.NewDust(projectile.Center, 0, 0, 5, 0, 0, 0, Color.Black);
+                Dust.NewDust(Projectile.Center, 0, 0, DustID.Blood, 0, 0, 0, Color.Black);
             }
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Main.PlaySound(SoundID.Dig, projectile.position);
+            SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
             return true;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (projectile.localAI[0] == 1)
+            if (Projectile.localAI[0] == 1)
             {
-                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Onyxbolt"), projectile.position);
+                SoundEngine.PlaySound(new SoundStyle("OldSchoolRuneScape/Sounds/Item/Onyxbolt"), Projectile.position);
                 for (int i = 0; i < 32; i++)
                 {
-                    Dust.NewDust(target.Center, 0, 0, 14, 0, 0, 0, Color.Black);
+                    Dust.NewDust(target.Center, 0, 0, DustID.Demonite, 0, 0, 0, Color.Black);
                 }
                 for (int i = 0; i < Main.rand.Next(4, 7); i++)
                 {
-                    Projectile.NewProjectile(target.Center + new Vector2(0, 32).RotateRandom(2 * Math.PI), projectile.velocity, mod.ProjectileType("Onyxheal"), damage / 10, 0f, projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center + new Vector2(0, 32).RotateRandom(2 * Math.PI), Projectile.velocity, Mod.Find<ModProjectile>("Onyxheal").Type, damage / 10, 0f, Projectile.owner);
                 }
             }
         }

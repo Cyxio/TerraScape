@@ -15,30 +15,30 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void SetDefaults()
         {
-            projectile.width = 20;
-            projectile.height = 20;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.melee = true;
-            projectile.ownerHitCheck = true;
-            projectile.friendly = true;
-            projectile.timeLeft = 20;
-            projectile.penetrate = -1;
-            projectile.aiStyle = -1;
-            projectile.ai[0] = 0;
-            projectile.ai[1] = 0;
+            Projectile.width = 20;
+            Projectile.height = 20;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.ownerHitCheck = true;
+            Projectile.friendly = true;
+            Projectile.timeLeft = 20;
+            Projectile.penetrate = -1;
+            Projectile.aiStyle = -1;
+            Projectile.ai[0] = 0;
+            Projectile.ai[1] = 0;
         }
         public override void AI()
         {
-            Player owner = Main.player[projectile.owner];
-            owner.heldProj = projectile.whoAmI;
-            projectile.rotation = projectile.velocity.ToRotation();
+            Player owner = Main.player[Projectile.owner];
+            owner.heldProj = Projectile.whoAmI;
+            Projectile.rotation = Projectile.velocity.ToRotation();
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Vector2 playerCenter = Main.player[projectile.owner].MountedCenter;
-            Vector2 center = projectile.Center;
-            Vector2 distToProj = playerCenter - projectile.Center;
+            Vector2 playerCenter = Main.player[Projectile.owner].MountedCenter;
+            Vector2 center = Projectile.Center;
+            Vector2 distToProj = playerCenter - Projectile.Center;
             float projRotation = distToProj.ToRotation() - 1.57f;
             float distance = distToProj.Length();
             while (distance > 30f && !float.IsNaN(distance))
@@ -51,9 +51,9 @@ namespace OldSchoolRuneScape.Projectiles
                 Color drawColor = lightColor;
 
                 //Draw chain
-                spriteBatch.Draw(mod.GetTexture("Projectiles/Abyssalchain"), new Vector2(center.X - Main.screenPosition.X, center.Y - Main.screenPosition.Y),
+                Main.EntitySpriteDraw(ModContent.Request<Texture2D>("Projectiles/Abyssalchain").Value, new Vector2(center.X - Main.screenPosition.X, center.Y - Main.screenPosition.Y),
                     new Rectangle(0, 0, 8, 16), drawColor, projRotation,
-                    new Vector2(4, 8), 1f, SpriteEffects.None, 0f);
+                    new Vector2(4, 8), 1f, SpriteEffects.None, 0);
             }
             return true;
         }

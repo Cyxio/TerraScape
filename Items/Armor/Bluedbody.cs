@@ -10,37 +10,32 @@ namespace OldSchoolRuneScape.Items.Armor
     [AutoloadEquip(EquipType.Body)]
     public class Bluedbody : ModItem
     {
-        public override void DrawHands(ref bool drawHands, ref bool drawArms)
-        {
-            drawHands = true;
-            drawArms = true;
-        }
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Blue Dragonhide Body");
             Tooltip.SetDefault("6% increased ranged critical strike chance");
+            ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
         public override void SetDefaults()
         {
-            item.width = 22;
-            item.height = 28;
-            item.value = Item.sellPrice(0, 4, 0, 0);
-            item.rare = 4;
-            item.defense = 12;
+            Item.width = 22;
+            Item.height = 28;
+            Item.value = Item.sellPrice(0, 4, 0, 0);
+            Item.rare = ItemRarityID.LightRed;
+            Item.defense = 12;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.rangedCrit += 6;
+            player.GetCritChance(DamageClass.Ranged) += 6;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Bluedhide", 22);
             recipe.AddTile(TileID.MythrilAnvil);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

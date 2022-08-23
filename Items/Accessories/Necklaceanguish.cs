@@ -16,28 +16,27 @@ namespace OldSchoolRuneScape.Items.Accessories
         }
         public override void SetDefaults()
         {
-            item.accessory = true;
-            item.width = 22;
-            item.height = 31;
-            item.value = Item.sellPrice(0, 20, 0, 0);
-            item.rare = 8;
+            Item.accessory = true;
+            Item.width = 22;
+            Item.height = 31;
+            Item.value = Item.sellPrice(0, 20, 0, 0);
+            Item.rare = ItemRarityID.Yellow;
         }
         public override void UpdateEquip(Player player)
         {
-            player.rangedDamage += 0.18f;
+            player.GetDamage(DamageClass.Ranged) += 0.18f;
             player.GetModPlayer<OSRSplayer>().Necklaceanguish = true;
-            player.rangedDamage += player.GetModPlayer<OSRSplayer>().AnguishTime / 400f;
-            player.rangedCrit += player.GetModPlayer<OSRSplayer>().AnguishTime / 4;
+            player.GetDamage(DamageClass.Ranged) += player.GetModPlayer<OSRSplayer>().AnguishTime / 400f;
+            player.GetCritChance(DamageClass.Ranged) += player.GetModPlayer<OSRSplayer>().AnguishTime / 4;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Enchantzenyte");
             recipe.AddIngredient(null, "Zenyte");
             recipe.AddIngredient(ItemID.ShroomiteBar, 6);
             recipe.AddTile(TileID.MythrilAnvil);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

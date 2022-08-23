@@ -14,31 +14,30 @@ namespace OldSchoolRuneScape.Items.Armor
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == mod.ItemType("Runeplate") && legs.type == mod.ItemType("Runeplatelegs");
+            return body.type == Mod.Find<ModItem>("Runeplate").Type && legs.type == Mod.Find<ModItem>("Runeplatelegs").Type;
         }
 
         public override void UpdateArmorSet(Player player)
         {
             player.setBonus = "20% increased melee damage";
-            player.meleeDamage += 0.2f;
+            player.GetDamage(DamageClass.Melee) += 0.2f;
         }
 
         public override void SetDefaults()
         {
-            item.width = 19;
-            item.height = 30;
-            item.value = Item.sellPrice(0, 3, 0, 0);
-            item.rare = 3;
-            item.defense = 7;
+            Item.width = 19;
+            Item.height = 30;
+            Item.value = Item.sellPrice(0, 3, 0, 0);
+            Item.rare = ItemRarityID.Orange;
+            Item.defense = 7;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Runitebar", 8);
             recipe.AddTile(TileID.Anvils);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

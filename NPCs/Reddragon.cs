@@ -1,8 +1,11 @@
 ﻿using System;
+using Terraria.Audio;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
 
 namespace OldSchoolRuneScape.NPCs
 {
@@ -11,26 +14,26 @@ namespace OldSchoolRuneScape.NPCs
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Red Dragon");
-            Main.npcFrameCount[npc.type] = 5;
+            Main.npcFrameCount[NPC.type] = 5;
         }
         public override void SetDefaults()
         {
-            npc.width = 150;
-            npc.height = 35;
-            npc.aiStyle = -1;
-            npc.damage = 60;
-            npc.scale = 1f;
-            npc.knockBackResist = 0.1f;
-            npc.defense = 10;
-            npc.lifeMax = 325;
-            npc.HitSound = mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Dragonhit");
-            npc.DeathSound = SoundID.NPCDeath1;
-            npc.value = 500f;
-            npc.noGravity = true;
+            NPC.width = 150;
+            NPC.height = 35;
+            NPC.aiStyle = -1;
+            NPC.damage = 60;
+            NPC.scale = 1f;
+            NPC.knockBackResist = 0.1f;
+            NPC.defense = 10;
+            NPC.lifeMax = 325;
+            NPC.HitSound = new SoundStyle("OldSchoolRuneScape/Sounds/Item/Dragonhit");
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.value = 500f;
+            NPC.noGravity = true;
         }
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = (int)(npc.damage * 0.8f);
+            NPC.damage = (int)(NPC.damage * 0.8f);
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -40,17 +43,21 @@ namespace OldSchoolRuneScape.NPCs
             }
             return 0;
         }
-        public override void NPCLoot()
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Reddhide>(), Main.rand.Next(3, 7));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Reddhide>(), 1, 3, 6));
         }
         public override void HitEffect(int hitDirection, double damage)
         {
-            if (npc.life <= 0)
+            if (Main.netMode == NetmodeID.Server)
             {
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Reddragon"), npc.scale);
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Reddragon1"), npc.scale);
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Reddragon1"), npc.scale);
+                return;
+            }
+            if (NPC.life <= 0)
+            {
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Reddragon").Type, NPC.scale);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Reddragon1").Type, NPC.scale);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Reddragon1").Type, NPC.scale);
             }
         }
 
@@ -62,14 +69,14 @@ namespace OldSchoolRuneScape.NPCs
 
         public float AI_State
         {
-            get { return npc.ai[AI_State_Slot]; }
-            set { npc.ai[AI_State_Slot] = value; }
+            get { return NPC.ai[AI_State_Slot]; }
+            set { NPC.ai[AI_State_Slot] = value; }
         }
 
         public float AI_Timer
         {
-            get { return npc.ai[AI_Timer_Slot]; }
-            set { npc.ai[AI_Timer_Slot] = value; }
+            get { return NPC.ai[AI_Timer_Slot]; }
+            set { NPC.ai[AI_Timer_Slot] = value; }
         }
 
         private float speed = 3f;
@@ -77,54 +84,54 @@ namespace OldSchoolRuneScape.NPCs
 
         public override void AI()
         {
-            Lighting.AddLight(npc.Center, new Vector3(0.5f, 0.5f, 0.5f));
+            Lighting.AddLight(NPC.Center, new Vector3(0.5f, 0.5f, 0.5f));
             if (AI_State == Fly)
             {
                 AI_Timer++;
-                if (AI_Timer > 140 && Main.rand.Next(6) == 0 && Main.netMode != 1)
+                if (AI_Timer > 140 && Main.rand.NextBool(6)&& Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     AI_Timer = 0;
                     AI_State = Attack;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
-                npc.TargetClosest(true);
-                Player target = Main.player[npc.target];
-                if (npc.velocity.X > speed)
+                NPC.TargetClosest(true);
+                Player target = Main.player[NPC.target];
+                if (NPC.velocity.X > speed)
                 {
-                    npc.velocity.X *= 0.9f;
+                    NPC.velocity.X *= 0.9f;
                 }
-                if (npc.velocity.Y > speed)
+                if (NPC.velocity.Y > speed)
                 {
-                    npc.velocity.Y *= 0.9f;
+                    NPC.velocity.Y *= 0.9f;
                 }
-                if (target.MountedCenter.Y - 320 > npc.Center.Y && npc.velocity.Y < speed)
+                if (target.MountedCenter.Y - 320 > NPC.Center.Y && NPC.velocity.Y < speed)
                 {
-                    npc.velocity.Y += accelerate * 0.75f;
+                    NPC.velocity.Y += accelerate * 0.75f;
                 }
-                if (target.MountedCenter.Y - 200 < npc.Center.Y && npc.velocity.Y > -speed)
+                if (target.MountedCenter.Y - 200 < NPC.Center.Y && NPC.velocity.Y > -speed)
                 {
-                    npc.velocity.Y -= accelerate * 0.75f;
+                    NPC.velocity.Y -= accelerate * 0.75f;
                 }
-                if (target.MountedCenter.X > npc.Center.X && npc.velocity.X < speed)
+                if (target.MountedCenter.X > NPC.Center.X && NPC.velocity.X < speed)
                 {
-                    npc.velocity.X += accelerate;
+                    NPC.velocity.X += accelerate;
                 }
-                if (target.MountedCenter.X < npc.Center.X && npc.velocity.X > -speed)
+                if (target.MountedCenter.X < NPC.Center.X && NPC.velocity.X > -speed)
                 {
-                    npc.velocity.X -= accelerate;
+                    NPC.velocity.X -= accelerate;
                 }
-                if (Main.player[npc.target].position.Y > npc.Bottom.Y)
+                if (Main.player[NPC.target].position.Y > NPC.Bottom.Y)
                 {
-                    int x = (int)(npc.position.X / 16f);
-                    int y = (int)(npc.BottomLeft.Y / 16f);
-                    if (TileID.Sets.Platforms[Main.tile[x, y].type])
+                    int x = (int)(NPC.position.X / 16f);
+                    int y = (int)(NPC.BottomLeft.Y / 16f);
+                    if (TileID.Sets.Platforms[Main.tile[x, y].TileType])
                     {
-                        npc.position.Y += 1;
+                        NPC.position.Y += 1;
                     }
                 }
-                if (!npc.HasValidTarget)
+                if (!NPC.HasValidTarget)
                 {
-                    npc.velocity *= 0;
+                    NPC.velocity *= 0;
                     AI_State = Flee;
                 }
             }
@@ -134,60 +141,60 @@ namespace OldSchoolRuneScape.NPCs
                 if (AI_Timer > 16)
                 {
                     AI_State = Fly;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
-                npc.TargetClosest(true);
-                Player target = Main.player[npc.target];
-                float speedX = target.MountedCenter.X - (npc.Center.X + 75 * npc.direction);
-                float speedY = target.MountedCenter.Y - (npc.Center.Y);
+                NPC.TargetClosest(true);
+                Player target = Main.player[NPC.target];
+                float speedX = target.MountedCenter.X - (NPC.Center.X + 75 * NPC.direction);
+                float speedY = target.MountedCenter.Y - (NPC.Center.Y);
                 Vector2 spd = new Vector2(speedX, speedY);
                 spd.Normalize();
                 spd *= 10;
                 if (AI_Timer == 8)
                 {
-                    Projectile.NewProjectile(new Vector2(npc.Center.X + 75 * npc.direction, npc.Center.Y), new Vector2(spd.X, spd.Y + 1), mod.ProjectileType("Dragonfire"), (npc.damage / 4), 0f, 0, 1, 0);
-                    Projectile.NewProjectile(new Vector2(npc.Center.X + 75 * npc.direction, npc.Center.Y), new Vector2(spd.X, spd.Y - 1), mod.ProjectileType("Dragonfire"), (npc.damage / 4), 0f, 0, 1, 0);
-                    npc.netUpdate = true;
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2(NPC.Center.X + 75 * NPC.direction, NPC.Center.Y), new Vector2(spd.X, spd.Y + 1), Mod.Find<ModProjectile>("Dragonfire").Type, (NPC.damage / 4), 0f, 0, 1, 0);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2(NPC.Center.X + 75 * NPC.direction, NPC.Center.Y), new Vector2(spd.X, spd.Y - 1), Mod.Find<ModProjectile>("Dragonfire").Type, (NPC.damage / 4), 0f, 0, 1, 0);
+                    NPC.netUpdate = true;
                 }
             }
             if (AI_State == Flee)
             {
-                npc.velocity.Y -= 0.1f;
+                NPC.velocity.Y -= 0.1f;
             }
         }
 
         public override void FindFrame(int frameHeight)
         {
-            npc.spriteDirection = npc.direction;
+            NPC.spriteDirection = NPC.direction;
             if (AI_State == Fly || AI_State == Flee)
             {
-                npc.frameCounter++;
-                if (npc.frameCounter < 6)
+                NPC.frameCounter++;
+                if (NPC.frameCounter < 6)
                 {
-                    npc.frame.Y = 0;
+                    NPC.frame.Y = 0;
                 }
-                else if (npc.frameCounter < 12)
+                else if (NPC.frameCounter < 12)
                 {
-                    npc.frame.Y = frameHeight;
+                    NPC.frame.Y = frameHeight;
                 }
-                else if (npc.frameCounter < 18)
+                else if (NPC.frameCounter < 18)
                 {
-                    npc.frame.Y = 2 * frameHeight;
+                    NPC.frame.Y = 2 * frameHeight;
                 }
                 else
                 {
-                    npc.frameCounter = 0;
+                    NPC.frameCounter = 0;
                 }
             }
             if (AI_State == Attack)
             {
                 if (AI_Timer < 8)
                 {
-                    npc.frame.Y = 3 * frameHeight;
+                    NPC.frame.Y = 3 * frameHeight;
                 }
                 else if (AI_Timer < 16)
                 {
-                    npc.frame.Y = 4 * frameHeight;
+                    NPC.frame.Y = 4 * frameHeight;
                 }
             }
         }

@@ -11,17 +11,14 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Medium
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lesser Demon Mask");
+            ArmorIDs.Head.Sets.DrawHead[Item.headSlot] = false;
         }
         public override void SetDefaults()
         {
-            item.vanity = true;
-            item.rare = 2;
-            item.width = 20;
-            item.height = 28;
-        }
-        public override bool DrawHead()
-        {
-            return false;
+            Item.vanity = true;
+            Item.rare = ItemRarityID.Green;
+            Item.width = 20;
+            Item.height = 28;
         }
     }
 }

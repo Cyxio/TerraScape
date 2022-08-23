@@ -32,15 +32,15 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 player.GetModPlayer<OSRSplayer>().easyStage++;
                 if (player.GetModPlayer<OSRSplayer>().easyStage >= player.GetModPlayer<OSRSplayer>().easySteps)
                 {
-                    item.TurnToAir();
-                    player.QuickSpawnItem(ModContent.ItemType<CasketEasy>());
+                    Item.TurnToAir();
+                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CasketEasy>());
                     player.GetModPlayer<OSRSplayer>().ClueReset(ModContent.ItemType<EasyClue>(), player);
                     player.GetModPlayer<OSRSplayer>().CompleteClue(1, player);
                     if (player.GetModPlayer<OSRSplayer>().masterClue == 9)
                     {
                         player.GetModPlayer<OSRSplayer>().cluestep = 5;
                     }
-                    if (Main.netMode == 1)
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         player.GetModPlayer<OSRSplayer>().ClueMessage(player.name + "_has_completed_an_Easy_Clue_Scroll! 6");
                     }
@@ -51,7 +51,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 }
                 else
                 {
-                    if (Main.netMode == 1)
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         player.GetModPlayer<OSRSplayer>().ClueMessage(player.name + "_completed_a_step_of_an_Easy_Clue_Scroll 1");
                     }
@@ -67,7 +67,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
         {
             return true;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             if (player.altFunctionUse == 2)
             {
@@ -77,7 +77,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
             }
             return true;
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             ClueUI.texture = "OldSchoolRuneScape/Items/ClueScroll/Easy/Easy" + player.GetModPlayer<OSRSplayer>().easyClue;
             if (player.channel && player.altFunctionUse != 2)

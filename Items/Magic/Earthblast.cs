@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace OldSchoolRuneScape.Items.Magic
 {
-    public class Earthblast : ModItem
+    /*public class Earthblast : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -40,5 +40,5 @@ namespace OldSchoolRuneScape.Items.Magic
             recipe.AddTile(TileID.MythrilAnvil);
             recipe.AddRecipe();
         }
-    }
+    }*/
 }

@@ -14,9 +14,9 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.value = Item.sellPrice(0, 20);
-            item.rare = 10;
+            Item.maxStack = 999;
+            Item.value = Item.sellPrice(0, 20);
+            Item.rare = ItemRarityID.Red;
         }
     }
 }

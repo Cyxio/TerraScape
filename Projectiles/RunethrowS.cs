@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using Terraria.ID;
 
@@ -13,21 +14,21 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = -1;
-            projectile.width = 26;
-            projectile.height = 30;
-            projectile.penetrate = 5;
-            projectile.timeLeft = 1200;
-            projectile.tileCollide = true;
-            projectile.thrown = true;
-            projectile.friendly = true;
-            projectile.localAI[0] = 0;
+            Projectile.aiStyle = -1;
+            Projectile.width = 26;
+            Projectile.height = 30;
+            Projectile.penetrate = 5;
+            Projectile.timeLeft = 1200;
+            Projectile.tileCollide = true;
+            Projectile.DamageType = DamageClass.Throwing;
+            Projectile.friendly = true;
+            Projectile.localAI[0] = 0;
         }
         public override void AI()
         {
-            projectile.damage = 40;
-            projectile.rotation += 0.35f * projectile.direction;
-            Lighting.AddLight(projectile.position, new Vector3(20 * 0.005f, 143 * 0.005f, 255 * 0.005f));
+            Projectile.damage = 40;
+            Projectile.rotation += 0.35f * Projectile.direction;
+            Lighting.AddLight(Projectile.position, new Vector3(20 * 0.005f, 143 * 0.005f, 255 * 0.005f));
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
@@ -37,13 +38,13 @@ namespace OldSchoolRuneScape.Projectiles
                 for (int i = 0; i < 200; i++)
                 {
                     NPC targ = Main.npc[i];
-                    if (!targ.friendly && targ.type != NPCID.TargetDummy && targ.Distance(projectile.Center) < 500f && targ != target)
+                    if (!targ.friendly && targ.type != NPCID.TargetDummy && targ.Distance(Projectile.Center) < 500f && targ != target)
                     {
-                        if (projectile.direction == 1 && targ.position.X > projectile.position.X + 20 || projectile.direction == -1 && targ.position.X < projectile.position.X - 20)
+                        if (Projectile.direction == 1 && targ.position.X > Projectile.position.X + 20 || Projectile.direction == -1 && targ.position.X < Projectile.position.X - 20)
                         {
-                            Vector2 spd = targ.Center - projectile.Center;
+                            Vector2 spd = targ.Center - Projectile.Center;
                             spd.Normalize();
-                            projectile.velocity = spd * projectile.velocity.Length();
+                            Projectile.velocity = spd * Projectile.velocity.Length();
                             break;
                         }
                     }
@@ -51,13 +52,13 @@ namespace OldSchoolRuneScape.Projectiles
             }
             for (int i = 0; i < 9; i++)
             {
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, mod.DustType("Runedust"), Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-1f, 1f), 150, new Color(20, 143, 255));
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, Mod.Find<ModDust>("Runedust").Type, Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-1f, 1f), 150, new Color(20, 143, 255));
             }
         }
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Dig, projectile.position);
+            SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
         }
     }
 }

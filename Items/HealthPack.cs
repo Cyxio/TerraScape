@@ -13,11 +13,11 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.width = 48;
-            item.height = 42;
-            item.maxStack = 999;
-            item.rare = 3;
-            item.value = Item.sellPrice(silver: 30);
+            Item.width = 48;
+            Item.height = 42;
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.Orange;
+            Item.value = Item.sellPrice(silver: 30);
         }
         public override bool CanRightClick()
         {
@@ -25,7 +25,7 @@ namespace OldSchoolRuneScape.Items
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(ItemID.HealingPotion, 15);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Type), ItemID.HealingPotion, 15);
         }
     }
 }

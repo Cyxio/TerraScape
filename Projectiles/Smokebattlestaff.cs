@@ -11,52 +11,52 @@ namespace OldSchoolRuneScape.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Smoke");
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
         public override void SetDefaults()
         {
-            projectile.width = 28;
-            projectile.height = 28;
-            projectile.timeLeft = 840;
-            projectile.friendly = true;
-            projectile.ignoreWater = true;
-            projectile.magic = true;
-            projectile.aiStyle = -1;
-            projectile.tileCollide = true;
-            projectile.penetrate = -1;
-            projectile.alpha = 80;
+            Projectile.width = 28;
+            Projectile.height = 28;
+            Projectile.timeLeft = 840;
+            Projectile.friendly = true;
+            Projectile.ignoreWater = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.aiStyle = -1;
+            Projectile.tileCollide = true;
+            Projectile.penetrate = -1;
+            Projectile.alpha = 80;
         }
         public override void AI()
         {
-            float distance = projectile.Distance(new Vector2(projectile.ai[0], projectile.ai[1]));
+            float distance = Projectile.Distance(new Vector2(Projectile.ai[0], Projectile.ai[1]));
             float slowDistance = 200f;
-            float shootSpeed = Main.player[projectile.owner].inventory[Main.player[projectile.owner].selectedItem].shootSpeed;
+            float shootSpeed = Main.player[Projectile.owner].inventory[Main.player[Projectile.owner].selectedItem].shootSpeed;
             if (distance < slowDistance)
             {
-                if (projectile.velocity.Length() > 0.01f)
+                if (Projectile.velocity.Length() > 0.01f)
                 {
-                    projectile.velocity.Normalize();
-                    projectile.velocity *= shootSpeed * (distance / slowDistance);
+                    Projectile.velocity.Normalize();
+                    Projectile.velocity *= shootSpeed * (distance / slowDistance);
                 }
                 else
                 {
-                    projectile.velocity *= 0;
+                    Projectile.velocity *= 0;
                 }
             }
-            projectile.rotation += MathHelper.ToRadians(2);
-            int dustIndex = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 31, 0f, -2f, 100, default(Color), 1f);
+            Projectile.rotation += MathHelper.ToRadians(2);
+            int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.Smoke, 0f, -2f, 100, default(Color), 1f);
             Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
             Main.dust[dustIndex].fadeIn = 1.5f + (float)Main.rand.Next(5) * 0.1f;
             Main.dust[dustIndex].noGravity = true;
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 5)
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 5)
             {
-                projectile.frame++;
-                if (projectile.frame >= Main.projFrames[projectile.type])
+                Projectile.frame++;
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
             }
         }
     }

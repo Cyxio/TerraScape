@@ -14,14 +14,14 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void SetDefaults()
         {
-            projectile.CloneDefaults(356);
-            aiType = 356;
+            Projectile.CloneDefaults(356);
+            AIType = 356;
         }
 
         public override void AI()
         {
             //projectile.tileCollide = false;
-            Dust dust = Dust.NewDustPerfect(projectile.position, 87);
+            Dust dust = Dust.NewDustPerfect(Projectile.position, 87);
             dust.scale = 1.5f;
             dust.velocity *= 0f;
             dust.noGravity = true;

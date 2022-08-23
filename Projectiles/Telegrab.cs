@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System;
@@ -12,19 +13,19 @@ namespace OldSchoolRuneScape.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Telegrab");
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
         public override void SetDefaults()
         {
-            projectile.width = 32;
-            projectile.height = 32;
-            projectile.timeLeft = 180;
-            projectile.penetrate = -1;
-            projectile.friendly = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.aiStyle = -1;
-            projectile.scale = 1f;
+            Projectile.width = 32;
+            Projectile.height = 32;
+            Projectile.timeLeft = 180;
+            Projectile.penetrate = -1;
+            Projectile.friendly = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.aiStyle = -1;
+            Projectile.scale = 1f;
         }
         public override Color? GetAlpha(Color lightColor)
         {
@@ -32,25 +33,25 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void AI()
         {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 4)
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 4)
             {
-                projectile.frame++;
-                if (projectile.frame >= Main.projFrames[projectile.type])
+                Projectile.frame++;
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
             }
-            projectile.rotation += MathHelper.ToRadians(8);
-            projectile.damage = 0;
+            Projectile.rotation += MathHelper.ToRadians(8);
+            Projectile.damage = 0;
             for (int i = 0; i < Main.maxItems; i++)
             {
                 Item target = Main.item[i];
-                if (projectile.Colliding(projectile.Hitbox, target.Hitbox))
+                if (Projectile.Colliding(Projectile.Hitbox, target.Hitbox))
                 {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Telegrab"), target.position);
-                    target.position = Main.player[projectile.owner].position;
+                    SoundEngine.PlaySound(new SoundStyle("OldSchoolRuneScape/Sounds/Item/Telegrab"), target.position);
+                    target.position = Main.player[Projectile.owner].position;
                 }
             }
         }

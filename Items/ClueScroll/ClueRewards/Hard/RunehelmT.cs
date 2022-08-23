@@ -14,22 +14,22 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Hard
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == mod.ItemType("RunebodyT") && legs.type == mod.ItemType("RunelegsT");
+            return body.type == Mod.Find<ModItem>("RunebodyT").Type && legs.type == Mod.Find<ModItem>("RunelegsT").Type;
         }
 
         public override void UpdateArmorSet(Player player)
         {
             player.setBonus = "20% increased melee damage";
-            player.meleeDamage += 0.2f;
+            player.GetDamage(DamageClass.Melee) += 0.2f;
         }
 
         public override void SetDefaults()
         {
-            item.width = 22;
-            item.height = 28;
-            item.value = Item.sellPrice(0, 3, 0, 0);
-            item.rare = 3;
-            item.defense = 7;
+            Item.width = 22;
+            Item.height = 28;
+            Item.value = Item.sellPrice(0, 3, 0, 0);
+            Item.rare = ItemRarityID.Orange;
+            Item.defense = 7;
         }
     }
 }

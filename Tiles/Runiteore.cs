@@ -7,7 +7,7 @@ namespace OldSchoolRuneScape.Tiles
 {
     public class Runiteore : ModTile
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.tileSolid[Type] = true;
             Main.tileMergeDirt[Type] = true;
@@ -15,11 +15,11 @@ namespace OldSchoolRuneScape.Tiles
             Main.tileLighted[Type] = false;
             TileID.Sets.Ore[Type] = true;
             Main.tileSpelunker[Type] = true; // The tile will be affected by spelunker highlighting
-            Main.tileValue[Type] = 410; // Metal Detector value, see https://terraria.gamepedia.com/Metal_Detector
-            this.minPick = 100;
-            this.soundType = 21;
-            dustType = mod.DustType("Runedust");
-            drop = mod.ItemType("Runiteore");
+            Main.tileOreFinderPriority[Type] = 410; // Metal Detector value, see https://terraria.gamepedia.com/Metal_Detector
+            this.MinPick = 100;
+            this.HitSound = SoundID.Tink;
+            DustType = Mod.Find<ModDust>("Runedust").Type;
+            ItemDrop = Mod.Find<ModItem>("Runiteore").Type;
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Runite ore");
             AddMapEntry(new Color(81, 108, 119), name);

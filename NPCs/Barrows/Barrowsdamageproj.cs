@@ -14,18 +14,18 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = -1;
-            projectile.extraUpdates = 1;
-            projectile.penetrate = 1;
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.friendly = true;
-            projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 1;
+            Projectile.aiStyle = -1;
+            Projectile.extraUpdates = 1;
+            Projectile.penetrate = 1;
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.friendly = true;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 1;
         }
         public override void AI()
         {
-            Dust dust = Dust.NewDustPerfect(projectile.Center, 58);
+            Dust dust = Dust.NewDustPerfect(Projectile.Center, 58);
             dust.noGravity = true;
             dust.velocity *= 0f;
             dust.scale = 1f;

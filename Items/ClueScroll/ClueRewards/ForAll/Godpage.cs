@@ -16,10 +16,10 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.ForAll
         }
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 32;
-            item.rare = 2;
-            item.value = Item.sellPrice(0, 1);
+            Item.width = 28;
+            Item.height = 32;
+            Item.rare = ItemRarityID.Green;
+            Item.value = Item.sellPrice(0, 1);
         }
     }
     public class Saradominpage1 : Godpage

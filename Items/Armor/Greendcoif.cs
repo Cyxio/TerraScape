@@ -10,13 +10,13 @@ namespace OldSchoolRuneScape.Items.Armor
     {
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == mod.ItemType("Greendbody") && legs.type == mod.ItemType("Greendchaps");
+            return body.type == Mod.Find<ModItem>("Greendbody").Type && legs.type == Mod.Find<ModItem>("Greendchaps").Type;
         }
 
         public override void UpdateArmorSet(Player player)
         {
             player.setBonus = "15% increased ranged damage\n20% chance not to consume ammo";
-            player.rangedDamage += 0.15f;
+            player.GetDamage(DamageClass.Ranged) += 0.15f;
             player.ammoCost80 = true;
         }
 
@@ -27,25 +27,24 @@ namespace OldSchoolRuneScape.Items.Armor
         }
         public override void SetDefaults()
         {
-            item.width = 26;
-            item.height = 20;
-            item.value = Item.sellPrice(0, 1, 0, 0);
-            item.rare = 3;
-            item.defense = 5;
+            Item.width = 26;
+            Item.height = 20;
+            Item.value = Item.sellPrice(0, 1, 0, 0);
+            Item.rare = ItemRarityID.Orange;
+            Item.defense = 5;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.rangedCrit += 4;
+            player.GetCritChance(DamageClass.Ranged) += 4;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Greendhide", 10);
             recipe.AddTile(TileID.Anvils);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

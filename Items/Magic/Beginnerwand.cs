@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,61 +11,60 @@ namespace OldSchoolRuneScape.Items.Magic
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Beginner Wand");
-            Item.staff[item.type] = true;
+            Item.staff[Item.type] = true;
         }
         public override void SetDefaults()
         {
-            item.damage = 14;
-            item.magic = true;
-            item.mana = 5;
-            item.width = 50;
-            item.height = 58;
-            item.useTime = 28;
-            item.useAnimation = 28;
-            item.useStyle = 5;
-            item.noUseGraphic = false;
-            item.noMelee = true;
-            item.knockBack = 2;
-            item.value = Item.sellPrice(0, 2, 50, 0);
-            item.rare = 2;
-            item.UseSound = SoundID.Item20;
-            item.autoReuse = true;
-            item.shoot = mod.ProjectileType("FirestrikeP");
-            item.shootSpeed = 12;
-            item.scale = 0.8f;
+            Item.damage = 14;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 5;
+            Item.width = 50;
+            Item.height = 58;
+            Item.useTime = 28;
+            Item.useAnimation = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noUseGraphic = false;
+            Item.noMelee = true;
+            Item.knockBack = 2;
+            Item.value = Item.sellPrice(0, 2, 50, 0);
+            Item.rare = ItemRarityID.Green;
+            Item.UseSound = SoundID.Item20;
+            Item.autoReuse = true;
+            Item.shoot = Mod.Find<ModProjectile>("FirestrikeP").Type;
+            Item.shootSpeed = 12;
+            Item.scale = 0.8f;
         }
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             int s = Main.rand.Next(4);
             if (s == 0)
             {
-                item.shoot = mod.ProjectileType("WaterstrikeP");
+                Item.shoot = Mod.Find<ModProjectile>("WaterstrikeP").Type;
             }
             else if (s == 1)
             {
-                item.shoot = mod.ProjectileType("WindstrikeP");
+                Item.shoot = Mod.Find<ModProjectile>("WindstrikeP").Type;
             }
             else if (s == 2)
             {
-                item.shoot = mod.ProjectileType("EarthstrikeP");
+                Item.shoot = Mod.Find<ModProjectile>("EarthstrikeP").Type;
             }
             else
             {
-                item.shoot = mod.ProjectileType("FirestrikeP");
+                Item.shoot = Mod.Find<ModProjectile>("FirestrikeP").Type;
             }
             return true;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Windstrike");
             recipe.AddIngredient(null, "Waterstrike");
             recipe.AddIngredient(null, "Earthstrike");
             recipe.AddIngredient(null, "Firestrike");
             recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

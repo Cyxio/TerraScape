@@ -15,30 +15,28 @@ namespace OldSchoolRuneScape.Items.Accessories
         }
         public override void SetDefaults()
         {
-            item.accessory = true;
-            item.width = 18;
-            item.height = 29;
-            item.value = Item.buyPrice(0, 1, 0, 0);
-            item.rare = 1;
-            item.defense = 3;
+            Item.accessory = true;
+            Item.width = 18;
+            Item.height = 29;
+            Item.value = Item.buyPrice(0, 1, 0, 0);
+            Item.rare = ItemRarityID.Blue;
+            Item.defense = 3;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Enchantemerald");
             recipe.AddIngredient(ItemID.Emerald);
             recipe.AddIngredient(ItemID.GoldBar, 2);
             recipe.AddTile(TileID.Furnaces);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-            recipe = new ModRecipe(mod);
+            recipe.Register();
+            recipe = CreateRecipe();
             recipe.AddIngredient(null, "Enchantemerald");
             recipe.AddIngredient(ItemID.Emerald);
             recipe.AddIngredient(ItemID.PlatinumBar, 2);
             recipe.AddTile(TileID.Furnaces);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

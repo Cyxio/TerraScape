@@ -29,10 +29,10 @@ namespace OldSchoolRuneScape.Items.ClueScroll
         }
         public override void SetDefaults()
         {
-            item.width = 30;
-            item.height = 26;
-            item.rare = 3;
-            item.maxStack = 999;
+            Item.width = 30;
+            Item.height = 26;
+            Item.rare = ItemRarityID.Orange;
+            Item.maxStack = 999;
         }
         public override bool CanRightClick()
         {

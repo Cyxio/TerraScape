@@ -14,10 +14,10 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Master
         }
         public override void SetDefaults()
         {
-            item.vanity = true;
-            item.rare = 2;
-            item.width = 28;
-            item.height = 24;
+            Item.vanity = true;
+            Item.rare = ItemRarityID.Green;
+            Item.width = 28;
+            Item.height = 24;
         }
     }
 }

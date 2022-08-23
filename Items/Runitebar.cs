@@ -12,25 +12,24 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.width = 16;
-            item.height = 16;
-            item.maxStack = 99;
-            item.useTurn = true;
-            item.rare = 3;
-            item.autoReuse = true;
-            item.useAnimation = 15;
-            item.useTime = 10;
-            item.value = 20000;
-            item.useStyle = 1;
-            item.consumable = false;
+            Item.width = 16;
+            Item.height = 16;
+            Item.maxStack = 99;
+            Item.useTurn = true;
+            Item.rare = ItemRarityID.Orange;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.value = 20000;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.consumable = false;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Runiteore", 4);
             recipe.AddTile(TileID.Hellforge);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

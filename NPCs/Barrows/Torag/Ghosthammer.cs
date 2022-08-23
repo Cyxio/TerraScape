@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,67 +15,67 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
         }
         public override void SetDefaults()
         {
-            projectile.hostile = true;
-            projectile.width = 64;
-            projectile.height = 64;
-            projectile.penetrate = -1;
-            projectile.aiStyle = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 480;
-            projectile.alpha = 0;
-            projectile.ai[0] = 0;
-            projectile.ai[1] = 0;
+            Projectile.hostile = true;
+            Projectile.width = 64;
+            Projectile.height = 64;
+            Projectile.penetrate = -1;
+            Projectile.aiStyle = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 480;
+            Projectile.alpha = 0;
+            Projectile.ai[0] = 0;
+            Projectile.ai[1] = 0;
         }
 
         public override void AI()
         {
-            if (projectile.alpha == 0)
+            if (Projectile.alpha == 0)
             {
-                Main.PlaySound(SoundID.Item1.WithPitchVariance(0.5f), projectile.position);
+                SoundEngine.PlaySound(SoundID.Item1, Projectile.position);
             }
-            Lighting.AddLight(projectile.Center + projectile.velocity, new Vector3(116 * 0.01f, 35 * 0.01f, 78 * 0.01f));
-            if (projectile.alpha < 10)
+            Lighting.AddLight(Projectile.Center + Projectile.velocity, new Vector3(116 * 0.01f, 35 * 0.01f, 78 * 0.01f));
+            if (Projectile.alpha < 10)
             {
-                projectile.ai[1] = 9;
+                Projectile.ai[1] = 9;
             }
-            if (projectile.alpha > 200)
+            if (Projectile.alpha > 200)
             {
-                projectile.ai[1] = -9;
+                Projectile.ai[1] = -9;
             }
-            projectile.alpha += (int)projectile.ai[1];
-            if(projectile.ai[0] == 0)
+            Projectile.alpha += (int)Projectile.ai[1];
+            if(Projectile.ai[0] == 0)
             {
-                projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(45);
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, 58);
-                projectile.velocity.Y += 0.2f;
+                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(45);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Enchanted_Pink);
+                Projectile.velocity.Y += 0.2f;
             }
-            if (projectile.ai[0] == 1)
+            if (Projectile.ai[0] == 1)
             {
-                projectile.rotation += MathHelper.ToRadians(12 * projectile.direction);
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, 58);
-                projectile.velocity.Y += 0.3f;
+                Projectile.rotation += MathHelper.ToRadians(12 * Projectile.direction);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Enchanted_Pink);
+                Projectile.velocity.Y += 0.3f;
             }
-            if (projectile.ai[0] == 2)
+            if (Projectile.ai[0] == 2)
             {
-                projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(45);
-                if (projectile.timeLeft > 390)
+                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(45);
+                if (Projectile.timeLeft > 390)
                 {
-                    projectile.velocity *= 0.97f;
+                    Projectile.velocity *= 0.97f;
                 }
-                else if (projectile.timeLeft > 372)
+                else if (Projectile.timeLeft > 372)
                 {
-                    Dust.NewDust(projectile.Center, 0, 0, 58, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2));
-                    projectile.velocity = projectile.velocity.RotatedBy(MathHelper.ToRadians(10));
+                    Dust.NewDust(Projectile.Center, 0, 0, DustID.Enchanted_Pink, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2));
+                    Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.ToRadians(10));
                 }
                 else
                 {
-                    projectile.velocity *= 1.03f;
+                    Projectile.velocity *= 1.03f;
                 }
             }
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(5) == 0)
+            if (Main.rand.NextBool(5))
             {
                 target.AddBuff(BuffID.Slow, 900);
             }
@@ -88,7 +89,7 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Torag
         {
             for (int i = 0; i < 20; i++)
             {
-                Dust.NewDust(projectile.Center, 0, 0, 58, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2));
+                Dust.NewDust(Projectile.Center, 0, 0, DustID.Enchanted_Pink, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2));
             }
         }
     }

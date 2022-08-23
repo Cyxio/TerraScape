@@ -11,63 +11,63 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Chaotic teleport");
-            Main.projFrames[projectile.type] = 8;
+            Main.projFrames[Projectile.type] = 8;
         }
         public override void SetDefaults()
         {
-            projectile.hostile = true;
-            projectile.width = 50;
-            projectile.height = 50;
-            projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 1;
-            projectile.penetrate = 1;
-            projectile.aiStyle = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 200;
+            Projectile.hostile = true;
+            Projectile.width = 50;
+            Projectile.height = 50;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 1;
+            Projectile.penetrate = 1;
+            Projectile.aiStyle = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 200;
         }
         public override void AI()
         {
-            projectile.damage = 0;
-            projectile.rotation = projectile.velocity.ToRotation();
-            Lighting.AddLight(projectile.Center + projectile.velocity, new Vector3(255 * 0.005f, 0, 0));
-            if (Main.rand.Next(2) == 0)
+            Projectile.damage = 0;
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            Lighting.AddLight(Projectile.Center + Projectile.velocity, new Vector3(255 * 0.005f, 0, 0));
+            if (Main.rand.NextBool(2))
             {
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, 164);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.TeleportationPotion);
             }
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 4)
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 4)
             {
-                projectile.frame++;
-                if (projectile.frame >= Main.projFrames[projectile.type])
+                Projectile.frame++;
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
             }
             Player target = Main.player[0];
-            for (int k = 0; k < Main.ActivePlayersCount; k++)
+            for (int k = 0; k < Main.CurrentFrameFlags.ActivePlayersCount; k++)
             {
-                if (projectile.Distance(Main.player[k].position) < projectile.Distance(target.position))
+                if (Projectile.Distance(Main.player[k].position) < Projectile.Distance(target.position))
                 {
                     target = Main.player[k];
                 }
             }
-            if (projectile.ai[0] == 0)
+            if (Projectile.ai[0] == 0)
             {
-                float speedX = target.MountedCenter.X - projectile.Center.X;
-                float speedY = target.MountedCenter.Y - projectile.Center.Y;
+                float speedX = target.MountedCenter.X - Projectile.Center.X;
+                float speedY = target.MountedCenter.Y - Projectile.Center.Y;
                 Vector2 spd = new Vector2(speedX, speedY);
                 spd.Normalize();
-                projectile.velocity = spd * 15f;
-                if (projectile.Distance(target.MountedCenter) < 100)
+                Projectile.velocity = spd * 15f;
+                if (Projectile.Distance(target.MountedCenter) < 100)
                 {
-                    projectile.ai[0] = 1;
+                    Projectile.ai[0] = 1;
                 }
             }
-            if (projectile.Colliding(projectile.Hitbox, target.Hitbox))
+            if (Projectile.Colliding(Projectile.Hitbox, target.Hitbox))
             {
                 target.Teleport(new Vector2(target.position.X + Main.rand.Next(-700, 700), target.position.Y + Main.rand.Next(-500, 100)), 1, 0);
-                projectile.active = false;
+                Projectile.active = false;
             }
         }
     }

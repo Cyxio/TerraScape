@@ -7,9 +7,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using System.Collections.Generic;
-using Terraria.World.Generation;
 using Terraria.GameContent.Generation;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria.WorldBuilding;
 
 namespace OldSchoolRuneScape.Tiles
 {
@@ -21,12 +21,8 @@ namespace OldSchoolRuneScape.Tiles
         protected abstract string getAltarName();
         protected abstract int getAltarItem();
         protected abstract int getRune();
-        public override bool Autoload(ref string name, ref string texture)
-        {
-            texture = "OldSchoolRuneScape/Tiles/Runealtar";
-            return base.Autoload(ref name, ref texture);
-        }
-        public override void SetDefaults()
+        public override string Texture => "OldSchoolRuneScape/Tiles/Runealtar";
+        public override void SetStaticDefaults()
         {
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
@@ -37,16 +33,18 @@ namespace OldSchoolRuneScape.Tiles
             ModTranslation name = CreateMapEntryName();
             name.SetDefault(getAltarName());
             AddMapEntry(getLightColor(), name);
-            dustType = 30;
+            DustType = 30;
         }
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            Item.NewItem(i * 16, j * 16, 48, 32, getAltarItem());
+            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 48, 32, getAltarItem());
         }
+        private int AnimationTime = 0;
         public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
         {
+            AnimationTime = (AnimationTime + 1) % 300;
             Color lightColor = getLightColor();
-            float Sin = (float)(Math.Sin(Math.PI * 2 * ((float)Main.time % 300f) / 299f));
+            float Sin = (float)(Math.Sin(Math.PI * 2 * AnimationTime / 299f));
             Lighting.AddLight(new Vector2(i * 16, j * 16), 0.5f * new Vector3(lightColor.R * Sin, lightColor.G * Sin, lightColor.B * Sin)
                 / Math.Max(lightColor.R, Math.Max(lightColor.G, lightColor.B)));
             Tile tile = Main.tile[i, j];
@@ -61,20 +59,20 @@ namespace OldSchoolRuneScape.Tiles
                 int Column = getColumn();
                 int Row = getRow();
                 int c = (int)((255 - 70 * h) * Sin);
-                spriteBatch.Draw(mod.GetTexture("Tiles/AltarEffect"), new Vector2(i * 16, j * 16 - (2 * h) + 2) - Main.screenPosition + zero,
-                new Rectangle(tile.frameX + (54 * Column), tile.frameY + (34 * Row), 16, 16), new Color(c, c, c, c), 0f, default, 1f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(ModContent.Request<Texture2D>("OldSchoolRuneScape/Tiles/AltarEffect").Value, new Vector2(i * 16, j * 16 - (2 * h) + 2) - Main.screenPosition + zero,
+                new Rectangle(tile.TileFrameX + (54 * Column), tile.TileFrameY + (34 * Row), 16, 16), new Color(c, c, c, c), 0f, default, 1f, SpriteEffects.None, 0f);
             }
         }
         public override void MouseOver(int i, int j)
         {
             Player player = Main.LocalPlayer;
-            if (player.inventory[player.selectedItem].type == ModContent.ItemType<Items.Magic.aaRuneessence>()
+            if (player.inventory[player.selectedItem].type == ModContent.ItemType<Items.Magic.RuneEssence>()
                 && player.inventory[player.selectedItem].stack > 0)
             {
                 player.noThrow = 2;
-                player.showItemIcon = true;
-                player.showItemIcon2 = getRune();
-                player.showItemIconText = "\n" + player.inventory[player.selectedItem].stack;
+                player.cursorItemIconEnabled = true;
+                player.cursorItemIconID = getRune();
+                player.cursorItemIconText = "\n" + player.inventory[player.selectedItem].stack;
             }   
         }
     }
@@ -87,35 +85,38 @@ namespace OldSchoolRuneScape.Tiles
         public override string Texture => "OldSchoolRuneScape/Tiles/RunealtarItem";
         public override void SetDefaults()
         {
-            item.width = 48;
-            item.height = 28;
-            item.useStyle = 1;
-            item.useTime = 10;
-            item.useAnimation = 15;
-            item.consumable = true;
-            item.autoReuse = true;
-            item.placeStyle = 0;
-            item.maxStack = 1;
-            item.value = Item.sellPrice(gold: 1);
-            item.createTile = getTile();
-            item.rare = getRarity();
+            Item.width = 48;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 10;
+            Item.useAnimation = 15;
+            Item.consumable = true;
+            Item.autoReuse = true;
+            Item.placeStyle = 0;
+            Item.maxStack = 1;
+            Item.value = Item.sellPrice(gold: 1);
+            Item.createTile = getTile();
+            Item.rare = getRarity();
         }
+        private int AnimationTime = 0;
         public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
         {
+            AnimationTime = (AnimationTime + 1) % 300;
             int Column = getColumn();
             int Row = getRow();
-            float Sin = (float)(Math.Sin(Math.PI * 2 * ((float)Main.time % 300f) / 299f));
+            float Sin = (float)(Math.Sin(Math.PI * 2 * AnimationTime / 299f));
             int c = (int)(255 * Sin);
-            spriteBatch.Draw(mod.GetTexture("Tiles/AltarItemEffect"), item.position - Main.screenPosition + new Vector2(24, 16),
+            spriteBatch.Draw(ModContent.Request<Texture2D>("OldSchoolRuneScape/Tiles/AltarItemEffect").Value, Item.position - Main.screenPosition + new Vector2(24, 14),
                 new Rectangle(48 * Column, 28 * Row, 48, 28), new Color(c, c, c, c), rotation, new Vector2(24, 14), scale, SpriteEffects.None, 0f);
         }
         public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
+            AnimationTime = (AnimationTime + 1) % 300;
             int Column = getColumn();
             int Row = getRow();
-            float Sin = (float)(Math.Sin(Math.PI * 2 * ((float)Main.time % 300f) / 299f));
+            float Sin = (float)(Math.Sin(Math.PI * 2 * AnimationTime / 299f));
             int c = (int)(255 * Sin);
-            spriteBatch.Draw(mod.GetTexture("Tiles/AltarItemEffect"), position,
+            spriteBatch.Draw(ModContent.Request<Texture2D>("OldSchoolRuneScape/Tiles/AltarItemEffect").Value, position,
                 new Rectangle(48 * Column, 28 * Row, 48, 28), new Color(c, c, c, c), 0f, origin, scale, SpriteEffects.None, 0f);
         }
     }

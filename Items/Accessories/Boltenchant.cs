@@ -15,11 +15,11 @@ namespace OldSchoolRuneScape.Items.Accessories
         }
         public override void SetDefaults()
         {
-            item.accessory = true;
-            item.width = 18;
-            item.height = 29;
-            item.value = Item.sellPrice(0, 1, 0, 0);
-            item.rare = 3;
+            Item.accessory = true;
+            Item.width = 18;
+            Item.height = 29;
+            Item.value = Item.sellPrice(0, 1, 0, 0);
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void UpdateEquip(Player player)

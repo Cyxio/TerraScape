@@ -14,7 +14,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Easy
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == mod.ItemType("IronbodyT") && legs.type == mod.ItemType("IronlegsT");
+            return body.type == Mod.Find<ModItem>("IronbodyT").Type && legs.type == Mod.Find<ModItem>("IronlegsT").Type;
         }
 
         public override void UpdateArmorSet(Player player)
@@ -25,10 +25,10 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Easy
 
         public override void SetDefaults()
         {
-            item.width = 22;
-            item.height = 28;
-            item.value = Item.sellPrice(0, 0, 2, 0);
-            item.defense = 2;
+            Item.width = 22;
+            Item.height = 28;
+            Item.value = Item.sellPrice(0, 0, 2, 0);
+            Item.defense = 2;
         }
     }
 }

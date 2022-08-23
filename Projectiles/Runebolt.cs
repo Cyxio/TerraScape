@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using Terraria.ID;
 
@@ -14,21 +15,21 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = 1;
-            projectile.width = 7;
-            projectile.height = 7;
-            projectile.friendly = true;
-            projectile.ranged = true;
+            Projectile.aiStyle = 1;
+            Projectile.width = 7;
+            Projectile.height = 7;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Ranged;
         }
 
         public override void AI()
         {
-            projectile.velocity.Y = projectile.velocity.Y - 0.025f;
+            Projectile.velocity.Y = Projectile.velocity.Y - 0.025f;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Main.PlaySound(SoundID.Dig, projectile.position);
+            SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
             return true;
         }
     }

@@ -1,8 +1,11 @@
 ﻿using System;
+using Terraria.GameContent.ItemDropRules;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
+using Terraria.Audio;
 
 namespace OldSchoolRuneScape.NPCs
 {
@@ -11,23 +14,23 @@ namespace OldSchoolRuneScape.NPCs
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Black demon");
-            Main.npcFrameCount[npc.type] = 3;
+            Main.npcFrameCount[NPC.type] = 3;
         }
         public override void SetDefaults()
         {
-            npc.scale = 1.2f;
-            npc.friendly = false;
-            npc.lifeMax = 300;
-            npc.defense = 20;
-            npc.damage = 60;
-            npc.knockBackResist = 0.2f;
-            npc.noGravity = true;
-            npc.width = 44;
-            npc.height = 64;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Demon");
-            npc.value = 1000f;
-            npc.aiStyle = 14;
+            NPC.scale = 1.2f;
+            NPC.friendly = false;
+            NPC.lifeMax = 300;
+            NPC.defense = 20;
+            NPC.damage = 60;
+            NPC.knockBackResist = 0.2f;
+            NPC.noGravity = true;
+            NPC.width = 44;
+            NPC.height = 64;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = new SoundStyle("OldSchoolRuneScape/Sounds/Item/Demon");
+            NPC.value = 1000f;
+            NPC.aiStyle = 14;
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -40,71 +43,59 @@ namespace OldSchoolRuneScape.NPCs
                 return 0;
             }
         }
-        public override void NPCLoot()
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            int ch = Main.rand.Next(100);
-            if (ch < 20)
-            {
-                Item.NewItem(npc.position, new Vector2(44, 58), mod.ItemType("Firerune"), Main.rand.Next(30, 120));
-            }
-            else if (ch < 25)
-            {
-                Item.NewItem(npc.position, new Vector2(44, 58), mod.ItemType("Lawrune"), 12);
-            }
-            else if (ch < 30)
-            {
-                Item.NewItem(npc.position, new Vector2(44, 58), mod.ItemType("Chaosrune"), 12);
-            }
-            else if (ch < 35)
-            {
-                Item.NewItem(npc.position, new Vector2(44, 58), mod.ItemType("Deathrune"), 3);
-            }
-            else if (ch < 36)
-            {
-                Item.NewItem(npc.position, new Vector2(44, 58), mod.ItemType("Runeplate"));
-            }
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Magic.Firerune>(), 5, 30, 120));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Magic.Lawrune>(), 20, 8, 12));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Magic.Chaosrune>(), 20, 8, 12));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Magic.Deathrune>(), 20, 3, 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Armor.Runeplate>(), 100));
         }
         public override void HitEffect(int hitDirection, double damage)
         {
-            if (npc.life > 0)
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
+            if (NPC.life > 0)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 7, 1f, 1f, 0, Color.Black);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.WoodFurniture, 1f, 1f, 0, Color.Black);
                 }
             }
             else
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 7, 1f, 1f, 0, Color.Black);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.WoodFurniture, 1f, 1f, 0, Color.Black);
                 }
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Blackdemon"), npc.scale);
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Blackdemon1"), npc.scale);
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Blackdemon1"), npc.scale);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Blackdemon").Type, NPC.scale);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Blackdemon1").Type, NPC.scale);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Blackdemon1").Type, NPC.scale);
             }
         }
         public override void FindFrame(int frameHeight)
         {
-            npc.spriteDirection = -npc.direction;
-            npc.rotation = npc.velocity.X * 0.08f;
+            NPC.spriteDirection = -NPC.direction;
+            NPC.rotation = NPC.velocity.X * 0.08f;
             int frameSpeed = 7;
-            npc.frameCounter++;
-            if (npc.frameCounter < frameSpeed)
+            NPC.frameCounter++;
+            if (NPC.frameCounter < frameSpeed)
             {
-                npc.frame.Y = 0;
+                NPC.frame.Y = 0;
             }
-            else if (npc.frameCounter < frameSpeed * 2)
+            else if (NPC.frameCounter < frameSpeed * 2)
             {
-                npc.frame.Y = frameHeight;
+                NPC.frame.Y = frameHeight;
             }
-            else if (npc.frameCounter < frameSpeed * 3)
+            else if (NPC.frameCounter < frameSpeed * 3)
             {
-                npc.frame.Y = frameHeight * 2;
+                NPC.frame.Y = frameHeight * 2;
             }
             else
             {
-                npc.frameCounter = 0;
+                NPC.frameCounter = 0;
             }
         }
     }

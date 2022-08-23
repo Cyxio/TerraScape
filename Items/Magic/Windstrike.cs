@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace OldSchoolRuneScape.Items.Magic
 {
-    public class Windstrike : ModItem
+    /*public class Windstrike : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -41,5 +41,5 @@ namespace OldSchoolRuneScape.Items.Magic
             recipe.AddTile(TileID.WorkBenches);
             recipe.AddRecipe();
         }
-    }
+    }*/
 }

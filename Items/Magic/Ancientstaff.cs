@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System;
@@ -15,22 +17,22 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void SetDefaults()
         {
-            item.damage = 34;
-            item.magic = true;
-            item.mana = 12;
-            item.width = 52;
-            item.height = 50;
-            item.useTime = 12;
-            item.useAnimation = 12;
-            item.useStyle = 5;
-            item.noMelee = true;
-            item.knockBack = 2;
-            item.value = Item.sellPrice(0, 30, 0, 0);
-            item.rare = 5;
-            item.UseSound = SoundID.Item20;
-            item.autoReuse = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.Shadowburst>();
-            item.shootSpeed = 8;
+            Item.damage = 34;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 12;
+            Item.width = 52;
+            Item.height = 50;
+            Item.useTime = 12;
+            Item.useAnimation = 12;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true;
+            Item.knockBack = 2;
+            Item.value = Item.sellPrice(0, 30, 0, 0);
+            Item.rare = ItemRarityID.Pink;
+            Item.UseSound = SoundID.Item20;
+            Item.autoReuse = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Shadowburst>();
+            Item.shootSpeed = 8;
         }
 
         public override Vector2? HoldoutOffset()
@@ -52,11 +54,11 @@ namespace OldSchoolRuneScape.Items.Magic
             return base.CanUseItem(player);
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse == 2 && !player.GetModPlayer<OSRSplayer>().SpecCD)
             {
-                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Ancientmagick"), position);
+                SoundEngine.PlaySound(new SoundStyle("OldSchoolRuneScape/Sounds/Item/Ancientmagick"), position);
                 for (int i = 0; i < 100; i++)
                 {
                     int meme = Main.rand.Next(4);
@@ -79,13 +81,13 @@ namespace OldSchoolRuneScape.Items.Magic
                     Vector2 spede = posi;
                     spede.Normalize();
                     spede *= -8;
-                    Projectile.NewProjectile(Main.MouseWorld + posi, spede, meme, damage, knockBack, player.whoAmI, 1, 0);
+                    Projectile.NewProjectile(source, Main.MouseWorld + posi, spede, meme, damage, knockback, player.whoAmI, 1, 0);
                 }
                 player.AddBuff(ModContent.BuffType<Buffs.SpecCD>(), 1800);
                 return false;
             }
             Vector2 pos = new Vector2(Main.MouseWorld.X, Main.screenPosition.Y);
-            Vector2 velocity = new Vector2(0, 14);
+            Vector2 vel = new Vector2(0, 14);
             for (int i = 0; i < 5; i++)
             {
                 int meme = Main.rand.Next(4);
@@ -106,15 +108,15 @@ namespace OldSchoolRuneScape.Items.Magic
                 }
                 Vector2 spawn = pos + new Vector2(Main.rand.Next(-50, 50), Main.rand.Next(-100, 0));
                 Vector2 distance = Main.MouseWorld - spawn;
-                Vector2 spawnspeed = velocity * Main.rand.NextFloat(0.8f, 1.2f);
+                Vector2 spawnspeed = vel * Main.rand.NextFloat(0.8f, 1.2f);
                 float timeto = distance.Length() / spawnspeed.Y;
-                Projectile.NewProjectile(spawn, spawnspeed, meme, damage, knockBack, player.whoAmI, 1, timeto);
+                Projectile.NewProjectile(source, spawn, spawnspeed, meme, damage, knockback, player.whoAmI, 1, timeto);
             }
             return false;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Bloodbarrage");
             recipe.AddIngredient(null, "Bloodburst");
             recipe.AddIngredient(null, "Icebarrage");
@@ -124,9 +126,8 @@ namespace OldSchoolRuneScape.Items.Magic
             recipe.AddIngredient(null, "Smokebarrage");
             recipe.AddIngredient(null, "Smokeburst");
             recipe.AddIngredient(ItemID.Ectoplasm, 15);
-            recipe.SetResult(this);
             recipe.AddTile(TileID.MythrilAnvil);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

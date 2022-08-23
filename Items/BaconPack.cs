@@ -13,11 +13,11 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.width = 48;
-            item.height = 42;
-            item.maxStack = 999;
-            item.rare = 4;
-            item.value = Item.sellPrice(silver: 60);
+            Item.width = 48;
+            Item.height = 42;
+            Item.maxStack = 999;
+            Item.rare = ItemRarityID.LightRed;
+            Item.value = Item.sellPrice(silver: 60);
         }
         public override bool CanRightClick()
         {
@@ -25,7 +25,7 @@ namespace OldSchoolRuneScape.Items
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(ItemID.Bacon, 30);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), ItemID.Bacon, 30);
         }
     }
 }

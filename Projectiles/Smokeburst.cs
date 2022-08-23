@@ -14,40 +14,40 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = -1;
-            projectile.width = 14;
-            projectile.height = 14;
-            projectile.friendly = true;
-            projectile.magic = true;
-            projectile.tileCollide = true;
-            projectile.penetrate = 1;
-            projectile.ai[0] = 0;
-            projectile.extraUpdates = 1;
-            projectile.scale = 0.75f;
-            projectile.timeLeft = 180;
+            Projectile.aiStyle = -1;
+            Projectile.width = 14;
+            Projectile.height = 14;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = true;
+            Projectile.penetrate = 1;
+            Projectile.ai[0] = 0;
+            Projectile.extraUpdates = 1;
+            Projectile.scale = 0.75f;
+            Projectile.timeLeft = 180;
         }
         public override void AI()
         {
-            if (projectile.ai[1] > 0)
+            if (Projectile.ai[1] > 0)
             {
-                projectile.tileCollide = false;
-                projectile.ai[1]--;
+                Projectile.tileCollide = false;
+                Projectile.ai[1]--;
             }
             else
             {
-                projectile.tileCollide = true;
+                Projectile.tileCollide = true;
             }
-            Lighting.AddLight(projectile.position + projectile.velocity, new Vector3(128, 128, 128) * 0.005f);
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
-            Dust.NewDustPerfect(projectile.Center, 31, -projectile.velocity * 0, 130, Color.LightGray, 0.7f);
+            Lighting.AddLight(Projectile.position + Projectile.velocity, new Vector3(128, 128, 128) * 0.005f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+            Dust.NewDustPerfect(Projectile.Center, 31, -Projectile.velocity * 0, 130, Color.LightGray, 0.7f);
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.NextBool(3))
             {
                 target.AddBuff(BuffID.Poisoned, 120);
             }
-            if (projectile.ai[0] == 1 && Main.rand.Next(5) == 0)
+            if (Projectile.ai[0] == 1 && Main.rand.NextBool(5))
             {
                 target.AddBuff(BuffID.Venom, 180);
             }
@@ -56,7 +56,7 @@ namespace OldSchoolRuneScape.Projectiles
         {
             for(int i = 0; i < 10; i++)
             {
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, 31);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke);
             }
         }
     }

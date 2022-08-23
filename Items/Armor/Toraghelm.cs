@@ -8,22 +8,19 @@ namespace OldSchoolRuneScape.Items.Armor //whole set 66def 15damage 8crit
     [AutoloadEquip(EquipType.Head)]
     public class Toraghelm : ModItem
     {
-        public override bool DrawHead()
-        {
-            return false;
-        }
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Torag's Helm");
             Tooltip.SetDefault("8% increased melee critical strike chance");
+            ArmorIDs.Head.Sets.DrawHead[Item.headSlot] = false;
         }
         public override void UpdateEquip(Player player)
         {
-            player.meleeCrit += 8;
+            player.GetCritChance(DamageClass.Generic) += 8;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == mod.ItemType("Toragbody") && legs.type == mod.ItemType("Toraglegs");
+            return body.type == Mod.Find<ModItem>("Toragbody").Type && legs.type == Mod.Find<ModItem>("Toraglegs").Type;
         }
         public override void UpdateArmorSet(Player player)
         {
@@ -40,19 +37,19 @@ namespace OldSchoolRuneScape.Items.Armor //whole set 66def 15damage 8crit
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            Player player = Main.player[item.owner];
+            Player player = Main.player[Item.playerIndexTheItemIsReservedFor];
             if (player.GetModPlayer<OSRSplayer>().Toragset && player.GetModPlayer<OSRSplayer>().Amuletdamned)
             {
-                tooltips.Add(new TooltipLine(mod, "Damned", "[c/5cdb7d:Amulet of the damned: Torag's hammers have a chance of staggering the enemy]"));
+                tooltips.Add(new TooltipLine(Mod, "Damned", "[c/5cdb7d:Amulet of the damned: Torag's hammers have a chance of staggering the enemy]"));
             }           
         }
         public override void SetDefaults()
         {
-            item.width = 23;
-            item.height = 27;
-            item.value = Item.sellPrice(0, 4, 0, 0);
-            item.rare = 7;
-            item.defense = 18;
+            Item.width = 23;
+            Item.height = 27;
+            Item.value = Item.sellPrice(0, 4, 0, 0);
+            Item.rare = ItemRarityID.Lime;
+            Item.defense = 18;
         }
     }
 }

@@ -14,20 +14,19 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.width = 20;
-            item.height = 22;
-            item.rare = 9;
-            item.value = Item.sellPrice(0, 10, 0, 0);
+            Item.maxStack = 999;
+            Item.width = 20;
+            Item.height = 22;
+            Item.rare = ItemRarityID.Cyan;
+            Item.value = Item.sellPrice(0, 10, 0, 0);
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Zenyteshard");
             recipe.AddIngredient(null, "Onyx");
-            recipe.SetResult(this);
             recipe.AddTile(TileID.WorkBenches);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

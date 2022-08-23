@@ -14,11 +14,11 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.width = 20;
-            item.height = 22;
-            item.rare = 5;
-            item.value = Item.buyPrice(0, 5, 0, 0);
+            Item.maxStack = 999;
+            Item.width = 20;
+            Item.height = 22;
+            Item.rare = ItemRarityID.Pink;
+            Item.value = Item.buyPrice(0, 5, 0, 0);
         }
     }
 }

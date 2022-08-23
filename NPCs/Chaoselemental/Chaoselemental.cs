@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,26 +17,26 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
         }
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.maxStack = 20;
-            item.useStyle = 4;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.rare = 3;
+            Item.consumable = true;
+            Item.maxStack = 20;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.rare = ItemRarityID.Orange;
         }
         public override bool CanUseItem(Player player)
         {
-            return !NPC.AnyNPCs(mod.NPCType("Chaoselemental"));
+            return !NPC.AnyNPCs(Mod.Find<ModNPC>("Chaoselemental").Type);
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
-            NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("Chaoselemental"));
-            Main.PlaySound(SoundID.Roar, player.position, 0);
-            return true;
+            NPC.SpawnOnPlayer(player.whoAmI, Mod.Find<ModNPC>("Chaoselemental").Type);
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
+            return null;
         }
         public override void AddRecipes()
         {
-            ModRecipe r = new ModRecipe(mod);
+            Recipe r = CreateRecipe();
             r.AddIngredient(ModContent.ItemType<Items.Magic.Airrune>());
             r.AddIngredient(ModContent.ItemType<Items.Magic.Waterrune>());
             r.AddIngredient(ModContent.ItemType<Items.Magic.Firerune>());
@@ -43,8 +45,7 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
             r.AddIngredient(ItemID.SoulofLight);
             r.AddIngredient(ItemID.SoulofNight);
             r.AddTile(TileID.Anvils);
-            r.SetResult(this);
-            r.AddRecipe();
+            r.Register();
         }
     }
     public class ChaosBag : ModItem
@@ -56,15 +57,15 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.consumable = true;
-            item.width = 24;
-            item.height = 24;
-            item.rare = 4;
-            item.expert = true;
+            Item.maxStack = 999;
+            Item.consumable = true;
+            Item.width = 24;
+            Item.height = 24;
+            Item.rare = ItemRarityID.LightRed;
+            Item.expert = true;
         }
 
-        public override int BossBagNPC => mod.NPCType("Chaoselemental");
+        public override int BossBagNPC => Mod.Find<ModNPC>("Chaoselemental").Type;
 
         public override bool CanRightClick()
         {
@@ -73,50 +74,51 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
 
         public override void OpenBossBag(Player player)
         {
-            Item.NewItem(player.Center, ModContent.ItemType<Tiles.ChaosMusicBoxItem>(), 1, false, 0);
+            var entitySource = player.GetSource_OpenItem(Item.type);
+            Item.NewItem(entitySource, player.Center, ModContent.ItemType<Tiles.ChaosMusicBoxItem>(), 1, false, 0);
             int ch = Main.rand.Next(7);
             if(ch == 0)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Dragon2h>());
+                player.QuickSpawnItem(entitySource, ModContent.ItemType<Items.Weapons.Melee.Dragon2h>());
             }
             if (ch == 1)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Dds>());
+                player.QuickSpawnItem(entitySource, ModContent.ItemType<Items.Weapons.Melee.Dds>());
             }
             if (ch == 2)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Magic.Ibansstaff>());
+                player.QuickSpawnItem(entitySource, ModContent.ItemType<Items.Magic.Ibansstaff>());
             }
             if (ch == 3)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Magicshortbow>());
+                player.QuickSpawnItem(entitySource, ModContent.ItemType<Items.Weapons.Ranged.Magicshortbow>());
             }
             if (ch == 4)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Dragonhuntercrossbow>());
+                player.QuickSpawnItem(entitySource, ModContent.ItemType<Items.Weapons.Ranged.Dragonhuntercrossbow>());
             }
             if (ch == 5)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Dragonspear>());
+                player.QuickSpawnItem(entitySource, ModContent.ItemType<Items.Weapons.Melee.Dragonspear>());
             }
             if (ch == 6)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Dragonscimitar>());
+                player.QuickSpawnItem(entitySource, ModContent.ItemType<Items.Weapons.Melee.Dragonscimitar>());
             }
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.NextBool(3))
             {
                 int supply = Main.rand.Next(3);
                 if (supply == 0)
                 {
-                    player.QuickSpawnItem(mod.ItemType("Dragonstone"), Main.rand.Next(1, 5));
+                    player.QuickSpawnItem(entitySource, ModContent.ItemType<Items.Dragonstone>(), Main.rand.Next(1, 5));
                 }
                 if (supply == 1)
                 {
-                    player.QuickSpawnItem(mod.ItemType("Chaosrune"), Main.rand.Next(100, 250));
+                    player.QuickSpawnItem(entitySource, ModContent.ItemType<Items.Magic.Chaosrune>(), Main.rand.Next(100, 250));
                 }
                 if (supply == 2)
                 {
-                    player.QuickSpawnItem(mod.ItemType("Dragonstonebolt"), Main.rand.Next(100, 250));
+                    player.QuickSpawnItem(entitySource, ModContent.ItemType<Items.Ammo.Dragonstonebolt>(), Main.rand.Next(100, 250));
                 }
             }
         }
@@ -127,37 +129,36 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("The Chaos Elemental");
-            Main.npcFrameCount[npc.type] = 8;
+            Main.npcFrameCount[NPC.type] = 8;
         }
         public override void SetDefaults()
         {
-            npc.width = 122;
-            npc.height = 80;
-            npc.aiStyle = -1;
-            npc.npcSlots = 20f;
-            npc.lavaImmune = true;
-            npc.damage = 60;
-            npc.defense = 35;
-            npc.lifeMax = 16000;
-            npc.scale = 1.5f;
-            npc.knockBackResist = 0f;
-            npc.boss = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath6;
-            npc.value = 10000f;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
-            npc.buffImmune[BuffID.Ichor] = true;
-            music = OldSchoolRuneScape.chaoseleMusic;
-            bossBag = mod.ItemType("ChaosBag");
+            NPC.width = 122;
+            NPC.height = 80;
+            NPC.aiStyle = -1;
+            NPC.npcSlots = 20f;
+            NPC.lavaImmune = true;
+            NPC.damage = 60;
+            NPC.defense = 35;
+            NPC.lifeMax = 16000;
+            NPC.scale = 1.5f;
+            NPC.knockBackResist = 0f;
+            NPC.boss = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath6;
+            NPC.value = 10000f;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Ichor] = true;
+            Music = OldSchoolRuneScape.chaoseleMusic;
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = 20000 + 1000 * numPlayers;
-            npc.damage = (int)(npc.damage * 0.7f);
+            NPC.lifeMax = 20000 + 1000 * numPlayers;
+            NPC.damage = (int)(NPC.damage * 0.7f);
         }
 
         const int AI_State_Slot = 0;
@@ -168,14 +169,14 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
 
         public float AI_State
         {
-            get { return npc.ai[AI_State_Slot]; }
-            set { npc.ai[AI_State_Slot] = value; }
+            get { return NPC.ai[AI_State_Slot]; }
+            set { NPC.ai[AI_State_Slot] = value; }
         }
 
         public float AI_Timer
         {
-            get { return npc.ai[AI_Timer_Slot]; }
-            set { npc.ai[AI_Timer_Slot] = value; }
+            get { return NPC.ai[AI_Timer_Slot]; }
+            set { NPC.ai[AI_Timer_Slot] = value; }
         }
 
         private float speed = 4f;
@@ -184,90 +185,90 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
 
         public override void AI()
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
-                Dust.NewDust(npc.position, npc.width, npc.height, 52);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.UnholyWater);
             }
             AI_Timer++;
-            Lighting.AddLight(npc.Center, new Vector3(148 * 0.01f, 56 * 0.01f, 255 * 0.01f));
-            if (npc.life < npc.lifeMax * 0.6f)
+            Lighting.AddLight(NPC.Center, new Vector3(148 * 0.01f, 56 * 0.01f, 255 * 0.01f));
+            if (NPC.life < NPC.lifeMax * 0.6f)
             {
                 healthmod = 1;
                 accelerate = 0.1f;
             }
-            if (npc.life < npc.lifeMax * 0.3f)
+            if (NPC.life < NPC.lifeMax * 0.3f)
             {
                 healthmod = 2;
                 accelerate = 0.2f;
             }
             if(AI_State == Fly)
             {
-                npc.TargetClosest(true);
-                Player target = Main.player[npc.target];
-                float distance = npc.Distance(target.MountedCenter);
-                if (npc.velocity.X > speed || npc.velocity.Y > speed)
+                NPC.TargetClosest(true);
+                Player target = Main.player[NPC.target];
+                float distance = NPC.Distance(target.MountedCenter);
+                if (NPC.velocity.X > speed || NPC.velocity.Y > speed)
                 {
-                    npc.velocity *= 0.95f;
+                    NPC.velocity *= 0.95f;
                 }
-                    if (target.MountedCenter.Y > npc.Center.Y && npc.velocity.Y < speed)
+                    if (target.MountedCenter.Y > NPC.Center.Y && NPC.velocity.Y < speed)
                     {
-                        npc.velocity.Y += accelerate;
+                        NPC.velocity.Y += accelerate;
                     }
-                    if (target.MountedCenter.Y < npc.Center.Y && npc.velocity.Y > -speed)
+                    if (target.MountedCenter.Y < NPC.Center.Y && NPC.velocity.Y > -speed)
                     {
-                        npc.velocity.Y -= accelerate;
+                        NPC.velocity.Y -= accelerate;
                     }
-                    if (target.MountedCenter.X > npc.Center.X && npc.velocity.X < speed)
+                    if (target.MountedCenter.X > NPC.Center.X && NPC.velocity.X < speed)
                     {
-                        npc.velocity.X += accelerate;
+                        NPC.velocity.X += accelerate;
                     }
-                    if (target.MountedCenter.X < npc.Center.X && npc.velocity.X > -speed)
+                    if (target.MountedCenter.X < NPC.Center.X && NPC.velocity.X > -speed)
                     {
-                        npc.velocity.X -= accelerate;
+                        NPC.velocity.X -= accelerate;
                     }
-                if (AI_Timer > (75 - 10 * healthmod) && Main.netMode != 1)
+                if (AI_Timer > (75 - 10 * healthmod) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     AI_Timer = 0;
                     AI_State = Attack;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
-                if (!npc.HasValidTarget)
+                if (!NPC.HasValidTarget)
                 {
-                    npc.velocity *= 0;
+                    NPC.velocity *= 0;
                     AI_State = Flee;
                 }
             }
             if (AI_State == Attack)
             {
                 AI_Timer++;
-                npc.TargetClosest(true);
-                Player target = Main.player[npc.target];
-                float speedX = target.MountedCenter.X - npc.Center.X;
-                float speedY = target.MountedCenter.Y - npc.Center.Y;
+                NPC.TargetClosest(true);
+                Player target = Main.player[NPC.target];
+                float speedX = target.MountedCenter.X - NPC.Center.X;
+                float speedY = target.MountedCenter.Y - NPC.Center.Y;
                 Vector2 spd = new Vector2(speedX, speedY);
                 spd.Normalize();
                 spd *= 8;
                 if (AI_Timer == 1)
                 {
-                    Projectile.NewProjectile(npc.Center, spd, mod.ProjectileType("Chaosbase"), (npc.damage / 4), 0f);
-                    if (Main.rand.Next(3) == 0 && Main.netMode != 1)
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spd, Mod.Find<ModProjectile>("Chaosbase").Type, (NPC.damage / 4), 0f);
+                    if (Main.rand.NextBool(3) && Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(npc.Center, spd, mod.ProjectileType("Chaosdebu"), 1, 0f);
-                        if (Main.rand.Next(2) == 0 && Main.netMode != 1)
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spd, Mod.Find<ModProjectile>("Chaosdebu").Type, 1, 0f);
+                        if (Main.rand.NextBool(2) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(npc.Center, spd, mod.ProjectileType("Chaostele"), 1, 0f);
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spd, Mod.Find<ModProjectile>("Chaostele").Type, 1, 0f);
                         }
 
                     }
                 }
-                if (Main.rand.Next(90 - 20*healthmod) == 0 && Main.netMode != 1)
+                if (Main.rand.NextBool(90 - 20 * healthmod) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 rotat = spd.RotatedBy(MathHelper.ToRadians(-30));
                     for (int i = 0; i < 8; i++)
                     {
                         if (true)
                         {
-                            Projectile.NewProjectile(npc.Center, rotat.RotatedBy(MathHelper.ToRadians(10 * i)), mod.ProjectileType("Chaosbase"), (npc.damage / 4), 0f);
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, rotat.RotatedBy(MathHelper.ToRadians(10 * i)), Mod.Find<ModProjectile>("Chaosbase").Type, (NPC.damage / 4), 0f);
                         }
                     }
                 }
@@ -275,31 +276,31 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
                 {
                     if (AI_Timer == 29)
                     {
-                        Projectile.NewProjectile(npc.Center, new Vector2(spd.X, spd.Y - 7f), mod.ProjectileType("Chaosbase"), (npc.damage / 4), 0f, 0, 1, 0);
-                        Projectile.NewProjectile(npc.Center, new Vector2(spd.X, spd.Y + 7f), mod.ProjectileType("Chaosbase"), (npc.damage / 4), 0f, 0, 2, 0);
-                        Projectile.NewProjectile(npc.Center, spd, mod.ProjectileType("Chaosbase"), (npc.damage / 4), 0f);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, new Vector2(spd.X, spd.Y - 7f), Mod.Find<ModProjectile>("Chaosbase").Type, (NPC.damage / 4), 0f, 0, 1, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, new Vector2(spd.X, spd.Y + 7f), Mod.Find<ModProjectile>("Chaosbase").Type, (NPC.damage / 4), 0f, 0, 2, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spd, Mod.Find<ModProjectile>("Chaosbase").Type, (NPC.damage / 4), 0f);
                     }
-                    if (Main.rand.Next(30) == 0 && Main.netMode != 1)
+                    if (Main.rand.NextBool(30) && Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(npc.Center, spd, mod.ProjectileType("Chaosdebu"), 1, 0f);
-                        Main.PlaySound(SoundID.Item20, npc.Center);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spd, Mod.Find<ModProjectile>("Chaosdebu").Type, 1, 0f);
+                        SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     }
                 }
                 if (healthmod > 1)
                 {
-                    if(Main.rand.Next(30) == 0 && Main.netMode != 1)
+                    if(Main.rand.NextBool(30) && Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(npc.Center, spd, mod.ProjectileType("Chaosbase"), (npc.damage / 4), 0f);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spd, Mod.Find<ModProjectile>("Chaosbase").Type, (NPC.damage / 4), 0f);
                     }
                     if (AI_Timer == 21)
                     {
-                        Projectile.NewProjectile(npc.Center, new Vector2(spd.X, spd.Y - 7f), mod.ProjectileType("Chaosbase"), (npc.damage / 4), 0f, 0, 1, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, new Vector2(spd.X, spd.Y - 7f), Mod.Find<ModProjectile>("Chaosbase").Type, (NPC.damage / 4), 0f, 0, 1, 0);
                     }
-                    if (Main.rand.Next(60) == 0 && Main.netMode != 1)
+                    if (Main.rand.NextBool(60) && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 36; i++)
                         {
-                            Projectile.NewProjectile(npc.Center + (spd*10).RotatedBy(MathHelper.ToRadians(10 * i)), (spd / 3).RotatedBy(MathHelper.ToRadians(10*i)), mod.ProjectileType("Chaostele"), 1, 0f, 0, 1, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + (spd*10).RotatedBy(MathHelper.ToRadians(10 * i)), (spd / 3).RotatedBy(MathHelper.ToRadians(10*i)), Mod.Find<ModProjectile>("Chaostele").Type, 1, 0f, 0, 1, 0);
                         }
                     }
                 }
@@ -307,12 +308,12 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
                 {
                     AI_Timer = 0;
                     AI_State = Fly;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
             }
             if (AI_State == Flee)
             {
-                npc.velocity.Y += 0.05f;
+                NPC.velocity.Y += 0.05f;
             }
         }
 
@@ -327,43 +328,43 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
 
         public override void FindFrame(int frameHeight)
         {
-            npc.spriteDirection = -npc.direction;
-            npc.frameCounter++;
-            if (npc.frameCounter < 5)
+            NPC.spriteDirection = -NPC.direction;
+            NPC.frameCounter++;
+            if (NPC.frameCounter < 5)
             {
-                npc.frame.Y = Fly1 * frameHeight;
+                NPC.frame.Y = Fly1 * frameHeight;
             }
-            else if (npc.frameCounter < 10)
+            else if (NPC.frameCounter < 10)
             {
-                npc.frame.Y = Fly2 * frameHeight;
+                NPC.frame.Y = Fly2 * frameHeight;
             }
-            else if (npc.frameCounter < 15)
+            else if (NPC.frameCounter < 15)
             {
-                npc.frame.Y = Fly3 * frameHeight;
+                NPC.frame.Y = Fly3 * frameHeight;
             }
-            else if (npc.frameCounter < 20)
+            else if (NPC.frameCounter < 20)
             {
-                npc.frame.Y = Fly4 * frameHeight;
+                NPC.frame.Y = Fly4 * frameHeight;
             }
-            else if (npc.frameCounter < 25)
+            else if (NPC.frameCounter < 25)
             {
-                npc.frame.Y = Fly5 * frameHeight;
+                NPC.frame.Y = Fly5 * frameHeight;
             }
-            else if (npc.frameCounter < 30)
+            else if (NPC.frameCounter < 30)
             {
-                npc.frame.Y = Fly6 * frameHeight;
+                NPC.frame.Y = Fly6 * frameHeight;
             }
-            else if (npc.frameCounter < 35)
+            else if (NPC.frameCounter < 35)
             {
-                npc.frame.Y = Fly7 * frameHeight;
+                NPC.frame.Y = Fly7 * frameHeight;
             }
-            else if (npc.frameCounter < 40)
+            else if (NPC.frameCounter < 40)
             {
-                npc.frame.Y = Fly8 * frameHeight;
+                NPC.frame.Y = Fly8 * frameHeight;
             }
             else
             {
-                npc.frameCounter = 0;
+                NPC.frameCounter = 0;
             }
         }
 
@@ -377,67 +378,34 @@ namespace OldSchoolRuneScape.NPCs.Chaoselemental
             name = "The Chaos Elemental";
             potionType = ItemID.GreaterHealingPotion;
         }
-        public override void NPCLoot()
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<ChaosBag>()));
+            var notExpert = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpert.OnSuccess(ItemDropRule.OneFromOptionsNotScalingWithLuck(1,
+                ModContent.ItemType<Items.Weapons.Melee.Dragon2h>(),
+                ModContent.ItemType<Items.Weapons.Melee.Dds>(),
+                ModContent.ItemType<Items.Magic.Ibansstaff>(),
+                ModContent.ItemType<Items.Weapons.Ranged.Magicshortbow>(),
+                ModContent.ItemType<Items.Weapons.Ranged.Dragonhuntercrossbow>(),
+                ModContent.ItemType<Items.Weapons.Melee.Dragonspear>(),
+                ModContent.ItemType<Items.Weapons.Melee.Dragonscimitar>()
+                ));
+            notExpert.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Dragonstone>(), 3, 1, 3)
+                .OnFailedRoll(ItemDropRule.Common(ModContent.ItemType<Items.Magic.Chaosrune>(), 2, 50, 150)
+                .OnFailedRoll(ItemDropRule.Common(ModContent.ItemType<Items.Ammo.Dragonstonebolt>(), 1, 50, 150)
+                )));
+            npcLoot.Add(notExpert);
+        }
+        public override void OnKill()
         {
             OSRSworld.downedChaosEle = true;
-            if (Main.expertMode)
-            {
-                npc.DropBossBags();
-            }
-            else
-            {
-                int ch = Main.rand.Next(7);
-                if (ch == 0)
-                {
-                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Dragon2h>());
-                }
-                if (ch == 1)
-                {
-                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Dds>());
-                }
-                if (ch == 2)
-                {
-                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Magic.Ibansstaff>());
-                }
-                if (ch == 3)
-                {
-                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Magicshortbow>());
-                }
-                if (ch == 4)
-                {
-                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Dragonhuntercrossbow>());
-                }
-                if (ch == 5)
-                {
-                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Dragonspear>());
-                }
-                if (ch == 6)
-                {
-                    Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Dragonscimitar>());
-                }
-                if (Main.rand.Next(3) == 0)
-                {
-                    int supply = Main.rand.Next(3);
-                    if (supply == 0)
-                    {
-                        Item.NewItem(npc.Hitbox, mod.ItemType("Dragonstone"), Main.rand.Next(1, 3));
-                    }
-                    if (supply == 1)
-                    {
-                        Item.NewItem(npc.Hitbox, mod.ItemType("Chaosrune"), Main.rand.Next(50, 150));
-                    }
-                    if (supply == 2)
-                    {
-                        Item.NewItem(npc.Hitbox, mod.ItemType("Dragonstonebolt"), Main.rand.Next(50, 120));
-                    }
-                }
-            }
         }
-        public override bool PreNPCLoot()
+        public override bool PreKill()
         {
             for (int i = 0; i < 100; i++)
             {
-                Dust.NewDust(npc.position, npc.width, npc.height, 52);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.UnholyWater);
             }
             return true;
         }

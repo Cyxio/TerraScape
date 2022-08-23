@@ -11,33 +11,33 @@ namespace OldSchoolRuneScape.Items.Magic
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Master Wand");
-            Item.staff[item.type] = true;
+            Item.staff[Item.type] = true;
         }
         public override void SetDefaults()
         {
-            item.damage = 100;
-            item.magic = true;
-            item.mana = 12;
-            item.crit = 16;
-            item.width = 62;
-            item.height = 64;
-            item.useTime = 14;
-            item.useAnimation = 14;
-            item.useStyle = 5;
-            item.noUseGraphic = false;
-            item.noMelee = true;
-            item.knockBack = 4;
-            item.value = Item.sellPrice(0, 15, 0, 0);
-            item.rare = 6;
-            item.UseSound = SoundID.Item20;
-            item.autoReuse = true;
-            item.shoot = mod.ProjectileType("FirewaveP");
-            item.shootSpeed = 20;
-            item.scale = 0.8f;
+            Item.damage = 100;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 12;
+            Item.crit = 16;
+            Item.width = 62;
+            Item.height = 64;
+            Item.useTime = 14;
+            Item.useAnimation = 14;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noUseGraphic = false;
+            Item.noMelee = true;
+            Item.knockBack = 4;
+            Item.value = Item.sellPrice(0, 15, 0, 0);
+            Item.rare = ItemRarityID.LightPurple;
+            Item.UseSound = SoundID.Item20;
+            Item.autoReuse = true;
+            Item.shoot = Mod.Find<ModProjectile>("WindsurgeP").Type;
+            Item.shootSpeed = 20;
+            Item.scale = 0.8f;
         }
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            int s = Main.rand.Next(4);
+            /*int s = Main.rand.Next(4);
             if (s == 0)
             {
                 item.shoot = mod.ProjectileType("WindwaveP");
@@ -53,7 +53,7 @@ namespace OldSchoolRuneScape.Items.Magic
             else
             {
                 item.shoot = mod.ProjectileType("FirewaveP");
-            }
+            }*/
             return true;
         }
 
@@ -64,7 +64,7 @@ namespace OldSchoolRuneScape.Items.Magic
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Teacherwand");
             recipe.AddIngredient(null, "Windwave");
             recipe.AddIngredient(null, "Waterwave");
@@ -72,8 +72,7 @@ namespace OldSchoolRuneScape.Items.Magic
             recipe.AddIngredient(null, "Firewave");
             recipe.AddIngredient(ItemID.Ectoplasm, 15);
             recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

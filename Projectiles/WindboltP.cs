@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,38 +14,38 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void SetDefaults()
         {
-            projectile.width = 18;
-            projectile.height = 18;
-            projectile.timeLeft = 1200;
-            projectile.penetrate = 1;
-            projectile.friendly = true;
-            projectile.magic = true;
-            projectile.tileCollide = true;
-            projectile.ignoreWater = true;
-            projectile.aiStyle = 1;
-            projectile.scale = 1f;
-            projectile.light = 0.2f;
+            Projectile.width = 18;
+            Projectile.height = 18;
+            Projectile.timeLeft = 1200;
+            Projectile.penetrate = 1;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = true;
+            Projectile.ignoreWater = true;
+            Projectile.aiStyle = 1;
+            Projectile.scale = 1f;
+            Projectile.light = 0.2f;
         }
         Vector3 x = new Vector3(150, 150, 150);
         public override void AI()
         {
-            Lighting.AddLight(projectile.position, x * 0.005f);
-            projectile.velocity.Y = projectile.oldVelocity.Y;
-            if (Main.rand.Next(1) == 0)
+            Lighting.AddLight(Projectile.position, x * 0.005f);
+            Projectile.velocity.Y = Projectile.oldVelocity.Y;
+            if (Main.rand.NextBool(1))
             {
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, mod.DustType("Windbolt"), projectile.velocity.X * -0.2f, 0);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, Mod.Find<ModDust>("Windbolt").Type, Projectile.velocity.X * -0.2f, 0);
             }
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Bolt"), projectile.position);
-            Dust.NewDust(projectile.Center, 1, 1, mod.DustType("WindstrikeD"), 0, 0);
+            SoundEngine.PlaySound(new SoundStyle("OldSchoolRuneScape/Sounds/Item/Windhit2"), Projectile.position);
+            Dust.NewDust(Projectile.Center, 1, 1, Mod.Find<ModDust>("WindstrikeD").Type, 0, 0);
             for (int i = 0; i < 9; ++i)
             {
-                Vector2 perturbedSpeed = new Vector2(projectile.velocity.X, projectile.velocity.Y).RotatedByRandom(MathHelper.ToRadians(360));
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, mod.DustType("WindboltD"), perturbedSpeed.X, perturbedSpeed.Y);
+                Vector2 perturbedSpeed = new Vector2(Projectile.velocity.X, Projectile.velocity.Y).RotatedByRandom(MathHelper.ToRadians(360));
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, Mod.Find<ModDust>("WindboltD").Type, perturbedSpeed.X, perturbedSpeed.Y);
             }
-            Lighting.AddLight(projectile.position, x * 0.005f);
+            Lighting.AddLight(Projectile.position, x * 0.005f);
         }
 
     }

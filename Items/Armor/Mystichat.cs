@@ -15,23 +15,23 @@ namespace OldSchoolRuneScape.Items.Armor
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == mod.ItemType("Mystictop") && legs.type == mod.ItemType("Mysticbottom");
+            return body.type == Mod.Find<ModItem>("Mystictop").Type && legs.type == Mod.Find<ModItem>("Mysticbottom").Type;
         }
 
         public override void UpdateArmorSet(Player player)
         {
             player.setBonus = "10% increased magic damage\n18% reduced mana usage";
-            player.magicDamage += 0.1f;
+            player.GetDamage(DamageClass.Magic) += 0.1f;
             player.manaCost -= 0.18f;
         }
 
         public override void SetDefaults()
         {
-            item.width = 19;
-            item.height = 30;
-            item.value = Item.sellPrice(0, 3, 0, 0);
-            item.rare = 3;
-            item.defense = 5;
+            Item.width = 19;
+            Item.height = 30;
+            Item.value = Item.sellPrice(0, 3, 0, 0);
+            Item.rare = ItemRarityID.Orange;
+            Item.defense = 5;
         }
 
         public override void UpdateEquip(Player player)
@@ -41,12 +41,11 @@ namespace OldSchoolRuneScape.Items.Armor
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Mysticcomponents>(), 4);
             recipe.AddIngredient(ItemID.Silk, 8);
             recipe.AddTile(TileID.Anvils);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace OldSchoolRuneScape.Items.Armor
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == mod.ItemType("Ahrimbody") && legs.type == mod.ItemType("Ahrimlegs");
+            return body.type == Mod.Find<ModItem>("Ahrimbody").Type && legs.type == Mod.Find<ModItem>("Ahrimlegs").Type;
         }
         public override void UpdateArmorSet(Player player)
         {
@@ -29,19 +29,19 @@ namespace OldSchoolRuneScape.Items.Armor
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            Player player = Main.player[item.owner];
+            Player player = Main.player[Item.playerIndexTheItemIsReservedFor];
             if (player.GetModPlayer<OSRSplayer>().Ahrimset && player.GetModPlayer<OSRSplayer>().Amuletdamned)
             {
-                tooltips.Add(new TooltipLine(mod, "Damned", "[c/5cdb7d:Amulet of the damned: Ahrim's staff fires additional homing projectiles]"));
+                tooltips.Add(new TooltipLine(Mod, "Damned", "[c/5cdb7d:Amulet of the damned: Ahrim's staff fires additional homing projectiles]"));
             }           
         }
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 30;
-            item.value = Item.sellPrice(0, 4, 0, 0);
-            item.rare = 7;
-            item.defense = 10;
+            Item.width = 28;
+            Item.height = 30;
+            Item.value = Item.sellPrice(0, 4, 0, 0);
+            Item.rare = ItemRarityID.Lime;
+            Item.defense = 10;
         }
     }
 }

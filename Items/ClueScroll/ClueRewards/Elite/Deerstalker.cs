@@ -12,17 +12,14 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Elite
         {
             DisplayName.SetDefault("Deerstalker");
             Tooltip.SetDefault("Elementary!");
+            ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
         }
         public override void SetDefaults()
         {
-            item.vanity = true;
-            item.rare = 2;
-            item.width = 24;
-            item.height = 28;
-        }
-        public override void DrawHair(ref bool drawHair, ref bool drawAltHair)
-        {
-            drawAltHair = true;
+            Item.vanity = true;
+            Item.rare = ItemRarityID.Green;
+            Item.width = 24;
+            Item.height = 28;
         }
     }
 }

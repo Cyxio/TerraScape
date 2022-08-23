@@ -16,35 +16,33 @@ namespace OldSchoolRuneScape.Items.Accessories
         }
         public override void SetDefaults()
         {
-            item.accessory = true;
-            item.width = 22;
-            item.height = 31;
-            item.value = Item.sellPrice(0, 10, 0, 0);
-            item.rare = 8;
+            Item.accessory = true;
+            Item.width = 22;
+            Item.height = 31;
+            Item.value = Item.sellPrice(0, 10, 0, 0);
+            Item.rare = ItemRarityID.Yellow;
         }
         public override void UpdateEquip(Player player)
         {
             if (player.statDefense < 100)
             {
-                player.meleeDamage += (100 - player.statDefense) / 100f;
+                player.GetDamage(DamageClass.Melee) += (100 - player.statDefense) / 100f;
             }
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Enchantonyx");
             recipe.AddIngredient(null, "Onyx");
             recipe.AddIngredient(ItemID.GoldBar, 2);
             recipe.AddTile(TileID.Furnaces);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-            recipe = new ModRecipe(mod);
+            recipe.Register();
+            recipe = CreateRecipe();
             recipe.AddIngredient(null, "Enchantonyx");
             recipe.AddIngredient(null, "Onyx");
             recipe.AddIngredient(ItemID.PlatinumBar, 2);
             recipe.AddTile(TileID.Furnaces);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

@@ -15,24 +15,24 @@ namespace OldSchoolRuneScape.Items.Armor
         }
         public override void UpdateEquip(Player player)
         {
-            player.rangedCrit += 8;
+            player.GetCritChance(DamageClass.Ranged) += 8;
             player.moveSpeed += 0.08f;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            Player player = Main.player[item.owner];
+            Player player = Main.player[Item.playerIndexTheItemIsReservedFor];
             if (player.GetModPlayer<OSRSplayer>().Karilset && player.GetModPlayer<OSRSplayer>().Amuletdamned)
             {
-                tooltips.Add(new TooltipLine(mod, "Damned", "[c/5cdb7d:Amulet of the damned: Karil's crossbow has a chance to spawn a homing bolt]"));
+                tooltips.Add(new TooltipLine(Mod, "Damned", "[c/5cdb7d:Amulet of the damned: Karil's crossbow has a chance to spawn a homing bolt]"));
             }
         }
         public override void SetDefaults()
         {
-            item.width = 13;
-            item.height = 30;
-            item.value = Item.sellPrice(0, 4, 0, 0);
-            item.rare = 7;
-            item.defense = 18;
+            Item.width = 13;
+            Item.height = 30;
+            Item.value = Item.sellPrice(0, 4, 0, 0);
+            Item.rare = ItemRarityID.Lime;
+            Item.defense = 18;
         }
     }
 }

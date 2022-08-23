@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,62 +14,62 @@ namespace OldSchoolRuneScape.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("3rd age spell");
-            Main.projFrames[projectile.type] = 5;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 8;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            Main.projFrames[Projectile.type] = 5;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 8;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
         public override void SetDefaults()
         {
-            projectile.magic = true;
-            projectile.friendly = true;
-            projectile.width = 14;
-            projectile.height = 14;
-            projectile.scale = 1f;
-            projectile.penetrate = -1;
-            projectile.aiStyle = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 600;
-            projectile.alpha = 0;
-            projectile.ai[0] = 0;
-            projectile.ai[1] = 0;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.friendly = true;
+            Projectile.width = 14;
+            Projectile.height = 14;
+            Projectile.scale = 1f;
+            Projectile.penetrate = -1;
+            Projectile.aiStyle = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 600;
+            Projectile.alpha = 0;
+            Projectile.ai[0] = 0;
+            Projectile.ai[1] = 0;
         }
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center + projectile.velocity, new Vector3(0.6f, 0.6f, 0.6f));
-            projectile.rotation += MathHelper.ToRadians(projectile.velocity.Length());
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 2)
+            Lighting.AddLight(Projectile.Center + Projectile.velocity, new Vector3(0.6f, 0.6f, 0.6f));
+            Projectile.rotation += MathHelper.ToRadians(Projectile.velocity.Length());
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 2)
             {
-                projectile.frame++;
-                if (projectile.frame >= Main.projFrames[projectile.type])
+                Projectile.frame++;
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.timeLeft >= 570)
+            if (Projectile.timeLeft >= 570)
             {
-                projectile.velocity = projectile.velocity.RotatedBy(MathHelper.ToRadians(projectile.ai[0]));
+                Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.ToRadians(Projectile.ai[0]));
             }            
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 drawOrigin = new Vector2(8, 8);
-            for (int i = 0; i < projectile.oldPos.Length; i++)
+            for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
-                int o = (projectile.frame + i) % Main.projFrames[projectile.type];
-                Vector2 drawPos = projectile.oldPos[i] - Main.screenPosition + drawOrigin + new Vector2(0f, projectile.gfxOffY);
-                Color color = projectile.GetAlpha(lightColor) * ((float)(projectile.oldPos.Length - i) / (float)projectile.oldPos.Length);
-                spriteBatch.Draw(Main.projectileTexture[projectile.type], drawPos, new Rectangle(0, 16 * (o), 16, 16), color, projectile.rotation, drawOrigin, projectile.scale, SpriteEffects.None, 0f);
+                int o = (Projectile.frame + i) % Main.projFrames[Projectile.type];
+                Vector2 drawPos = Projectile.oldPos[i] - Main.screenPosition + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
+                Color color = Projectile.GetAlpha(lightColor) * ((float)(Projectile.oldPos.Length - i) / (float)Projectile.oldPos.Length);
+                Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, drawPos, new Rectangle(0, 16 * (o), 16, 16), color, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             }
             return true;
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item10, projectile.position);
+            SoundEngine.PlaySound(SoundID.Item10, Projectile.position);
             for (int i = 0; i < 5; i++)
             {
-                Dust.NewDust(projectile.Center - (projectile.velocity * 0.1f * i), 0, 0, 124, projectile.velocity.X * 0.3f, projectile.velocity.Y * 0.3f, 0, Color.White, 1f);
+                Dust.NewDust(Projectile.Center - (Projectile.velocity * 0.1f * i), 0, 0, DustID.SandstormInABottle, Projectile.velocity.X * 0.3f, Projectile.velocity.Y * 0.3f, 0, Color.White, 1f);
             }
         }
         public override Color? GetAlpha(Color lightColor)

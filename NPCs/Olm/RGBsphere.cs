@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -16,40 +17,40 @@ namespace OldSchoolRuneScape.NPCs.Olm
         }
         public override void SetDefaults()
         {
-            projectile.width = 1;
-            projectile.height = 1;
-            projectile.aiStyle = -1;
-            projectile.penetrate = 1;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 300;
+            Projectile.width = 1;
+            Projectile.height = 1;
+            Projectile.aiStyle = -1;
+            Projectile.penetrate = 1;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 300;
         }
         public override void AI()
         {
-            if (projectile.alpha == 0)
+            if (Projectile.alpha == 0)
             {
-                Main.PlaySound(SoundID.Item15, projectile.position);
-                projectile.alpha = 1;
+                SoundEngine.PlaySound(SoundID.Item15, Projectile.position);
+                Projectile.alpha = 1;
             }
-            projectile.rotation += 0.2f;
-            if (projectile.ai[0] == 0)
+            Projectile.rotation += 0.2f;
+            if (Projectile.ai[0] == 0)
             {
-                int dust = Dust.NewDust(projectile.position + new Vector2(25).RotatedBy(projectile.rotation), projectile.width, projectile.height, 263, 0, 0, 0, Color.Red);
+                int dust = Dust.NewDust(Projectile.position + new Vector2(25).RotatedBy(Projectile.rotation), Projectile.width, Projectile.height, DustID.PortalBolt, 0, 0, 0, Color.Red);
                 Main.dust[dust].scale = 1.3f;
                 Main.dust[dust].velocity *= 0f;
                 Main.dust[dust].noGravity = true;
             }
-            if (projectile.ai[0] == 1)
+            if (Projectile.ai[0] == 1)
             {
-                int dust = Dust.NewDust(projectile.position + new Vector2(25).RotatedBy(projectile.rotation), projectile.width, projectile.height, 263, 0, 0, 0, Color.Green);
+                int dust = Dust.NewDust(Projectile.position + new Vector2(25).RotatedBy(Projectile.rotation), Projectile.width, Projectile.height, DustID.PortalBolt, 0, 0, 0, Color.Green);
                 Main.dust[dust].scale = 1.3f;
                 Main.dust[dust].velocity *= 0f;
                 Main.dust[dust].noGravity = true;
             }
-            if (projectile.ai[0] == 2)
+            if (Projectile.ai[0] == 2)
             {
-                int dust = Dust.NewDust(projectile.position + new Vector2(25).RotatedBy(projectile.rotation), projectile.width, projectile.height, 263, 0, 0, 0, Color.Blue);
+                int dust = Dust.NewDust(Projectile.position + new Vector2(25).RotatedBy(Projectile.rotation), Projectile.width, Projectile.height, DustID.PortalBolt, 0, 0, 0, Color.Blue);
                 Main.dust[dust].scale = 1.3f;
                 Main.dust[dust].velocity *= 0f;
                 Main.dust[dust].noGravity = true;
@@ -57,32 +58,38 @@ namespace OldSchoolRuneScape.NPCs.Olm
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player p = Main.player[i];
-                if (p.Distance(projectile.position) < 50f)
+                bool highMeleeDamage = p.GetDamage(DamageClass.Melee).Flat > p.GetDamage(DamageClass.Ranged).Flat &&
+                                        p.GetDamage(DamageClass.Melee).Flat > p.GetDamage(DamageClass.Magic).Flat;
+                bool highRangeDamage = p.GetDamage(DamageClass.Ranged).Flat > p.GetDamage(DamageClass.Melee).Flat &&
+                                        p.GetDamage(DamageClass.Ranged).Flat > p.GetDamage(DamageClass.Magic).Flat;
+                bool highMagicDamage = p.GetDamage(DamageClass.Magic).Flat > p.GetDamage(DamageClass.Ranged).Flat &&
+                                        p.GetDamage(DamageClass.Magic).Flat > p.GetDamage(DamageClass.Melee).Flat;
+                if (p.Distance(Projectile.position) < 50f)
                 {
-                    if (projectile.ai[0] == 0 && p.meleeDamage > p.rangedDamage && p.meleeDamage > p.magicDamage)
+                    if (Projectile.ai[0] == 0 && highMeleeDamage)
                     {
                         p.HealEffect(20);
                         p.statLife += 20;
-                        projectile.Kill();
+                        Projectile.Kill();
                     }
-                    else if (projectile.ai[0] == 1 && p.rangedDamage > p.magicDamage && p.rangedDamage > p.meleeDamage)
+                    else if (Projectile.ai[0] == 1 && highRangeDamage)
                     {
                         p.HealEffect(20);
                         p.statLife += 20;
-                        projectile.Kill();
+                        Projectile.Kill();
                     }
-                    else if (projectile.ai[0] == 2 && p.magicDamage > p.rangedDamage && p.magicDamage > p.meleeDamage)
+                    else if (Projectile.ai[0] == 2 && highMagicDamage)
                     {
                         p.HealEffect(20);
                         p.statLife += 20;
-                        projectile.Kill();
+                        Projectile.Kill();
                     }
                     else
                     {
-                        projectile.position = p.Center;
-                        if (projectile.timeLeft > 4)
+                        Projectile.position = p.Center;
+                        if (Projectile.timeLeft > 4)
                         {
-                            projectile.timeLeft = 4;
+                            Projectile.timeLeft = 4;
                         }                      
                     }
                 }

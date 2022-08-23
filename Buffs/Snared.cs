@@ -5,7 +5,7 @@ namespace OldSchoolRuneScape.Buffs
 {
     public class Snared : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Snared");
             Main.debuff[Type] = true;

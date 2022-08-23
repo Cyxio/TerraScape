@@ -16,29 +16,28 @@ namespace OldSchoolRuneScape.Items.Accessories
         }
         public override void SetDefaults()
         {
-            item.accessory = true;
-            item.width = 22;
-            item.height = 31;
-            item.value = Item.sellPrice(0, 20, 0, 0);
-            item.rare = 8;
+            Item.accessory = true;
+            Item.width = 22;
+            Item.height = 31;
+            Item.value = Item.sellPrice(0, 20, 0, 0);
+            Item.rare = ItemRarityID.Yellow;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.meleeDamage += 0.18f;
+            player.GetDamage(DamageClass.Melee) += 0.18f;
             player.GetModPlayer<OSRSplayer>().Amulettorture = true;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Enchantzenyte");
             recipe.AddIngredient(null, "Zenyte");
             recipe.AddIngredient(ItemID.ChlorophyteBar, 6);
             recipe.AddIngredient(ItemID.BeetleHusk, 6);
             recipe.AddTile(TileID.MythrilAnvil);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

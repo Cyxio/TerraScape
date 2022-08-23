@@ -14,11 +14,11 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Hard
         }
         public override void SetDefaults()
         {
-            item.width = 30;
-            item.height = 18;
-            item.value = Item.sellPrice(0, 3, 0, 0);
-            item.rare = 3;
-            item.defense = 8;
+            Item.width = 30;
+            Item.height = 18;
+            Item.value = Item.sellPrice(0, 3, 0, 0);
+            Item.rare = ItemRarityID.Orange;
+            Item.defense = 8;
         }
     }
 }

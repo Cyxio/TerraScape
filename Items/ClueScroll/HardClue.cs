@@ -32,11 +32,11 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 player.GetModPlayer<OSRSplayer>().hardStage++;
                 if (player.GetModPlayer<OSRSplayer>().hardStage >= player.GetModPlayer<OSRSplayer>().hardSteps)
                 {
-                    item.TurnToAir();
-                    player.QuickSpawnItem(ModContent.ItemType<CasketHard>());
+                    Item.TurnToAir();
+                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CasketHard>());
                     player.GetModPlayer<OSRSplayer>().ClueReset(ModContent.ItemType<HardClue>(), player);
                     player.GetModPlayer<OSRSplayer>().CompleteClue(3, player);
-                    if (Main.netMode == 1)
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         player.GetModPlayer<OSRSplayer>().ClueMessage(player.name + "_has_completed_a_Hard_Clue_Scroll! 8");
                     }
@@ -47,7 +47,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 }
                 else
                 {
-                    if (Main.netMode == 1)
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         player.GetModPlayer<OSRSplayer>().ClueMessage(player.name + "_completed_a_step_of_a_Hard_Clue_Scroll 3");
                     }
@@ -64,7 +64,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
         {
             return true;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (player.altFunctionUse == 2)
             {
@@ -74,7 +74,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
             }
             return true;
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             ClueUI.texture = "OldSchoolRuneScape/Items/ClueScroll/Hard/Hard" + player.GetModPlayer<OSRSplayer>().hardClue;
             if (player.channel && player.altFunctionUse != 2)

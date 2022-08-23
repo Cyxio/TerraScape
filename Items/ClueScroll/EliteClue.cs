@@ -32,11 +32,11 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 player.GetModPlayer<OSRSplayer>().eliteStage++;
                 if (player.GetModPlayer<OSRSplayer>().eliteStage >= player.GetModPlayer<OSRSplayer>().eliteSteps)
                 {
-                    item.TurnToAir();
-                    player.QuickSpawnItem(ModContent.ItemType<CasketElite>());
+                    Item.TurnToAir();
+                    player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<CasketElite>());
                     player.GetModPlayer<OSRSplayer>().ClueReset(ModContent.ItemType<EliteClue>(), player);
                     player.GetModPlayer<OSRSplayer>().CompleteClue(4, player);
-                    if (Main.netMode == 1)
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         player.GetModPlayer<OSRSplayer>().ClueMessage(player.name + "_has_completed_an_Elite_Clue_Scroll! 9");
                     }
@@ -47,7 +47,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
                 }
                 else
                 {
-                    if (Main.netMode == 1)
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
                         player.GetModPlayer<OSRSplayer>().ClueMessage(player.name + "_completed_a_step_of_an_Elite_Clue_Scroll 4");
                     }
@@ -64,7 +64,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
         {
             return true;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (player.altFunctionUse == 2)
             {
@@ -74,7 +74,7 @@ namespace OldSchoolRuneScape.Items.ClueScroll
             }
             return true;
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             ClueUI.texture = "OldSchoolRuneScape/Items/ClueScroll/Elite/Elite" + player.GetModPlayer<OSRSplayer>().eliteClue;
             if (player.channel && player.altFunctionUse != 2)

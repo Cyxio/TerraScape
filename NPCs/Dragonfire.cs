@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,77 +12,77 @@ namespace OldSchoolRuneScape.NPCs
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dragonbreath");
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
         public override void SetDefaults()
         {
-            projectile.hostile = true;
-            projectile.width = 20;
-            projectile.height = 20;
-            projectile.damage = 0;
-            projectile.penetrate = 1;
-            projectile.aiStyle = -1;
-            projectile.scale = 0.6f;
-            projectile.tileCollide = true;
-            projectile.timeLeft = 360;
+            Projectile.hostile = true;
+            Projectile.width = 20;
+            Projectile.height = 20;
+            Projectile.damage = 0;
+            Projectile.penetrate = 1;
+            Projectile.aiStyle = -1;
+            Projectile.scale = 0.6f;
+            Projectile.tileCollide = true;
+            Projectile.timeLeft = 360;
         }
         public override void AI()
         {
-            if (projectile.timeLeft == 360)
+            if (Projectile.timeLeft == 360)
             {
-                Main.PlaySound(SoundID.DD2_BetsyFlameBreath.WithVolume(0.5f), projectile.Center);
+                SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath.WithVolumeScale(0.5f), Projectile.Center);
             }
-            Lighting.AddLight(projectile.Center + projectile.velocity, new Vector3(255 * 0.005f, 124 * 0.005f, 0));
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
-            Dust.NewDust(projectile.position, projectile.width, projectile.height, 127);
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 4)
+            Lighting.AddLight(Projectile.Center + Projectile.velocity, new Vector3(255 * 0.005f, 124 * 0.005f, 0));
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Flare);
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 4)
             {
-                projectile.frame++;
-                if (projectile.frame >= Main.projFrames[projectile.type])
+                Projectile.frame++;
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.ai[0] == 1 && projectile.timeLeft < 350)
+            if (Projectile.ai[0] == 1 && Projectile.timeLeft < 350)
             {
                 Player target = Main.player[0];
-                for (int k = 0; k < Main.ActivePlayersCount; k++)
+                for (int k = 0; k < Main.CurrentFrameFlags.ActivePlayersCount; k++)
                 {
-                    if (projectile.Distance(Main.player[k].position) < projectile.Distance(target.position))
+                    if (Projectile.Distance(Main.player[k].position) < Projectile.Distance(target.position))
                     {
                         target = Main.player[k];
                     }
                 }
-                if (projectile.Distance(target.position) > 150)
+                if (Projectile.Distance(target.position) > 150)
                 {
-                    float speedX = target.MountedCenter.X - projectile.Center.X;
-                    float speedY = target.MountedCenter.Y - projectile.Center.Y;
+                    float speedX = target.MountedCenter.X - Projectile.Center.X;
+                    float speedY = target.MountedCenter.Y - Projectile.Center.Y;
                     Vector2 spd = new Vector2(speedX, speedY);
                     spd.Normalize();
-                    projectile.velocity = spd * 12f;
+                    Projectile.velocity = spd * 12f;
                 }
                 else
                 {
-                    projectile.ai[0] = 0;
+                    Projectile.ai[0] = 0;
                 }
             }
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Main.rand.Next(2) == 0)
+            if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.OnFire, 60);
             }
-            projectile.Kill();
+            Projectile.Kill();
         }
         public override void Kill(int timeLeft)
         {
             for (int i = 0; i < 20; i++)
             {
-                Dust.NewDust(projectile.Center, 0, 0, 127, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2));
-                Main.PlaySound(SoundID.Item20.WithPitchVariance(0.5f), projectile.position);
+                Dust.NewDust(Projectile.Center, 0, 0, DustID.Flare, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2));
+                SoundEngine.PlaySound(SoundID.Item20, Projectile.position);
             }
         }
     }

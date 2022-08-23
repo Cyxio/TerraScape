@@ -23,15 +23,15 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.ForAll
         }
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 24;
-            item.vanity = true;
-            item.rare = 1;
-            item.value = Item.sellPrice(10);
+            Item.width = 28;
+            Item.height = 24;
+            Item.vanity = true;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = Item.sellPrice(10);
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips[0].overrideColor = new Color(252, 251, 251);
+            tooltips[0].OverrideColor = new Color(252, 251, 251);
         }
     }
 }

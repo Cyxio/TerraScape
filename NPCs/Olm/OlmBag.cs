@@ -15,15 +15,15 @@ namespace OldSchoolRuneScape.NPCs.Olm
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.consumable = true;
-            item.width = 24;
-            item.height = 24;
-            item.rare = 10;
-            item.expert = true;
+            Item.maxStack = 999;
+            Item.consumable = true;
+            Item.width = 24;
+            Item.height = 24;
+            Item.rare = ItemRarityID.Red;
+            Item.expert = true;
         }
 
-        public override int BossBagNPC => mod.NPCType("Olm");
+        public override int BossBagNPC => Mod.Find<ModNPC>("Olm").Type;
 
         public override bool CanRightClick()
         {
@@ -32,38 +32,39 @@ namespace OldSchoolRuneScape.NPCs.Olm
 
         public override void OpenBossBag(Player player)
         {
-            Item.NewItem(player.Center, ModContent.ItemType<Tiles.OlmMusicBoxItem>(), 1, false, 0);
+            var source = player.GetSource_OpenItem(Item.type);
+            Item.NewItem(source, player.Center, ModContent.ItemType<Tiles.OlmMusicBoxItem>(), 1, false, 0);
             int ch = Main.rand.Next(4);
             if (ch == 0)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Magic.Kodaiinsignia>());
+                player.QuickSpawnItem(source, ModContent.ItemType<Items.Magic.Kodaiinsignia>());
             }
             if (ch == 1)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Dinhbulwark>());
+                player.QuickSpawnItem(source, ModContent.ItemType<Items.Weapons.Melee.Dinhbulwark>());
             }
             if (ch == 2)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Twistedbow>());
+                player.QuickSpawnItem(source, ModContent.ItemType<Items.Weapons.Ranged.Twistedbow>());
             }
             if (ch == 3)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Dclaws>());
+                player.QuickSpawnItem(source, ModContent.ItemType<Items.Weapons.Melee.Dclaws>());
             }
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.NextBool(3))
             {
                 int supply = Main.rand.Next(3);
                 if (supply == 0)
                 {
-                    player.QuickSpawnItem(mod.ItemType("Dragonstone"), Main.rand.Next(1, 5));
+                    player.QuickSpawnItem(source, Mod.Find<ModItem>("Dragonstone").Type, Main.rand.Next(1, 5));
                 }
                 if (supply == 1)
                 {
-                    player.QuickSpawnItem(mod.ItemType("Onyx"), Main.rand.Next(1, 5));
+                    player.QuickSpawnItem(source, Mod.Find<ModItem>("Onyx").Type, Main.rand.Next(1, 5));
                 }
                 if (supply == 2)
                 {
-                    player.QuickSpawnItem(mod.ItemType("Zenyte"), Main.rand.Next(1, 5));
+                    player.QuickSpawnItem(source, Mod.Find<ModItem>("Zenyte").Type, Main.rand.Next(1, 5));
                 }
             }
         }

@@ -1,8 +1,10 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
 
 namespace OldSchoolRuneScape.NPCs
 {
@@ -11,20 +13,20 @@ namespace OldSchoolRuneScape.NPCs
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Broodoo victim");
-            Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.Zombie];
+            Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Zombie];
         }
         public override void SetDefaults()
         {
-            npc.width = 18;
-            npc.height = 40;
-            npc.damage = 14;
-            npc.defense = 6;
-            npc.lifeMax = 75;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath36;
-            npc.value = 100f;
-            npc.aiStyle = -1;
-            animationType = NPCID.Zombie;
+            NPC.width = 18;
+            NPC.height = 40;
+            NPC.damage = 14;
+            NPC.defense = 6;
+            NPC.lifeMax = 75;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath36;
+            NPC.value = 100f;
+            NPC.aiStyle = -1;
+            AnimationType = NPCID.Zombie;
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -34,32 +36,37 @@ namespace OldSchoolRuneScape.NPCs
             }
             return 0;
         }
-        public override void NPCLoot()
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            if (Main.rand.Next(15) == 0)
-            {
-                Item.NewItem(npc.Hitbox, ModContent.ItemType<Items.Armor.Tribalmask>());
-            }
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Armor.Tribalmask>(), 15));
         }
         public override void HitEffect(int hitDirection, double damage)
         {
-            npc.ai[0] = 0;
-            if (npc.life > 0)
+            NPC.ai[0] = 0;
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
+            if (NPC.life > 0)
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 7, 1f, 1f, 0, new Color(109, 255, 0));
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.WoodFurniture, 1f, 1f, 0, new Color(109, 255, 0));
                 }
             }
             else
             {
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    return;
+                }
                 for (int i = 0; i < 10; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 7, 1f, 1f, 0, new Color(109, 255, 0));
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.WoodFurniture, 1f, 1f, 0, new Color(109, 255, 0));
                 }
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Broodoo"), 1f);
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Broodoo2"), 1f);
-                Gore.NewGore(npc.position, npc.velocity * Main.rand.NextFloat(0.9f, 1.1f), mod.GetGoreSlot("Gores/Broodoo2"), 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Broodoo").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Broodoo2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity * Main.rand.NextFloat(0.9f, 1.1f), Mod.Find<ModGore>("Broodoo2").Type, 1f);
             }
 
         }
@@ -67,83 +74,83 @@ namespace OldSchoolRuneScape.NPCs
         {
             float maxspeed = 2f;
             float acceleration = 0.1f;
-            if (npc.ai[0] == 0)
+            if (NPC.ai[0] == 0)
             {
-                if (npc.direction != npc.oldDirection)
+                if (NPC.direction != NPC.oldDirection)
                 {
-                    npc.velocity.X *= 0.5f;
+                    NPC.velocity.X *= 0.5f;
                 }
-                npc.TargetClosest(true);
-                if (npc.collideX && npc.collideY)
+                NPC.TargetClosest(true);
+                if (NPC.collideX && NPC.collideY)
                 {
-                    npc.velocity = new Vector2(npc.velocity.X * 1.2f, -6f);
-                    npc.ai[0] = 0;
-                    npc.netUpdate = true;
+                    NPC.velocity = new Vector2(NPC.velocity.X * 1.2f, -6f);
+                    NPC.ai[0] = 0;
+                    NPC.netUpdate = true;
                 }
-                if (!npc.HasValidTarget || !Main.dayTime)
+                if (!NPC.HasValidTarget || !Main.dayTime)
                 {
-                    npc.velocity.X = npc.direction * maxspeed;
-                    npc.ai[0] = 2;
-                    npc.netUpdate = true;
+                    NPC.velocity.X = NPC.direction * maxspeed;
+                    NPC.ai[0] = 2;
+                    NPC.netUpdate = true;
                 }
-                if (npc.HasValidTarget)
+                if (NPC.HasValidTarget)
                 {
-                    if (npc.velocity.X < maxspeed && npc.velocity.X > -maxspeed)
+                    if (NPC.velocity.X < maxspeed && NPC.velocity.X > -maxspeed)
                     {
-                        npc.velocity.X += npc.direction * acceleration;
+                        NPC.velocity.X += NPC.direction * acceleration;
                     }
                     else
                     {
-                        npc.velocity.X *= 0.9f;
+                        NPC.velocity.X *= 0.9f;
                     }
                 }
-                if (npc.velocity.Y > 1f)
+                if (NPC.velocity.Y > 1f)
                 {
-                    npc.ai[0] = 1;
-                    npc.netUpdate = true;
+                    NPC.ai[0] = 1;
+                    NPC.netUpdate = true;
                 }
-                if (Main.player[npc.target].position.Y > npc.Bottom.Y)
+                if (Main.player[NPC.target].position.Y > NPC.Bottom.Y)
                 {
-                    int x = (int)(npc.position.X / 16f);
-                    int y = (int)(npc.BottomLeft.Y / 16f);
-                    if (TileID.Sets.Platforms[Main.tile[x, y].type])
+                    int x = (int)(NPC.position.X / 16f);
+                    int y = (int)(NPC.BottomLeft.Y / 16f);
+                    if (TileID.Sets.Platforms[Main.tile[x, y].TileType])
                     {
-                        npc.position.Y += 1;
+                        NPC.position.Y += 1;
                     }
                 }
-                if (Main.player[npc.target].Distance(npc.Center) < 400f)
+                if (Main.player[NPC.target].Distance(NPC.Center) < 400f)
                 {
-                    if (Main.rand.Next(180) == 0 && Main.netMode != 1)
+                    if (Main.rand.NextBool(180)&& Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        npc.velocity = new Vector2(npc.direction * maxspeed, -6f);
-                        npc.ai[0] = 1;
-                        npc.netUpdate = true;
+                        NPC.velocity = new Vector2(NPC.direction * maxspeed, -6f);
+                        NPC.ai[0] = 1;
+                        NPC.netUpdate = true;
                     }
                 }
             }
-            else if (npc.ai[0] == 1)
+            else if (NPC.ai[0] == 1)
             {
-                if (npc.velocity.X < 1 && npc.velocity.X > -1)
+                if (NPC.velocity.X < 1 && NPC.velocity.X > -1)
                 {
-                    npc.velocity.X = 1 * npc.direction;
+                    NPC.velocity.X = 1 * NPC.direction;
                 }
-                if (npc.velocity.Y == 0)
+                if (NPC.velocity.Y == 0)
                 {
-                    npc.ai[0] = 0;
-                    npc.netUpdate = true;
+                    NPC.ai[0] = 0;
+                    NPC.netUpdate = true;
                 }
             }
-            else if (npc.ai[0] == 2)
+            else if (NPC.ai[0] == 2)
             {
-                if (npc.collideX)
+                if (NPC.collideX)
                 {
-                    npc.velocity = new Vector2(npc.velocity.X * 1.2f, -6f);
-                    npc.position.X += npc.direction;
+                    NPC.velocity = new Vector2(NPC.velocity.X * 1.2f, -6f);
+                    NPC.position.X += NPC.direction;
                 }
-                if (Main.rand.Next(600) == 0 && Main.dayTime && Main.netMode != 1)
+                if (Main.rand.NextBool(600)&& Main.dayTime && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.ai[0] = 1;
-                    npc.netUpdate = true;
+                    NPC.ai[0] = 1;
+                    NPC.netUpdate = true;
                 }
             }
         }

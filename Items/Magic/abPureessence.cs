@@ -14,19 +14,18 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.width = 28;
-            item.height = 28;
-            item.value = 10;
-            item.rare = 3;
+            Item.maxStack = 999;
+            Item.width = 28;
+            Item.height = 28;
+            Item.value = 10;
+            Item.rare = ItemRarityID.Orange;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(null, "aaRuneessence");
-            recipe.needLava = true;
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe()
+                .AddIngredient(ModContent.ItemType<RuneEssence>())
+                .AddCondition(Recipe.Condition.NearLava)
+                .Register();
         }
     }
 }

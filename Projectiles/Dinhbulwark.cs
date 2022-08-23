@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using Terraria.ID;
 
@@ -13,48 +14,48 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void SetDefaults()
         {
-            projectile.width = 54;
-            projectile.height = 54;
-            projectile.timeLeft = 64;
-            projectile.penetrate = 1;
-            projectile.friendly = true;
-            projectile.melee = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.aiStyle = -1;
-            projectile.ownerHitCheck = true;
-            projectile.timeLeft = 30;
+            Projectile.width = 54;
+            Projectile.height = 54;
+            Projectile.timeLeft = 64;
+            Projectile.penetrate = 1;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.aiStyle = -1;
+            Projectile.ownerHitCheck = true;
+            Projectile.timeLeft = 30;
         }
         public override void AI()
         {
-            Player player = Main.player[projectile.owner];
-            projectile.position = player.RotatedRelativePoint(player.MountedCenter, true) - (projectile.Size / 2f) + projectile.velocity;
-            projectile.rotation = projectile.velocity.ToRotation();
-            if (projectile.timeLeft > 10)
+            Player player = Main.player[Projectile.owner];
+            Projectile.position = player.RotatedRelativePoint(player.MountedCenter, true) - (Projectile.Size / 2f) + Projectile.velocity;
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            if (Projectile.timeLeft > 10)
             {
-                player.velocity = projectile.velocity * (projectile.timeLeft / 30f);
+                player.velocity = Projectile.velocity * (Projectile.timeLeft / 30f);
             }         
-            Dust.NewDust(projectile.position, projectile.width, projectile.height, 107);
-            Lighting.AddLight(projectile.Center, new Vector3(0.75f, 0.85f, 0.5f));
-            if (projectile.direction == -1)
+            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.TerraBlade);
+            Lighting.AddLight(Projectile.Center, new Vector3(0.75f, 0.85f, 0.5f));
+            if (Projectile.direction == -1)
             {
-                projectile.rotation = projectile.velocity.ToRotation() - MathHelper.Pi;
+                Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.Pi;
             }
-            projectile.spriteDirection = projectile.direction;
-            player.heldProj = projectile.whoAmI;
+            Projectile.spriteDirection = Projectile.direction;
+            player.heldProj = Projectile.whoAmI;
             player.itemAnimation = 2;
             player.itemTime = 2;
-            player.ChangeDir(projectile.direction);
-            if (projectile.ai[0] == 1 && player.velocity.Y < 0.1f && projectile.timeLeft > 2)
+            player.ChangeDir(Projectile.direction);
+            if (Projectile.ai[0] == 1 && player.velocity.Y < 0.1f && Projectile.timeLeft > 2)
             {
                 for (int i = 0; i < 20; i++)
                 {
-                    Dust.NewDust(new Vector2(player.Center.X + i * 3, player.position.Y + player.height), 0, 0, 163, i / 10, -4);
-                    Dust.NewDust(new Vector2(player.Center.X - i * 3, player.position.Y + player.height), 0, 0, 163, -i / 10, -4);
+                    Dust.NewDust(new Vector2(player.Center.X + i * 3, player.position.Y + player.height), 0, 0, DustID.PoisonStaff, i / 10, -4);
+                    Dust.NewDust(new Vector2(player.Center.X - i * 3, player.position.Y + player.height), 0, 0, DustID.PoisonStaff, -i / 10, -4);
                 }
-                projectile.timeLeft = 2;
-                Main.PlaySound(SoundID.Item70, projectile.position);
-                player.AddBuff(mod.BuffType("SpecCD"), 720);
+                Projectile.timeLeft = 2;
+                SoundEngine.PlaySound(SoundID.Item70, Projectile.position);
+                player.AddBuff(Mod.Find<ModBuff>("SpecCD").Type, 720);
                 for (int i = 0; i < 200; i++)
                 {
                     NPC target = Main.npc[i];
@@ -72,15 +73,15 @@ namespace OldSchoolRuneScape.Projectiles
         {
             if (target.type != NPCID.TargetDummy)
             {
-                target.velocity = Main.player[projectile.owner].velocity;
+                target.velocity = Main.player[Projectile.owner].velocity;
                 target.netUpdate = true;
             }    
-            Main.player[projectile.owner].velocity *= -0.3f;
+            Main.player[Projectile.owner].velocity *= -0.3f;
         }
         public override void OnHitPvp(Player target, int damage, bool crit)
         {
-            target.velocity += Main.player[projectile.owner].velocity;
-            Main.player[projectile.owner].velocity *= -0.3f;
+            target.velocity += Main.player[Projectile.owner].velocity;
+            Main.player[Projectile.owner].velocity *= -0.3f;
         }
     }
 }

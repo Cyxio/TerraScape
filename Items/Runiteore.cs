@@ -12,18 +12,18 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.width = 16;
-            item.height = 16;
-            item.maxStack = 999;
-            item.useTurn = true;
-            item.rare = 3;
-            item.autoReuse = true;
-            item.useAnimation = 15;
-            item.value = 5000;
-            item.useTime = 10;
-            item.useStyle = 1;
-            item.consumable = true;
-            item.createTile = mod.TileType("Runiteore");
+            Item.width = 16;
+            Item.height = 16;
+            Item.maxStack = 999;
+            Item.useTurn = true;
+            Item.rare = ItemRarityID.Orange;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.value = 5000;
+            Item.useTime = 10;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.consumable = true;
+            Item.createTile = Mod.Find<ModTile>("Runiteore").Type;
         }
     }
 }

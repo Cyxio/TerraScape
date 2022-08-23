@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System.Collections.Generic;
@@ -16,39 +17,39 @@ namespace OldSchoolRuneScape.Projectiles
 
         public override void SetDefaults()
         {
-            projectile.width = 18;
-            projectile.height = 18;
-            projectile.aiStyle = 19;
-            projectile.friendly = true;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.hide = true;
-            projectile.ownerHitCheck = true;
-            projectile.melee = true;
-            projectile.scale = 1.1f;
-            projectile.alpha = 0;
-            projectile.ai[1] = 0;
+            Projectile.width = 18;
+            Projectile.height = 18;
+            Projectile.aiStyle = 19;
+            Projectile.friendly = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.hide = true;
+            Projectile.ownerHitCheck = true;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.scale = 1.1f;
+            Projectile.alpha = 0;
+            Projectile.ai[1] = 0;
         }
         public float movementFactor
         {
-            get { return projectile.ai[0]; }
-            set { projectile.ai[0] = value; }
+            get { return Projectile.ai[0]; }
+            set { Projectile.ai[0] = value; }
         }
         public override void AI()
         {
-            Player projOwner = Main.player[projectile.owner];
+            Player projOwner = Main.player[Projectile.owner];
             Vector2 ownerMountedCenter = projOwner.RotatedRelativePoint(projOwner.MountedCenter, true);
-            projectile.direction = projOwner.direction;
-            projOwner.heldProj = projectile.whoAmI;
+            Projectile.direction = projOwner.direction;
+            projOwner.heldProj = Projectile.whoAmI;
             projOwner.itemTime = projOwner.itemAnimation;
-            projectile.position.X = ownerMountedCenter.X - (float)(projectile.width / 2);
-            projectile.position.Y = ownerMountedCenter.Y - (float)(projectile.height / 2);
+            Projectile.position.X = ownerMountedCenter.X - (float)(Projectile.width / 2);
+            Projectile.position.Y = ownerMountedCenter.Y - (float)(Projectile.height / 2);
             if (!projOwner.frozen)
             {
                 if (movementFactor == 0f)
                 {
                     movementFactor = 3f;
-                    projectile.netUpdate = true;
+                    Projectile.netUpdate = true;
                 }
                 if (projOwner.itemAnimation < projOwner.itemAnimationMax / 3)
                 {
@@ -59,30 +60,22 @@ namespace OldSchoolRuneScape.Projectiles
                     movementFactor += 2.9f;
                 }
             }
-            projectile.position += projectile.velocity * movementFactor;
+            Projectile.position += Projectile.velocity * movementFactor;
             if (projOwner.itemAnimation == 0)
             {
-                projectile.Kill();
+                Projectile.Kill();
             }
-            projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X) + MathHelper.ToRadians(135f);
-            if (projectile.spriteDirection == -1)
+            Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + MathHelper.ToRadians(135f);
+            if (Projectile.spriteDirection == -1)
             {
-                projectile.rotation -= MathHelper.ToRadians(90f);
-            }
-            if (projectile.ai[1] == 1)
-            {
-                Main.projectileTexture[projectile.type] = mod.GetTexture("Projectiles/DragonspearS");
-            }
-            else
-            {
-                Main.projectileTexture[projectile.type] = mod.GetTexture("Projectiles/Dragonspear");
+                Projectile.rotation -= MathHelper.ToRadians(90f);
             }
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (projectile.ai[1] == 1 && target.type != NPCID.TargetDummy)
+            if (Projectile.ai[1] == 1 && target.type != NPCID.TargetDummy)
             {
-                Player projOwner = Main.player[projectile.owner];
+                Player projOwner = Main.player[Projectile.owner];
                 Vector2 spd = target.position - projOwner.MountedCenter;
                 spd.Normalize();
                 target.velocity = spd * 18f;
@@ -91,9 +84,9 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void OnHitPvp(Player target, int damage, bool crit)
         {
-            if (projectile.ai[1] == 1)
+            if (Projectile.ai[1] == 1)
             {
-                Player projOwner = Main.player[projectile.owner];
+                Player projOwner = Main.player[Projectile.owner];
                 Vector2 spd = target.position - projOwner.MountedCenter;
                 spd.Normalize();
                 target.velocity += spd * 18f;

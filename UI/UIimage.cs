@@ -15,9 +15,9 @@ using System.Linq;
 
 namespace OldSchoolRuneScape.UI
 {
-    internal class UIimage : UIElement
+    internal class UIclueImage : UIElement
     {
         internal Color backgroundColor = Color.Gray;
-        internal static Texture2D _backgroundTexture = ModContent.GetTexture("OldSchoolRuneScape/Items/ClueScroll/ClueTemp");      
+        internal static Texture2D _backgroundTexture = ModContent.Request<Texture2D>("OldSchoolRuneScape/Items/ClueScroll/ClueTemp").Value;
     }
 }

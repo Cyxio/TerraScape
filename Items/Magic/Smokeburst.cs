@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,56 +15,54 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void SetDefaults()
         {
-            item.damage = 35;
-            item.magic = true;
-            item.mana = 16;
-            item.width = 18;
-            item.height = 15;
-            item.useTime = 20;
-            item.useAnimation = 20;
-            item.useStyle = 5;
-            item.noUseGraphic = true;
-            item.noMelee = true;
-            item.knockBack = 2;
-            item.value = Item.sellPrice(0, 5, 0, 0);
-            item.rare = 5;
-            item.UseSound = SoundID.Item20;
-            item.autoReuse = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.Smokeburst>();
-            item.shootSpeed = 9;
+            Item.damage = 35;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 16;
+            Item.width = 18;
+            Item.height = 15;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.knockBack = 2;
+            Item.value = Item.sellPrice(0, 5, 0, 0);
+            Item.rare = ItemRarityID.Pink;
+            Item.UseSound = SoundID.Item20;
+            Item.autoReuse = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Smokeburst>();
+            Item.shootSpeed = 9;
         }
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             int ch = Main.rand.Next(10);
-            Vector2 velocity = new Vector2(speedX, speedY);
             if (ch >= 0)
             {
-                Projectile.NewProjectile(position, velocity, type, damage, knockBack, player.whoAmI);
-                Projectile.NewProjectile(position - (velocity * 5).RotatedBy(MathHelper.ToRadians(-20)), velocity * Main.rand.NextFloat(0.8f, 1.2f), type, damage, knockBack, player.whoAmI);
-                Projectile.NewProjectile(position - (velocity * 5).RotatedBy(MathHelper.ToRadians(20)), velocity * Main.rand.NextFloat(0.8f, 1.2f), type, damage, knockBack, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position - (velocity * 5).RotatedBy(MathHelper.ToRadians(-20)), velocity * Main.rand.NextFloat(0.8f, 1.2f), type, damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position - (velocity * 5).RotatedBy(MathHelper.ToRadians(20)), velocity * Main.rand.NextFloat(0.8f, 1.2f), type, damage, knockback, player.whoAmI);
             }
             if (ch >= 5)
             {
-                Projectile.NewProjectile(position - velocity * 5, velocity * Main.rand.NextFloat(0.8f, 1.2f), type, damage, knockBack, player.whoAmI);
+                Projectile.NewProjectile(source, position - velocity * 5, velocity * Main.rand.NextFloat(0.8f, 1.2f), type, damage, knockback, player.whoAmI);
             }
             if (ch >= 8)
             {
-                Projectile.NewProjectile(position - (velocity * 10).RotatedBy(MathHelper.ToRadians(20)), velocity * Main.rand.NextFloat(0.8f, 1.2f), type, damage, knockBack, player.whoAmI);
-                Projectile.NewProjectile(position - (velocity * 10).RotatedBy(MathHelper.ToRadians(-20)), velocity * Main.rand.NextFloat(0.8f, 1.2f), type, damage, knockBack, player.whoAmI);
+                Projectile.NewProjectile(source, position - (velocity * 10).RotatedBy(MathHelper.ToRadians(20)), velocity * Main.rand.NextFloat(0.8f, 1.2f), type, damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position - (velocity * 10).RotatedBy(MathHelper.ToRadians(-20)), velocity * Main.rand.NextFloat(0.8f, 1.2f), type, damage, knockback, player.whoAmI);
             }
             player.reuseDelay = 10;
             return false;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Bloodrune", 25);
             recipe.AddIngredient(null, "Chaosrune", 25);
             recipe.AddIngredient(null, "Firerune", 25);
             recipe.AddIngredient(null, "Airrune", 25);
-            recipe.SetResult(this);
             recipe.AddTile(TileID.MythrilAnvil);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

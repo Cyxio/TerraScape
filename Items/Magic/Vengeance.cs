@@ -14,29 +14,29 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void SetDefaults()
         {
-            item.mana = 50;
-            item.width = 40;
-            item.height = 40;
-            item.useTime = 60;
-            item.useAnimation = 60;
-            item.useStyle = 5;
-            item.noUseGraphic = true;
-            item.noMelee = true;
-            item.rare = 8;
-            item.UseSound = SoundID.Item77;
-            item.autoReuse = false;
+            Item.mana = 50;
+            Item.width = 40;
+            Item.height = 40;
+            Item.useTime = 60;
+            Item.useAnimation = 60;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.rare = ItemRarityID.Yellow;
+            Item.UseSound = SoundID.Item77;
+            Item.autoReuse = false;
         }
         public override bool CanUseItem(Player player)
         {
             return !player.GetModPlayer<OSRSplayer>().Vengeance;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             player.AddBuff(ModContent.BuffType<Buffs.Vengeance>(), 360000);
             for (int o = 0; o < 36; o++)
             {
                 Vector2 rotate = new Vector2(3).RotatedBy(MathHelper.ToRadians(10 * o));
-                int dust = Dust.NewDust(player.Center, 0, 0, 90);
+                int dust = Dust.NewDust(player.Center, 0, 0, DustID.GemRuby);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].position = player.MountedCenter + 10*rotate;
                 Main.dust[dust].scale = 1f;
@@ -47,13 +47,12 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Deathrune", 20);
             recipe.AddIngredient(null, "Astralrune", 40);
             recipe.AddIngredient(null, "Earthrune", 100);
-            recipe.SetResult(this);
             recipe.AddTile(TileID.WorkBenches);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

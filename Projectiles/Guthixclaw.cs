@@ -11,36 +11,36 @@ namespace OldSchoolRuneScape.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Guthixclaw");
-            Main.projFrames[projectile.type] = 9;
+            Main.projFrames[Projectile.type] = 9;
         }
         public override void SetDefaults()
         {
-            projectile.width = 48;
-            projectile.height = 78;
-            projectile.aiStyle = -1;
-            projectile.tileCollide = false;
-            projectile.friendly = true;
-            projectile.penetrate = -1;
-            projectile.magic = true;
+            Projectile.width = 48;
+            Projectile.height = 78;
+            Projectile.aiStyle = -1;
+            Projectile.tileCollide = false;
+            Projectile.friendly = true;
+            Projectile.penetrate = -1;
+            Projectile.DamageType = DamageClass.Magic;
         }
         int i = 0;
         public override void AI()
         {
-            Dust.NewDust(projectile.position, 48, 78, 173, 0f, 0f);
-            Lighting.AddLight(projectile.position, new Vector3(0, 0, 0));
+            Dust.NewDust(Projectile.position, 48, 78, DustID.ShadowbeamStaff, 0f, 0f);
+            Lighting.AddLight(Projectile.position, new Vector3(0, 0, 0));
             i++;
             if (i == 3)
             {
-                projectile.frame++;
+                Projectile.frame++;
                 i = 0;
-                if (projectile.frame > Main.projFrames[projectile.type])
+                if (Projectile.frame > Main.projFrames[Projectile.type])
                 {
-                    projectile.Kill();
+                    Projectile.Kill();
                 }
             }
-            if (projectile.frame > 6)
+            if (Projectile.frame > 6)
             {
-                projectile.alpha += 25;
+                Projectile.alpha += 25;
             }
         }
     }

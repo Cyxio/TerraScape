@@ -14,20 +14,19 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.width = 28;
-            item.height = 28;
-            item.value = 10;
-            item.rare = 5;
+            Item.maxStack = 999;
+            Item.width = 28;
+            Item.height = 28;
+            Item.value = 10;
+            Item.rare = ItemRarityID.Pink;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe(10);
             recipe.AddIngredient(null, "abPureessence", 10);
             recipe.AddIngredient(ItemID.SoulofNight, 1);
-            recipe.SetResult(this, 10);
             recipe.AddTile(TileID.WorkBenches);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

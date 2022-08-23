@@ -1,6 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using OldSchoolRuneScape.Common.DropRules;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,22 +18,22 @@ namespace OldSchoolRuneScape.NPCs.Slayer
         }
         public override void SetDefaults()
         {
-            item.value = Item.buyPrice(0, 5, 0, 0);
-            item.consumable = true;
-            item.maxStack = 20;
-            item.useStyle = 4;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.rare = 2;
+            Item.value = Item.buyPrice(0, 5, 0, 0);
+            Item.consumable = true;
+            Item.maxStack = 20;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.rare = ItemRarityID.Green;
         }
         public override bool CanUseItem(Player player)
         {
             return !NPC.AnyNPCs(ModContent.NPCType<CrushingHand>()) && !Main.dayTime;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<ScreamingBanshee>());
-            Main.PlaySound(SoundID.Roar, player.position, 0);
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
             return true;
         }
     }
@@ -44,21 +47,21 @@ namespace OldSchoolRuneScape.NPCs.Slayer
         }
         public override void SetDefaults()
         {
-            projectile.CloneDefaults(ProjectileID.ShadowFlame);
-            projectile.hostile = true;
-            aiType = ProjectileID.ShadowFlame;
+            Projectile.CloneDefaults(ProjectileID.ShadowFlame);
+            Projectile.hostile = true;
+            AIType = ProjectileID.ShadowFlame;
         }
         public override void AI()
         {
-            projectile.hostile = true;
-            projectile.friendly = false;
-            if (projectile.ai[0] == 0)
+            Projectile.hostile = true;
+            Projectile.friendly = false;
+            if (Projectile.ai[0] == 0)
             {
-                projectile.ai[0] = Main.rand.NextFloat(-0.2f, 0.2f);
+                Projectile.ai[0] = Main.rand.NextFloat(-0.2f, 0.2f);
             }
-            if (projectile.ai[1] == 0)
+            if (Projectile.ai[1] == 0)
             {
-                projectile.ai[1] = Main.rand.NextFloat(-0.2f, 0.2f);
+                Projectile.ai[1] = Main.rand.NextFloat(-0.2f, 0.2f);
             }
         }
     }
@@ -69,27 +72,27 @@ namespace OldSchoolRuneScape.NPCs.Slayer
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Screaming Banshee");
-            Main.npcFrameCount[npc.type] = 4;
+            Main.npcFrameCount[NPC.type] = 4;
         }
         public override void SetDefaults()
         {
-            npc.width = 100;
-            npc.height = 200;
-            npc.aiStyle = -1;
-            npc.npcSlots = 10f;
-            npc.lavaImmune = true;
-            npc.damage = 35;
-            npc.defense = 0;
-            npc.lifeMax = 4000;
-            npc.knockBackResist = 0f;
-            npc.boss = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.HitSound = SoundID.NPCHit54;
-            npc.DeathSound = SoundID.NPCDeath52;
-            npc.value = Item.buyPrice(0, 5) / 2.5f;
-            npc.buffImmune[BuffID.Confused] = true;
-            music = OldSchoolRuneScape.slayerMusic;
+            NPC.width = 100;
+            NPC.height = 200;
+            NPC.aiStyle = -1;
+            NPC.npcSlots = 10f;
+            NPC.lavaImmune = true;
+            NPC.damage = 35;
+            NPC.defense = 0;
+            NPC.lifeMax = 4000;
+            NPC.knockBackResist = 0f;
+            NPC.boss = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.HitSound = SoundID.NPCHit54;
+            NPC.DeathSound = SoundID.NPCDeath52;
+            NPC.value = Item.buyPrice(0, 5) / 2.5f;
+            NPC.buffImmune[BuffID.Confused] = true;
+            Music = OldSchoolRuneScape.slayerMusic;
         }
 
         const int Move = 0;
@@ -98,31 +101,31 @@ namespace OldSchoolRuneScape.NPCs.Slayer
 
         public float State
         {
-            get { return npc.ai[0]; }
-            set { npc.ai[0] = value; }
+            get { return NPC.ai[0]; }
+            set { NPC.ai[0] = value; }
         }
 
         public float Timer
         {
-            get { return npc.ai[1]; }
-            set { npc.ai[1] = value; }
+            get { return NPC.ai[1]; }
+            set { NPC.ai[1] = value; }
         }
 
         public float AttackNum
         {
-            get { return npc.ai[2]; }
-            set { npc.ai[2] = value; }
+            get { return NPC.ai[2]; }
+            set { NPC.ai[2] = value; }
         }
 
         public override bool CheckDead()
         {
-            if (npc.ai[3] == 0f)
+            if (NPC.ai[3] == 0f)
             {
-                npc.ai[3] = 1f;
-                npc.damage = 0;
-                npc.life = npc.lifeMax;
-                npc.dontTakeDamage = true;
-                npc.netUpdate = true;
+                NPC.ai[3] = 1f;
+                NPC.damage = 0;
+                NPC.life = NPC.lifeMax;
+                NPC.dontTakeDamage = true;
+                NPC.netUpdate = true;
                 return false;
             }
             return true;
@@ -130,8 +133,8 @@ namespace OldSchoolRuneScape.NPCs.Slayer
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = 5200 + 1000 * numPlayers;
-            npc.damage = (int)(npc.damage * 0.7f);
+            NPC.lifeMax = 5200 + 1000 * numPlayers;
+            NPC.damage = (int)(NPC.damage * 0.7f);
         }
         public override void BossLoot(ref string name, ref int potionType)
         {
@@ -147,31 +150,27 @@ namespace OldSchoolRuneScape.NPCs.Slayer
             {
                 Timer--;
             }
-            npc.TargetClosest(true);
-            Player target = Main.player[npc.target];
-            HealthPrc = (int)(100f * (npc.life / (float)npc.lifeMax));
-            if (npc.ai[3] > 0f)
+            NPC.TargetClosest(true);
+            Player target = Main.player[NPC.target];
+            HealthPrc = (int)(100f * (NPC.life / (float)NPC.lifeMax));
+            if (NPC.ai[3] > 0f)
             {
                 State = 4;
-                npc.alpha++;
-                npc.velocity *= 0.96f;
-                npc.ai[3]++;
-                if (npc.ai[3] % 20 == 0)
+                NPC.alpha++;
+                NPC.velocity *= 0.96f;
+                NPC.ai[3]++;
+                if (NPC.ai[3] % 20 == 0)
                 {
-                    Main.PlaySound(npc.HitSound);
-                    if (OSRSworld.slayBossProgress < 2)
-                    {
-                        Item.NewItem(npc.position, new Vector2(npc.width, npc.height), ModContent.ItemType<Items.SlayerToken>(), 4);
-                    }
+                    SoundEngine.PlaySound(NPC.HitSound.Value);
                 }
                 if (Main.rand.NextFloat() < 1f)
                 {
                     Dust dust;
                     // You need to set position depending on what you are doing. You may need to subtract width/2 and height/2 as well to center the spawn rectangle.
-                    Vector2 position = npc.position;
-                    dust = Main.dust[Terraria.Dust.NewDust(position, npc.width, npc.height, 109, 0f, -5f, 0, new Color(255, 255, 255), 2.302632f)];
+                    Vector2 position = NPC.position;
+                    dust = Main.dust[Terraria.Dust.NewDust(position, NPC.width, NPC.height, DustID.Asphalt, 0f, -5f, 0, new Color(255, 255, 255), 2.302632f)];
                 }
-                if (npc.ai[3] > 180f)
+                if (NPC.ai[3] > 180f)
                 {
                     for (int i = 0; i < 180; i++)
                     {
@@ -180,13 +179,13 @@ namespace OldSchoolRuneScape.NPCs.Slayer
                         Vector2 spede = new Vector2(0, 8);
                         spede = spede.RotatedBy(MathHelper.ToRadians(i * 2));
                         spede *= Main.rand.NextFloat(1f, 2f);
-                        dust = Main.dust[Terraria.Dust.NewDust(npc.Center, 10, 10, 54, spede.X, spede.Y, 0, new Color(255, 255, 255), 2.960526f)];
+                        dust = Main.dust[Terraria.Dust.NewDust(NPC.Center, 10, 10, DustID.Wraith, spede.X, spede.Y, 0, new Color(255, 255, 255), 2.960526f)];
                         dust.noGravity = true;
                         dust.fadeIn = 0.9868421f;
                     }
-                    npc.life = 0;
-                    npc.HitEffect(0, 0);
-                    npc.checkDead();
+                    NPC.life = 0;
+                    NPC.HitEffect(0, 0);
+                    NPC.checkDead();
                 }
             }
             if (State == Move)
@@ -203,15 +202,15 @@ namespace OldSchoolRuneScape.NPCs.Slayer
                     speed = 5.5f;
                     acceleration = 0.06f;
                 }
-                Vector2 toTarget = target.MountedCenter - npc.Center;
+                Vector2 toTarget = target.MountedCenter - NPC.Center;
                 toTarget.Normalize();
                 toTarget *= (speed * acceleration);
-                npc.velocity += toTarget;
-                if (npc.velocity.Length() > speed)
+                NPC.velocity += toTarget;
+                if (NPC.velocity.Length() > speed)
                 {
-                    npc.velocity *= 0.95f;
+                    NPC.velocity *= 0.95f;
                 }
-                if (Timer <= 0 && HealthPrc < 100 && Main.netMode != 1)
+                if (Timer <= 0 && HealthPrc < 100 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int i = Main.rand.Next(4);
                     AttackNum = i;
@@ -219,13 +218,13 @@ namespace OldSchoolRuneScape.NPCs.Slayer
                     {
                         //Main.NewText("dash");
                         Timer = 90;
-                        npc.velocity = new Vector2(10 * npc.direction, 0);
+                        NPC.velocity = new Vector2(10 * NPC.direction, 0);
                     }
                     else if (i == 1)
                     {
                         //Main.NewText("tentac");
                         Timer = 101;
-                        npc.velocity *= 0;
+                        NPC.velocity *= 0;
                     }
                     else if (i == 2)
                     {
@@ -238,13 +237,13 @@ namespace OldSchoolRuneScape.NPCs.Slayer
                         Timer = 270;
                     }
                     State = Attack;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
-                if (Main.dayTime || !npc.HasValidTarget)
+                if (Main.dayTime || !NPC.HasValidTarget)
                 {
                     State = Flee;
                     Timer = 85;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
             }
             if (State == Attack)
@@ -252,11 +251,11 @@ namespace OldSchoolRuneScape.NPCs.Slayer
                 int CD = 60;
                 if (AttackNum == 0)
                 {
-                    npc.velocity *= 0.985f;
+                    NPC.velocity *= 0.985f;
                 }
                 else if (AttackNum == 1)
                 {
-                    Vector2 velo = target.Center - npc.Center;
+                    Vector2 velo = target.Center - NPC.Center;
                     velo.Normalize();
                     velo = velo.RotatedBy(Main.rand.NextFloat((float)Math.PI / -10f, (float)Math.PI / 10f));
                     if (Timer > 89)
@@ -277,12 +276,12 @@ namespace OldSchoolRuneScape.NPCs.Slayer
                     }
                     if (Timer % 30 == 0)
                     {
-                        Main.PlaySound(SoundID.Item103, npc.Center);
-                        if (Main.netMode != 1)
+                        SoundEngine.PlaySound(SoundID.Item103, NPC.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             for (int a = 0; a < 3; a++)
                             {
-                                Projectile.NewProjectile(npc.Center + new Vector2(41 * npc.direction, 41), velo, ModContent.ProjectileType<BansheeTentacle>(), npc.damage / 4, 1f, 255, Main.rand.NextFloat(-0.2f, 0.2f), Main.rand.NextFloat(-0.2f, 0.2f));
+                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(41 * NPC.direction, 41), velo, ModContent.ProjectileType<BansheeTentacle>(), NPC.damage / 4, 1f, 255, Main.rand.NextFloat(-0.2f, 0.2f), Main.rand.NextFloat(-0.2f, 0.2f));
                             }
                         }
                     }
@@ -290,46 +289,46 @@ namespace OldSchoolRuneScape.NPCs.Slayer
                 }
                 else if (AttackNum == 2)
                 {
-                    if (Timer > 45 && Vector2.Distance(target.Center, npc.Center) > 200f)
+                    if (Timer > 45 && Vector2.Distance(target.Center, NPC.Center) > 200f)
                     {
-                        Vector2 velo = target.Center - npc.Center;
+                        Vector2 velo = target.Center - NPC.Center;
                         velo.Normalize();
-                        npc.velocity += velo;
+                        NPC.velocity += velo;
                     }
                     else
                     {
-                        npc.velocity *= 0.995f;
+                        NPC.velocity *= 0.995f;
                     }
-                    if (npc.velocity.Length() > 5f)
+                    if (NPC.velocity.Length() > 5f)
                     {
-                        npc.velocity *= 0.93f;
+                        NPC.velocity *= 0.93f;
                     }
                     CD = 60;
                 }
                 else if (AttackNum == 3)
                 {
                     Vector2 target1 = target.Center + new Vector2(0, 450).RotatedBy(MathHelper.ToRadians(Timer * 2));
-                    Vector2 velo = target1 - npc.Center;
+                    Vector2 velo = target1 - NPC.Center;
                     velo.Normalize();
-                    npc.velocity += velo;
-                    if (npc.velocity.Length() > 9f)
+                    NPC.velocity += velo;
+                    if (NPC.velocity.Length() > 9f)
                     {
-                        npc.velocity *= 0.93f;
+                        NPC.velocity *= 0.93f;
                     }
                     if (HealthPrc < 50 && Timer % 90 == 0)
                     {
-                        if (Main.netMode != 1)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             for (int a = 0; a < 3; a++)
                             {
-                                Vector2 veloc = target.Center - npc.Center;
+                                Vector2 veloc = target.Center - NPC.Center;
                                 veloc.Normalize();
                                 veloc = veloc.RotatedBy(Main.rand.NextFloat((float)Math.PI / -10f, (float)Math.PI / 10f));
                                 veloc *= 19f;
-                                Projectile.NewProjectile(npc.Center + new Vector2(41 * npc.direction, 41), veloc, ModContent.ProjectileType<BansheeTentacle>(), npc.damage / 4, 1f, 255, Main.rand.NextFloat(-0.2f, 0.2f), Main.rand.NextFloat(-0.2f, 0.2f));
+                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(41 * NPC.direction, 41), veloc, ModContent.ProjectileType<BansheeTentacle>(), NPC.damage / 4, 1f, 255, Main.rand.NextFloat(-0.2f, 0.2f), Main.rand.NextFloat(-0.2f, 0.2f));
                             }
                         }
-                        Main.PlaySound(SoundID.Item103, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item103, NPC.Center);
                     }
                     CD = 30;
                 }
@@ -342,22 +341,37 @@ namespace OldSchoolRuneScape.NPCs.Slayer
                         i = (int)(CD / 10f);
                     }
                     Timer = CD - (i*5);
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
             }
             if (State == Flee)
             {
-                npc.alpha = (85 - (int)(Timer)) * 3;
+                NPC.alpha = (85 - (int)(Timer)) * 3;
                 if (Timer < 10)
                 {
-                    npc.active = false;
-                    npc.netUpdate = true;
+                    NPC.active = false;
+                    NPC.netUpdate = true;
                 }
             }
         }
 
-
-        public override void NPCLoot()
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            var leadingCondition = new LeadingConditionRule(new SlayerBossFirstKillCondition(2));
+            int itemType = ModContent.ItemType<Items.SlayerToken>();
+            var parameters = new DropOneByOne.Parameters()
+            {
+                ChanceNumerator = 1,
+                ChanceDenominator = 1,
+                MinimumStackPerChunkBase = 1,
+                MaximumStackPerChunkBase = 1,
+                MinimumItemDropsCount = 25,
+                MaximumItemDropsCount = 25,
+            };
+            leadingCondition.OnSuccess(new DropOneByOne(itemType, parameters));
+            npcLoot.Add(leadingCondition);
+        }
+        public override void OnKill()
         {
             if (OSRSworld.slayBossProgress < 2)
             {
@@ -376,49 +390,49 @@ namespace OldSchoolRuneScape.NPCs.Slayer
 
         public override void FindFrame(int frameHeight)
         {
-            npc.spriteDirection = npc.direction;
+            NPC.spriteDirection = NPC.direction;
             if (State == Attack)
             {
-                npc.frameCounter++;
-                if (npc.frameCounter < 6)
+                NPC.frameCounter++;
+                if (NPC.frameCounter < 6)
                 {
-                    npc.frame.Y = 0 * frameHeight;
+                    NPC.frame.Y = 0 * frameHeight;
                 }
-                else if (npc.frameCounter < 12)
+                else if (NPC.frameCounter < 12)
                 {
-                    npc.frame.Y = 1 * frameHeight;
+                    NPC.frame.Y = 1 * frameHeight;
                 }
-                else if (npc.frameCounter < 18)
+                else if (NPC.frameCounter < 18)
                 {
-                    npc.frame.Y = 2 * frameHeight;
+                    NPC.frame.Y = 2 * frameHeight;
                 }
                 else
                 {
-                    npc.frameCounter = 0;
+                    NPC.frameCounter = 0;
                 }
             }
             else
             {
-                npc.frameCounter++;
-                if (npc.frameCounter < 10)
+                NPC.frameCounter++;
+                if (NPC.frameCounter < 10)
                 {
-                    npc.frame.Y = 0 * frameHeight;
+                    NPC.frame.Y = 0 * frameHeight;
                 }
-                else if (npc.frameCounter < 20)
+                else if (NPC.frameCounter < 20)
                 {
-                    npc.frame.Y = 1 * frameHeight;
+                    NPC.frame.Y = 1 * frameHeight;
                 }
-                else if (npc.frameCounter < 30)
+                else if (NPC.frameCounter < 30)
                 {
-                    npc.frame.Y = 2 * frameHeight;
+                    NPC.frame.Y = 2 * frameHeight;
                 }
-                else if (npc.frameCounter < 40)
+                else if (NPC.frameCounter < 40)
                 {
-                    npc.frame.Y = 3 * frameHeight;
+                    NPC.frame.Y = 3 * frameHeight;
                 }
                 else
                 {
-                    npc.frameCounter = 0;
+                    NPC.frameCounter = 0;
                 }
             }
         }

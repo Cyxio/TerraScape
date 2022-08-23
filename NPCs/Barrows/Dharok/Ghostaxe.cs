@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,57 +15,57 @@ namespace OldSchoolRuneScape.NPCs.Barrows.Dharok
         }
         public override void SetDefaults()
         {
-            projectile.hostile = true;
-            projectile.width = 72;
-            projectile.height = 62;
-            projectile.scale = 1f;
-            projectile.penetrate = -1;
-            projectile.aiStyle = -1;
-            projectile.scale = 1.2f;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 480;
-            projectile.alpha = 0;
-            projectile.ai[0] = 0;
-            projectile.ai[1] = 0;
+            Projectile.hostile = true;
+            Projectile.width = 72;
+            Projectile.height = 62;
+            Projectile.scale = 1f;
+            Projectile.penetrate = -1;
+            Projectile.aiStyle = -1;
+            Projectile.scale = 1.2f;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 480;
+            Projectile.alpha = 0;
+            Projectile.ai[0] = 0;
+            Projectile.ai[1] = 0;
         }
         public override void AI()
         {
-            projectile.spriteDirection = projectile.direction;
-            if (projectile.alpha == 0)
+            Projectile.spriteDirection = Projectile.direction;
+            if (Projectile.alpha == 0)
             {
-                Main.PlaySound(SoundID.Item1.WithPitchVariance(0.5f), projectile.position);
+                SoundEngine.PlaySound(SoundID.Item1, Projectile.position);
             }
-            Lighting.AddLight(projectile.Center + projectile.velocity, new Vector3(116 * 0.01f, 35 * 0.01f, 78 * 0.01f));
-            if (projectile.alpha < 10)
+            Lighting.AddLight(Projectile.Center + Projectile.velocity, new Vector3(116 * 0.01f, 35 * 0.01f, 78 * 0.01f));
+            if (Projectile.alpha < 10)
             {
-                projectile.ai[1] = 9;
+                Projectile.ai[1] = 9;
             }
-            if (projectile.alpha > 200)
+            if (Projectile.alpha > 200)
             {
-                projectile.ai[1] = -9;
+                Projectile.ai[1] = -9;
             }
-            projectile.alpha += (int)projectile.ai[1];
-            if(projectile.ai[0] == 0)
+            Projectile.alpha += (int)Projectile.ai[1];
+            if(Projectile.ai[0] == 0)
             {
-                projectile.rotation += MathHelper.ToRadians(12 * projectile.direction);
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, 58);
-                projectile.velocity.Y += 0.3f;
+                Projectile.rotation += MathHelper.ToRadians(12 * Projectile.direction);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Enchanted_Pink);
+                Projectile.velocity.Y += 0.3f;
             }
-            if (projectile.ai[0] == 1)
+            if (Projectile.ai[0] == 1)
             {
-                projectile.rotation += MathHelper.ToRadians(20 - projectile.velocity.Length());
-                if (projectile.timeLeft > 130)
+                Projectile.rotation += MathHelper.ToRadians(20 - Projectile.velocity.Length());
+                if (Projectile.timeLeft > 130)
                 {
-                    projectile.timeLeft = 130;
+                    Projectile.timeLeft = 130;
                 }
-                projectile.velocity *= 0.98f;
+                Projectile.velocity *= 0.98f;
             }
         }
         public override void Kill(int timeLeft)
         {
             for (int i = 0; i < 20; i++)
             {
-                Dust.NewDust(projectile.Center, 0, 0, 58, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2));
+                Dust.NewDust(Projectile.Center, 0, 0, DustID.Enchanted_Pink, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2));
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,28 +16,27 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.consumable = true;
-            item.width = 24;
-            item.height = 24;
-            item.rare = 8;
+            Item.maxStack = 999;
+            Item.consumable = true;
+            Item.width = 24;
+            Item.height = 24;
+            Item.rare = ItemRarityID.Yellow;
         }
 
-        public override int BossBagNPC => mod.NPCType("Barrowsspirit");
+        public override int BossBagNPC => Mod.Find<ModNPC>("Barrowsspirit").Type;
 
         public override bool CanRightClick()
         {
             return true;
         }
-
         public override void OpenBossBag(Player player)
         {
             for (int i = 0; i < 10; i++)
             {
-                player.TryGettingDevArmor();
+                player.TryGettingDevArmor(player.GetSource_OpenItem(Item.type));
             }         
-            Item.NewItem(player.Center, ModContent.ItemType<Tiles.BarrowsMusicBoxItem>(), 1, false, 0);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.Amuletdamned>());
+            Item.NewItem(player.GetSource_OpenItem(Item.type), player.Center, ModContent.ItemType<Tiles.BarrowsMusicBoxItem>(), 1, false, 0);
+            player.QuickSpawnItem(player.GetSource_OpenItem(Item.type), ModContent.ItemType<Items.Accessories.Amuletdamned>());
         }
     }
     public class Barrowsspirit : ModNPC
@@ -44,112 +44,114 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spirit of Barrows");
-            Main.npcFrameCount[npc.type] = 4;
+            Main.npcFrameCount[NPC.type] = 4;
         }
         public override void SetDefaults()
         {
-            npc.lifeMax = 666;
-            npc.height = 70;
-            npc.width = 50;
-            npc.friendly = false;
-            npc.knockBackResist = 0f;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.alpha = 100;
-            npc.boss = true;
-            npc.aiStyle = -1;
-            npc.value = Item.buyPrice(0, 15);
-            npc.HitSound = SoundID.NPCHit21;
-            npc.DeathSound = SoundID.NPCDeath58;
-            music = OldSchoolRuneScape.barrowsMusic;
-            bossBag = ModContent.ItemType<Barrowschest>();
+            NPC.lifeMax = 666;
+            NPC.height = 70;
+            NPC.width = 50;
+            NPC.friendly = false;
+            NPC.knockBackResist = 0f;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.alpha = 100;
+            NPC.boss = true;
+            NPC.aiStyle = -1;
+            NPC.value = Item.buyPrice(0, 15);
+            NPC.HitSound = SoundID.NPCHit21;
+            NPC.DeathSound = SoundID.NPCDeath58;
+            Music = OldSchoolRuneScape.barrowsMusic;
         }
         public override void AI()
         {
-            npc.TargetClosest();
-            if (!npc.HasValidTarget)
+            NPC.TargetClosest();
+            if (!NPC.HasValidTarget)
             {
-                npc.active = false;
+                NPC.active = false;
             }
             int dustCounter = 0;
-            npc.ai[1]++;
-            npc.dontTakeDamage = false;
+            NPC.ai[1]++;
+            NPC.dontTakeDamage = false;
             if (NPC.AnyNPCs(ModContent.NPCType<Ahrim.Ahrim>()))
             {
-                npc.dontTakeDamage = true;
+                NPC.dontTakeDamage = true;
                 dustCounter++;
             }
             if (NPC.AnyNPCs(ModContent.NPCType<Dharok.Dharok>()))
             {
-                npc.dontTakeDamage = true;
+                NPC.dontTakeDamage = true;
                 dustCounter++;
             }
             if (NPC.AnyNPCs(ModContent.NPCType<Torag.Torag>()))
             {
-                npc.dontTakeDamage = true;
+                NPC.dontTakeDamage = true;
                 dustCounter++;
             }
             if (NPC.AnyNPCs(ModContent.NPCType<Guthan.Guthan>()))
             {
-                npc.dontTakeDamage = true;
+                NPC.dontTakeDamage = true;
                 dustCounter++;
             }
             if (NPC.AnyNPCs(ModContent.NPCType<Verac.Verac>()))
             {
-                npc.dontTakeDamage = true;
+                NPC.dontTakeDamage = true;
                 dustCounter++;
             }
             if (NPC.AnyNPCs(ModContent.NPCType<Karil.Karil>()))
             {
-                npc.dontTakeDamage = true;
+                NPC.dontTakeDamage = true;
                 dustCounter++;
             }
             for (int i = 0; i < dustCounter; i++)
             {
                 Vector2 rotate = new Vector2(0, -130).RotatedBy(MathHelper.ToRadians(60 * i));
-                Dust dust = Dust.NewDustPerfect(npc.Center + rotate.RotatedBy(MathHelper.ToRadians(npc.ai[1])), 58);
+                Dust dust = Dust.NewDustPerfect(NPC.Center + rotate.RotatedBy(MathHelper.ToRadians(NPC.ai[1])), 58);
                 dust.noGravity = true;
                 dust.velocity *= 0f;
             }
         }
         public override void FindFrame(int frameHeight)
         {
-            npc.spriteDirection = -npc.direction;
+            NPC.spriteDirection = -NPC.direction;
             int frameSpeed = 5;
-            npc.frameCounter++;
-            if (npc.frameCounter < frameSpeed)
+            NPC.frameCounter++;
+            if (NPC.frameCounter < frameSpeed)
             {
-                npc.frame.Y = 0;
+                NPC.frame.Y = 0;
             }
-            else if (npc.frameCounter < frameSpeed * 2)
+            else if (NPC.frameCounter < frameSpeed * 2)
             {
-                npc.frame.Y = frameHeight;
+                NPC.frame.Y = frameHeight;
             }
-            else if (npc.frameCounter < frameSpeed * 3)
+            else if (NPC.frameCounter < frameSpeed * 3)
             {
-                npc.frame.Y = frameHeight * 2;
+                NPC.frame.Y = frameHeight * 2;
             }
-            else if (npc.frameCounter < frameSpeed * 4)
+            else if (NPC.frameCounter < frameSpeed * 4)
             {
-                npc.frame.Y = frameHeight * 3;
+                NPC.frame.Y = frameHeight * 3;
             }
-            else if (npc.frameCounter < frameSpeed * 5)
+            else if (NPC.frameCounter < frameSpeed * 5)
             {
-                npc.frame.Y = frameHeight * 2;
+                NPC.frame.Y = frameHeight * 2;
             }
-            else if (npc.frameCounter < frameSpeed * 6)
+            else if (NPC.frameCounter < frameSpeed * 6)
             {
-                npc.frame.Y = frameHeight;
+                NPC.frame.Y = frameHeight;
             }
             else
             {
-                npc.frameCounter = 0;
+                NPC.frameCounter = 0;
             }
         }
-        public override void NPCLoot()
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Barrowschest>()));
+        }
+        public override void OnKill()
         {
             OSRSworld.downedBarSpirit = true;
-            npc.DropBossBags();
         }
         public override void BossLoot(ref string name, ref int potionType)
         {

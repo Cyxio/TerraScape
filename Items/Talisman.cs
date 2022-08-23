@@ -14,20 +14,20 @@ namespace OldSchoolRuneScape.Items
         protected abstract Color getColor();
         public override void SetDefaults()
         {
-            item.maxStack = 1;
-            item.width = 28;
-            item.height = 32;
-            item.rare = getRarity();
-            item.UseSound = SoundID.DD2_BookStaffCast;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 120;
-            item.useTime = 120;
-            item.value = getValue();
+            Item.maxStack = 1;
+            Item.width = 28;
+            Item.height = 32;
+            Item.rare = getRarity();
+            Item.UseSound = SoundID.DD2_BookStaffCast;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 120;
+            Item.useTime = 120;
+            Item.value = getValue();
         }
 
         private Vector2 altarPos = Vector2.Zero;
         private Vector2 castPos = Vector2.Zero;
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             if (player.itemAnimation >= 119)
             {
@@ -38,7 +38,7 @@ namespace OldSchoolRuneScape.Items
                     {
                         for (int i = 0; i < Main.maxTilesX; i++)
                         {
-                            if (Main.tile[i, j].type == getAltar())
+                            if (Main.tile[i, j].TileType == getAltar())
                             {
                                 altarPos = new Vector2(i * 16, j * 16);
                                 break;
@@ -64,7 +64,7 @@ namespace OldSchoolRuneScape.Items
                 Dust dust;
                 int area = i;
                 Vector2 position = castPos + vec * (700 - (i * 7)) - new Vector2(area / 2, area / 2);
-                dust = Main.dust[Terraria.Dust.NewDust(position, area, area, 261, 0f, 0f, 0, c, 0.1f)];
+                dust = Main.dust[Terraria.Dust.NewDust(position, area, area, DustID.AncientLight, 0f, 0f, 0, c, 0.1f)];
                 dust.noGravity = true;
                 dust.fadeIn = 0.75f;
             }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System;
@@ -15,36 +17,36 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void SetDefaults()
         {
-            item.damage = 60;
-            item.magic = true;
-            item.mana = 16;
-            item.crit = 3;
-            item.width = 42;
-            item.height = 62;
-            item.useTime = 28;
-            item.useAnimation = 28;
-            item.useStyle = 5;
-            item.noMelee = true;
-            item.noUseGraphic = false;
-            item.knockBack = 1f;
-            item.value = Item.sellPrice(0, 4, 0, 0);
-            item.rare = 6;
-            item.autoReuse = true;
-            item.shoot = mod.ProjectileType("Sarastrike");
-            item.shootSpeed = 10f;
-            item.scale = 0.8f;
+            Item.damage = 60;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 16;
+            Item.crit = 3;
+            Item.width = 42;
+            Item.height = 62;
+            Item.useTime = 28;
+            Item.useAnimation = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true;
+            Item.noUseGraphic = false;
+            Item.knockBack = 1f;
+            Item.value = Item.sellPrice(0, 4, 0, 0);
+            Item.rare = ItemRarityID.LightPurple;
+            Item.autoReuse = true;
+            Item.shoot = Mod.Find<ModProjectile>("Sarastrike").Type;
+            Item.shootSpeed = 10f;
+            Item.scale = 0.8f;
         }
-        public override void GetWeaponDamage(Player player, ref int damage)
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (player.GetModPlayer<OSRSplayer>().GodCharge)
             {
-                damage *= 2;
+                damage.Flat *= 2;
             }
         }
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile.NewProjectile(new Vector2(Main.MouseWorld.X, Main.MouseWorld.Y - 55), new Vector2(0, 5), mod.ProjectileType("Sarastrike"), damage, knockBack, player.whoAmI);
-            Main.PlaySound(SoundID.Item72, Main.MouseWorld);
+            Projectile.NewProjectile(source, new Vector2(Main.MouseWorld.X, Main.MouseWorld.Y - 55), new Vector2(0, 5), Mod.Find<ModProjectile>("Sarastrike").Type, damage, knockback, player.whoAmI);
+            SoundEngine.PlaySound(SoundID.Item72, Main.MouseWorld);
             return false;
         }
         public override Vector2? HoldoutOffset()

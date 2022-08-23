@@ -14,10 +14,10 @@ namespace OldSchoolRuneScape.Items.Magic
         }
         public override void SetDefaults()
         {
-            item.maxStack = 999;
-            item.width = 28;
-            item.height = 28;
-            item.value = 10;
+            Item.maxStack = 999;
+            Item.width = 28;
+            Item.height = 28;
+            Item.value = 10;
         }
     }
 }

@@ -16,35 +16,34 @@ namespace OldSchoolRuneScape.Tiles
 
         public override void SetDefaults()
         {
-            item.useStyle = 1;
-            item.useTurn = true;
-            item.useAnimation = 15;
-            item.useTime = 10;
-            item.autoReuse = true;
-            item.consumable = true;
-            item.createTile = mod.TileType("MainThemeBox");
-            item.width = 24;
-            item.height = 24;
-            item.rare = 4;
-            item.value = 100000;
-            item.accessory = true;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTurn = true;
+            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.autoReuse = true;
+            Item.consumable = true;
+            Item.createTile = Mod.Find<ModTile>("MainThemeBox").Type;
+            Item.width = 24;
+            Item.height = 24;
+            Item.rare = ItemRarityID.LightRed;
+            Item.value = 100000;
+            Item.accessory = true;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Airrune");
             recipe.AddIngredient(null, "Waterrune");
             recipe.AddIngredient(null, "Earthrune");
             recipe.AddIngredient(null, "Firerune");
             recipe.AddIngredient(ItemID.StoneBlock, 20);
             recipe.AddTile(TileID.Furnaces);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
     public class MainThemeBox : ModTile
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.tileFrameImportant[Type] = true;
             Main.tileObsidianKill[Type] = true;
@@ -53,7 +52,7 @@ namespace OldSchoolRuneScape.Tiles
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.newTile.DrawYOffset = 2;
             TileObjectData.addTile(Type);
-            disableSmartCursor = true;
+            TileID.Sets.DisableSmartCursor[Type] = true;
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Music Box");
             AddMapEntry(new Color(200, 200, 200), name);
@@ -61,15 +60,15 @@ namespace OldSchoolRuneScape.Tiles
 
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            Item.NewItem(i * 16, j * 16, 16, 48, mod.ItemType("MainThemeBoxItem"));
+            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 48, Mod.Find<ModItem>("MainThemeBoxItem").Type);
         }
 
         public override void MouseOver(int i, int j)
         {
             Player player = Main.LocalPlayer;
             player.noThrow = 2;
-            player.showItemIcon = true;
-            player.showItemIcon2 = mod.ItemType("MainThemeBoxItem");
+            player.cursorItemIconEnabled = true;
+            player.cursorItemIconID = Mod.Find<ModItem>("MainThemeBoxItem").Type;
         }
     }
 }

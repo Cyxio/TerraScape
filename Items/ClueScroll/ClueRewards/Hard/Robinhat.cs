@@ -12,21 +12,18 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Hard
         {
             DisplayName.SetDefault("Robin Hood Hat");
             Tooltip.SetDefault("25% increased ranged damage");
+            ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
         }
         public override void SetDefaults()
         {
-            item.rare = 3;
-            item.width = 30;
-            item.height = 18;
-            item.value = Item.sellPrice(0, 5);
+            Item.rare = ItemRarityID.Orange;
+            Item.width = 30;
+            Item.height = 18;
+            Item.value = Item.sellPrice(0, 5);
         }
         public override void UpdateEquip(Player player)
         {
-            player.rangedDamage += 0.25f;
-        }
-        public override void DrawHair(ref bool drawHair, ref bool drawAltHair)
-        {
-            drawAltHair = true;
+            player.GetDamage(DamageClass.Ranged) += 0.25f;
         }
     }
 }

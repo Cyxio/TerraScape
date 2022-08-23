@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,18 +16,18 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         }
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.maxStack = 20;
-            item.useStyle = 4;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.rare = 5;
+            Item.consumable = true;
+            Item.maxStack = 20;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.rare = ItemRarityID.Pink;
         }
         public override bool CanUseItem(Player player)
         {
-            return !NPC.AnyNPCs(mod.NPCType("Ahrim")) && !NPC.AnyNPCs(mod.NPCType("Dharok")) && !NPC.AnyNPCs(mod.NPCType("Guthan")) && !NPC.AnyNPCs(mod.NPCType("Torag")) && !NPC.AnyNPCs(mod.NPCType("Verac")) && !NPC.AnyNPCs(mod.NPCType("Karil")) && !Main.dayTime;
+            return !NPC.AnyNPCs(Mod.Find<ModNPC>("Ahrim").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Dharok").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Guthan").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Torag").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Verac").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Karil").Type) && !Main.dayTime;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             string boss = "Ahrim";
             int ch = Main.rand.Next(6);
@@ -51,24 +52,22 @@ namespace OldSchoolRuneScape.NPCs.Barrows
                     boss = "Ahrim";
                     break;
             }
-            NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType(boss));
-            Main.PlaySound(SoundID.Roar, player.position, 0);
+            NPC.SpawnOnPlayer(player.whoAmI, Mod.Find<ModNPC>(boss).Type);
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
             return true;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddRecipeGroup("Wood", 10);
             recipe.AddIngredient(ItemID.IronBar, 2);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-            recipe = new ModRecipe(mod);
+            recipe.Register();
+            recipe = CreateRecipe();
             recipe.AddRecipeGroup("Wood", 10);
             recipe.AddIngredient(ItemID.LeadBar, 2);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
     public class Ahrimsummon : ModItem
@@ -80,21 +79,21 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         }
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.maxStack = 20;
-            item.useStyle = 4;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.rare = 5;
+            Item.consumable = true;
+            Item.maxStack = 20;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.rare = ItemRarityID.Pink;
         }
         public override bool CanUseItem(Player player)
         {
-            return !NPC.AnyNPCs(mod.NPCType("Ahrim")) && !Main.dayTime;
+            return !NPC.AnyNPCs(Mod.Find<ModNPC>("Ahrim").Type) && !Main.dayTime;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
-            NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("Ahrim"));
-            Main.PlaySound(SoundID.Roar, player.position, 0);
+            NPC.SpawnOnPlayer(player.whoAmI, Mod.Find<ModNPC>("Ahrim").Type);
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
             return true;
         }
     }
@@ -107,21 +106,21 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         }
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.maxStack = 20;
-            item.useStyle = 4;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.rare = 5;
+            Item.consumable = true;
+            Item.maxStack = 20;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.rare = ItemRarityID.Pink;
         }
         public override bool CanUseItem(Player player)
         {
-            return !NPC.AnyNPCs(mod.NPCType("Guthan")) && !Main.dayTime;
+            return !NPC.AnyNPCs(Mod.Find<ModNPC>("Guthan").Type) && !Main.dayTime;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
-            NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("Guthan"));
-            Main.PlaySound(SoundID.Roar, player.position, 0);
+            NPC.SpawnOnPlayer(player.whoAmI, Mod.Find<ModNPC>("Guthan").Type);
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
             return true;
         }
     }
@@ -134,21 +133,21 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         }
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.maxStack = 20;
-            item.useStyle = 4;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.rare = 5;
+            Item.consumable = true;
+            Item.maxStack = 20;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.rare = ItemRarityID.Pink;
         }
         public override bool CanUseItem(Player player)
         {
-            return !NPC.AnyNPCs(mod.NPCType("Dharok")) && !Main.dayTime;
+            return !NPC.AnyNPCs(Mod.Find<ModNPC>("Dharok").Type) && !Main.dayTime;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
-            NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("Dharok"));
-            Main.PlaySound(SoundID.Roar, player.position, 0);
+            NPC.SpawnOnPlayer(player.whoAmI, Mod.Find<ModNPC>("Dharok").Type);
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
             return true;
         }
     }
@@ -161,21 +160,21 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         }
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.maxStack = 20;
-            item.useStyle = 4;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.rare = 5;
+            Item.consumable = true;
+            Item.maxStack = 20;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.rare = ItemRarityID.Pink;
         }
         public override bool CanUseItem(Player player)
         {
-            return !NPC.AnyNPCs(mod.NPCType("Verac")) && !Main.dayTime;
+            return !NPC.AnyNPCs(Mod.Find<ModNPC>("Verac").Type) && !Main.dayTime;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
-            NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("Verac"));
-            Main.PlaySound(SoundID.Roar, player.position, 0);
+            NPC.SpawnOnPlayer(player.whoAmI, Mod.Find<ModNPC>("Verac").Type);
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
             return true;
         }
     }
@@ -188,21 +187,21 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         }
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.maxStack = 20;
-            item.useStyle = 4;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.rare = 5;
+            Item.consumable = true;
+            Item.maxStack = 20;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.rare = ItemRarityID.Pink;
         }
         public override bool CanUseItem(Player player)
         {
-            return !NPC.AnyNPCs(mod.NPCType("Torag")) && !Main.dayTime;
+            return !NPC.AnyNPCs(Mod.Find<ModNPC>("Torag").Type) && !Main.dayTime;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
-            NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("Torag"));
-            Main.PlaySound(SoundID.Roar, player.position, 0);
+            NPC.SpawnOnPlayer(player.whoAmI, Mod.Find<ModNPC>("Torag").Type);
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
             return true;
         }
     }
@@ -215,21 +214,21 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         }
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.maxStack = 20;
-            item.useStyle = 4;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.rare = 5;
+            Item.consumable = true;
+            Item.maxStack = 20;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.rare = ItemRarityID.Pink;
         }
         public override bool CanUseItem(Player player)
         {
-            return !NPC.AnyNPCs(mod.NPCType("Karil")) && !Main.dayTime;
+            return !NPC.AnyNPCs(Mod.Find<ModNPC>("Karil").Type) && !Main.dayTime;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
-            NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("Karil"));
-            Main.PlaySound(SoundID.Roar, player.position, 0);
+            NPC.SpawnOnPlayer(player.whoAmI, Mod.Find<ModNPC>("Karil").Type);
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
             return true;
         }
     }
@@ -242,17 +241,17 @@ namespace OldSchoolRuneScape.NPCs.Barrows
         }
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.maxStack = 20;
-            item.useStyle = 4;
-            item.useTime = 45;
-            item.useAnimation = 45;
-            item.rare = 6;
-            item.scale = 0.75f;
+            Item.consumable = true;
+            Item.maxStack = 20;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 45;
+            Item.useAnimation = 45;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.scale = 0.75f;
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Dharoksummon>());
             recipe.AddIngredient(ModContent.ItemType<Guthansummon>());
             recipe.AddIngredient(ModContent.ItemType<Veracsummon>());
@@ -260,29 +259,28 @@ namespace OldSchoolRuneScape.NPCs.Barrows
             recipe.AddIngredient(ModContent.ItemType<Ahrimsummon>());
             recipe.AddIngredient(ModContent.ItemType<Karilsummon>());
             recipe.AddTile(TileID.MythrilAnvil);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
         public override bool CanUseItem(Player player)
         {
-            return !NPC.AnyNPCs(mod.NPCType("Ahrim")) && !NPC.AnyNPCs(mod.NPCType("Dharok")) && !NPC.AnyNPCs(mod.NPCType("Guthan")) && !NPC.AnyNPCs(mod.NPCType("Torag")) && !NPC.AnyNPCs(mod.NPCType("Verac")) && !NPC.AnyNPCs(mod.NPCType("Karil")) && !Main.dayTime;
+            return !NPC.AnyNPCs(Mod.Find<ModNPC>("Ahrim").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Dharok").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Guthan").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Torag").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Verac").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Karil").Type) && !Main.dayTime;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             Vector2 pos = new Vector2(0, -1000);
-            NPC.NewNPC((int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Dharok.Dharok>());
-            NPC.NewNPC((int)(player.MountedCenter.X), (int)(player.MountedCenter.Y - 120), ModContent.NPCType<Barrowsspirit>());
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Dharok.Dharok>());
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)(player.MountedCenter.X), (int)(player.MountedCenter.Y - 120), ModContent.NPCType<Barrowsspirit>());
             pos = pos.RotatedBy(MathHelper.ToRadians(60));
-            NPC.NewNPC((int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Verac.Verac>());
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Verac.Verac>());
             pos = pos.RotatedBy(MathHelper.ToRadians(60));
-            NPC.NewNPC((int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Torag.Torag>());
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Torag.Torag>());
             pos = pos.RotatedBy(MathHelper.ToRadians(60));
-            NPC.NewNPC((int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Guthan.Guthan>());
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Guthan.Guthan>());
             pos = pos.RotatedBy(MathHelper.ToRadians(60));
-            NPC.NewNPC((int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Ahrim.Ahrim>());
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Ahrim.Ahrim>());
             pos = pos.RotatedBy(MathHelper.ToRadians(60));
-            NPC.NewNPC((int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Karil.Karil>());
-            Main.PlaySound(SoundID.Roar, player.position, 0);
+            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)(player.MountedCenter.X + pos.X), (int)(player.MountedCenter.Y + pos.Y), ModContent.NPCType<Karil.Karil>());
+            SoundEngine.PlaySound(SoundID.Roar, player.position);
             return true;
         }
     }

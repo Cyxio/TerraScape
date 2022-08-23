@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System;
@@ -13,30 +14,30 @@ namespace OldSchoolRuneScape.Items.Magic
         {
             DisplayName.SetDefault("Smoke Battlestaff");
             Tooltip.SetDefault("Creates a cloud of lingering smoke");
-            Item.staff[item.type] = true;
+            Item.staff[Item.type] = true;
         }
 
         public override void SetDefaults()
         {
-            item.damage = 120;
-            item.magic = true;
-            item.mana = 12;
-            item.width = 52;
-            item.height = 58;
-            item.useTime = 40;
-            item.useAnimation = 40;
-            item.useStyle = 5;
-            item.noMelee = true;
-            item.scale = 0.9f;
-            item.knockBack = 2;
-            item.value = Item.sellPrice(0, 10);
-            item.rare = 8;
-            item.UseSound = SoundID.Item20;
-            item.autoReuse = false;
-            item.shoot = ModContent.ProjectileType<Projectiles.Smokebattlestaff>();
-            item.shootSpeed = 20f;
+            Item.damage = 120;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 12;
+            Item.width = 52;
+            Item.height = 58;
+            Item.useTime = 40;
+            Item.useAnimation = 40;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true;
+            Item.scale = 0.9f;
+            Item.knockBack = 2;
+            Item.value = Item.sellPrice(0, 10);
+            Item.rare = ItemRarityID.Yellow;
+            Item.UseSound = SoundID.Item20;
+            Item.autoReuse = false;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Smokebattlestaff>();
+            Item.shootSpeed = 20f;
         }
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.ownedProjectileCounts[type] > 2)
             {
@@ -57,7 +58,7 @@ namespace OldSchoolRuneScape.Items.Magic
                 }
                 Main.projectile[toKill].Kill();
             }
-            Projectile.NewProjectile(position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI, Main.MouseWorld.X, Main.MouseWorld.Y);
+            Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, Main.MouseWorld.X, Main.MouseWorld.Y);
             return false;
         }
     }

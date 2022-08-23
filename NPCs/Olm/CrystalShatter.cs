@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,50 +14,50 @@ namespace OldSchoolRuneScape.NPCs.Olm
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Olm's Crystal");
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
         public override void SetDefaults()
         {
-            projectile.width = 34;
-            projectile.height = 34;
-            projectile.aiStyle = -1;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 100;
+            Projectile.width = 34;
+            Projectile.height = 34;
+            Projectile.aiStyle = -1;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 100;
         }
         public override void AI()
         {
-            if (projectile.alpha == 0)
+            if (Projectile.alpha == 0)
             {
-                Main.PlaySound(SoundID.Item8, projectile.position);
-                projectile.alpha = 20;
+                SoundEngine.PlaySound(SoundID.Item8, Projectile.position);
+                Projectile.alpha = 20;
             }
-            projectile.rotation += 0.1f;
-            Lighting.AddLight(projectile.Center, new Vector3(0, 0.8f, 0));
-            projectile.velocity *= 0.97f;
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 5)
+            Projectile.rotation += 0.1f;
+            Lighting.AddLight(Projectile.Center, new Vector3(0, 0.8f, 0));
+            Projectile.velocity *= 0.97f;
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 5)
             {
-                projectile.frame++;
-                if (projectile.frame >= Main.projFrames[projectile.type])
+                Projectile.frame++;
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
             }
         }
         public override void Kill(int timeLeft)
         {
-            for (int i = 0; i < Main.ActivePlayersCount; i++)
+            for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
             {
-                Vector2 spd = Main.player[i].MountedCenter - projectile.Center;
+                Vector2 spd = Main.player[i].MountedCenter - Projectile.Center;
                 spd.Normalize();
-                Projectile.NewProjectile(projectile.Center, spd * 11, ModContent.ProjectileType<BasicCrystal>(), 200 / 4, 0f);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, spd * 11, ModContent.ProjectileType<BasicCrystal>(), 200 / 4, 0f);
             }
             for (int i = 0; i < 4; i++)
             {
-                Projectile.NewProjectile(projectile.Center, new Vector2(11).RotateRandom(Math.PI), ModContent.ProjectileType<BasicCrystal>(), 200 / 4, 0f);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(11).RotateRandom(Math.PI), ModContent.ProjectileType<BasicCrystal>(), 200 / 4, 0f);
             }
         }
     }

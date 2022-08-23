@@ -11,37 +11,37 @@ namespace OldSchoolRuneScape.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Zamorakflame");
-            Main.projFrames[projectile.type] = 5;
+            Main.projFrames[Projectile.type] = 5;
         }
         public override void SetDefaults()
         {
-            projectile.width = 32;
-            projectile.height = 50;
-            projectile.aiStyle = -1;
-            projectile.tileCollide = false;
-            projectile.friendly = true;
-            projectile.penetrate = -1;
-            projectile.magic = true;
+            Projectile.width = 32;
+            Projectile.height = 50;
+            Projectile.aiStyle = -1;
+            Projectile.tileCollide = false;
+            Projectile.friendly = true;
+            Projectile.penetrate = -1;
+            Projectile.DamageType = DamageClass.Magic;
         }
         int i = 0;
         public override void AI()
         {
-            Dust.NewDust(projectile.BottomLeft, 32, 0, 174, 0, -5f);
-            Lighting.AddLight(projectile.position, new Vector3(0, 0, 0));
+            Dust.NewDust(Projectile.BottomLeft, 32, 0, DustID.InfernoFork, 0, -5f);
+            Lighting.AddLight(Projectile.position, new Vector3(0, 0, 0));
             i++;
             if (i == 5)
             {
-                projectile.frame++;
+                Projectile.frame++;
                 i = 0;
-                if (projectile.frame > Main.projFrames[projectile.type])
+                if (Projectile.frame > Main.projFrames[Projectile.type])
                 {
-                    projectile.Kill();
+                    Projectile.Kill();
                 }
             }
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (Main.rand.Next(6) == 0)
+            if (Main.rand.NextBool(6))
             {
                 target.AddBuff(BuffID.OnFire, 300);
             }

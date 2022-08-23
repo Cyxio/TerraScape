@@ -15,27 +15,26 @@ namespace OldSchoolRuneScape.Items.Armor
         }
         public override void SetDefaults()
         {
-            item.width = 31;
-            item.height = 23;
-            item.value = Item.sellPrice(0, 3, 0, 0);
-            item.rare = 4;
-            item.defense = 9;
+            Item.width = 31;
+            Item.height = 23;
+            Item.value = Item.sellPrice(0, 3, 0, 0);
+            Item.rare = ItemRarityID.LightRed;
+            Item.defense = 9;
         }
 
         public override void UpdateEquip(Player player)
         {
             player.statManaMax2 += 40;
-            player.magicCrit += 8;
+            player.GetCritChance(DamageClass.Magic) += 8;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Mystictop");
             recipe.AddIngredient(ItemID.SoulofNight, 20);
             recipe.AddTile(TileID.Anvils);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

@@ -15,26 +15,25 @@ namespace OldSchoolRuneScape.Items.Armor
         }
         public override void SetDefaults()
         {
-            item.width = 14;
-            item.height = 32;
-            item.value = Item.sellPrice(0, 4, 0, 0);
-            item.rare = 6;
-            item.defense = 18;
+            Item.width = 14;
+            Item.height = 32;
+            Item.value = Item.sellPrice(0, 4, 0, 0);
+            Item.rare = ItemRarityID.LightPurple;
+            Item.defense = 18;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.rangedCrit += 8;
+            player.GetCritChance(DamageClass.Ranged) += 8;
             player.moveSpeed += 0.14f;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Blackdhide", 13);
             recipe.AddTile(TileID.MythrilAnvil);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

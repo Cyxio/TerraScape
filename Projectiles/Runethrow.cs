@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using Terraria.ID;
 
@@ -13,43 +14,43 @@ namespace OldSchoolRuneScape.Projectiles
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = -1;
-            projectile.width = 26;
-            projectile.height = 30;
-            projectile.penetrate = 3;
-            projectile.timeLeft = 1200;
-            projectile.tileCollide = true;
-            projectile.friendly = true;
-            projectile.thrown = true;
+            Projectile.aiStyle = -1;
+            Projectile.width = 26;
+            Projectile.height = 30;
+            Projectile.penetrate = 3;
+            Projectile.timeLeft = 1200;
+            Projectile.tileCollide = true;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Throwing;
         }
         public override void AI()
         {
-            projectile.position += projectile.velocity;
-            projectile.rotation += 0.07f * projectile.direction + projectile.velocity.X * 0.15f;
-            projectile.velocity.X *= 0.975f;
-            projectile.velocity.Y *= 0.975f;
-            if (projectile.timeLeft < 1185)
+            Projectile.position += Projectile.velocity;
+            Projectile.rotation += 0.07f * Projectile.direction + Projectile.velocity.X * 0.15f;
+            Projectile.velocity.X *= 0.975f;
+            Projectile.velocity.Y *= 0.975f;
+            if (Projectile.timeLeft < 1185)
             {
-                projectile.velocity.Y += 0.2f;
-                projectile.velocity.Y /= 0.975f;
+                Projectile.velocity.Y += 0.2f;
+                Projectile.velocity.Y /= 0.975f;
             }
-            if (projectile.velocity.Y > 6)
+            if (Projectile.velocity.Y > 6)
             {
-                projectile.velocity.Y = 6;
+                Projectile.velocity.Y = 6;
             }
 
         }
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Dig, projectile.position);
-            if (Main.rand.Next(2) == 0)
+            SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
+            if (Main.rand.NextBool(2))
             {
-                Item.NewItem(projectile.Center, mod.ItemType("Runethrownaxe"), 1);
+                Item.NewItem(Projectile.GetSource_DropAsItem(), Projectile.Center, Mod.Find<ModItem>("Runethrownaxe").Type, 1);
             }
             for (int i = 0; i < 10; i++)
             {
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, mod.DustType("Runedust"), Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-1f, 1f));
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, Mod.Find<ModDust>("Runedust").Type, Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-1f, 1f));
             }
         }
     }

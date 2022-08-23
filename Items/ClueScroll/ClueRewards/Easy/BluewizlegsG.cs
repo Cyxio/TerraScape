@@ -15,15 +15,15 @@ namespace OldSchoolRuneScape.Items.ClueScroll.ClueRewards.Easy
         }
         public override void UpdateEquip(Player player)
         {
-            player.magicCrit += 10;
+            player.GetCritChance(DamageClass.Magic) += 10;
         }
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 28;
-            item.value = Item.sellPrice(0, 0, 1, 50);
-            item.defense = 2;
-            item.rare = 1;
+            Item.width = 18;
+            Item.height = 28;
+            Item.value = Item.sellPrice(0, 0, 1, 50);
+            Item.defense = 2;
+            Item.rare = ItemRarityID.Blue;
         }
     }
 }

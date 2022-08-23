@@ -16,16 +16,16 @@ namespace OldSchoolRuneScape.Items
         }
         public override void SetDefaults()
         {
-            item.ToolTip = Terraria.UI.ItemTooltip.None;
-            item.maxStack = 1;
-            item.width = 20;
-            item.height = 22;
-            item.rare = -11;
-            item.value = Item.buyPrice(0, 0, 1, 0);
+            Item.ToolTip = Terraria.UI.ItemTooltip.None;
+            Item.maxStack = 1;
+            Item.width = 20;
+            Item.height = 22;
+            Item.rare = -11;
+            Item.value = Item.buyPrice(0, 0, 1, 0);
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            TooltipLine tt = new TooltipLine(mod, "slayText", OSRSplayer.slayerText);
+            TooltipLine tt = new TooltipLine(Mod, "slayText", OSRSplayer.slayerText);
             Color color = Colors.RarityBlue;
             switch (Main.player[Main.myPlayer].GetModPlayer<OSRSplayer>().slayerDifficulty)
             {
@@ -43,7 +43,7 @@ namespace OldSchoolRuneScape.Items
                 default:
                     break;
             }
-            tt.overrideColor = color;
+            tt.OverrideColor = color;
             tooltips.Add(tt);
         }
     }

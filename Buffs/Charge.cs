@@ -5,7 +5,7 @@ namespace OldSchoolRuneScape.Buffs
 {
     public class Charge : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Charge");
             Description.SetDefault("God spells deal 100% increased damage");

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using System;
 
 namespace OldSchoolRuneScape.Projectiles
 {
@@ -9,38 +11,61 @@ namespace OldSchoolRuneScape.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Windstrike");
+            DisplayName.SetDefault("Wind Strike");
         }
         public override void SetDefaults()
         {
-            projectile.width = 18;
-            projectile.height = 18;
-            projectile.timeLeft = 1200;
-            projectile.penetrate = 1;
-            projectile.friendly = true;
-            projectile.magic = true;
-            projectile.tileCollide = true;
-            projectile.ignoreWater = true;
-            projectile.aiStyle = 1;
-            projectile.damage = 5;
-            projectile.scale = 0.8f;
-            projectile.light = 0.2f;
+            Projectile.width = 14;
+            Projectile.height = 14;
+            Projectile.timeLeft = 1200;
+            Projectile.penetrate = 1;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = true;
+            Projectile.ignoreWater = true;
+            Projectile.aiStyle = 1;
         }
-        Vector3 x = new Vector3(150, 150, 150);
+        private void DrawDustEllipse(float rotation) 
+        {
+            var step = 2f;
+            var a = 20f;
+            var b = 10f;
+            var scaleModifier = 0.2f;
+            for (float x = -a; x <= a; x += step)
+            {
+                float y = (float)(b * Math.Sqrt(a * a - x * x)) / a;
+                float scale = (30 - Math.Abs(x)) / 30f * scaleModifier;
+                float speed = 0.02f;
+                Vector2 topVec = new Vector2(x, y).RotatedBy(rotation);
+                Vector2 botVec = new Vector2(x, -y).RotatedBy(rotation);
+                Dust.NewDustPerfect(Projectile.Center + topVec, ModContent.DustType<Dusts.Windstrike>(), Velocity: topVec * speed, Scale: 1f + scale);
+                Dust.NewDustPerfect(Projectile.Center + botVec, ModContent.DustType<Dusts.Windstrike>(), Velocity: botVec * speed, Scale: 1f - scale);
+            }
+        }
+        public override Color? GetAlpha(Color lightColor)
+        {
+            return Color.White;
+        }
         public override void AI()
         {
-            Lighting.AddLight(projectile.position, x * 0.005f);
-            projectile.velocity.Y = projectile.oldVelocity.Y;
-            if (Main.rand.Next(1) == 0)
+            Lighting.AddLight(Projectile.position, Color.White.ToVector3() * 0.003f);
+            Projectile.velocity.Y = Projectile.oldVelocity.Y;
+            Dust.NewDustPerfect(Projectile.position + new Vector2(Main.rand.Next(Projectile.width), Main.rand.Next(Projectile.height)), 
+                ModContent.DustType<Dusts.Windstrike>(), Vector2.Zero, 0, Color.White);
+        }
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (target.velocity.Y != 0) 
             {
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, mod.DustType("Windstrike"), projectile.velocity.X * -0.2f, 0);
+                damage += 4;
+                DrawDustEllipse(Projectile.rotation);
             }
+            base.ModifyHitNPC(target, ref damage, ref knockback, ref crit, ref hitDirection);
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Strike"), projectile.position);
-            Dust.NewDust(projectile.Center, 1, 1, mod.DustType("WindstrikeD"), 0, 0);
-            Lighting.AddLight(projectile.position, x * 0.005f);
+            SoundEngine.PlaySound(new SoundStyle("OldSchoolRuneScape/Sounds/Item/WindStrikeHit"), Projectile.position);
+            Dust.NewDust(Projectile.Center - new Vector2(8f), 1, 1, Mod.Find<ModDust>("WindstrikeD").Type, 0f, 0f, 0, Color.White);
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,26 +13,25 @@ namespace OldSchoolRuneScape.Items.Ammo
         }
         public override void SetDefaults()
         {
-            item.damage = 6;
-            item.ranged = true;
-            item.width = 12;
-            item.height = 20;
-            item.maxStack = 999;
-            item.consumable = true;
-            item.value = 10;
-            item.rare = 2;
-            item.shoot = mod.ProjectileType("Bonebolt");
-            item.shootSpeed = 16f;
-            item.ammo = 1;
+            Item.damage = 6;
+            Item.DamageType = DamageClass.Ranged;
+            Item.width = 12;
+            Item.height = 20;
+            Item.maxStack = 999;
+            Item.consumable = true;
+            Item.value = 10;
+            Item.rare = ItemRarityID.Green;
+            Item.shoot = Mod.Find<ModProjectile>("Bonebolt").Type;
+            Item.shootSpeed = 16f;
+            Item.ammo = 1;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = CreateRecipe(10);
             recipe.AddIngredient(ItemID.Bone);
             recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this, 10);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

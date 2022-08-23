@@ -10,13 +10,13 @@ using System.Linq;
 
 namespace OldSchoolRuneScape.UI
 {
-    internal class ClueUI: UIState
+    class ClueUI: UIState
     {
-        internal static bool visible = false;
+        public static bool visible = false;
         internal static string texture = "OldSchoolRuneScape/Items/ClueScroll/ClueTemp";
         public override void OnInitialize()
         {
-            UIimage parent = new UIimage();
+            UIclueImage parent = new UIclueImage();
             parent.Height.Set(296, 0f);
             parent.Width.Set(324, 0f);
             parent.Left.Set(Main.screenWidth / 2 - parent.Width.Pixels / 2, 0f);
@@ -26,7 +26,7 @@ namespace OldSchoolRuneScape.UI
         }
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
-            Player p = Main.player[Main.myPlayer];
+            Player p = Main.LocalPlayer;
             if (p.channel)
             {
                 if (p.inventory[p.selectedItem].type == ModContent.ItemType<Items.ClueScroll.EasyClue>() ||
@@ -39,7 +39,7 @@ namespace OldSchoolRuneScape.UI
                     Point point1 = new Point((int)dimensions.X, (int)dimensions.Y);
                     int width = (int)Math.Ceiling(dimensions.Width);
                     int height = (int)Math.Ceiling(dimensions.Height);
-                    spriteBatch.Draw(ModContent.GetTexture(texture), new Rectangle(point1.X, point1.Y, width, height), Color.White);
+                    spriteBatch.Draw(ModContent.Request<Texture2D>(texture).Value, new Rectangle(point1.X, point1.Y, width, height), Color.White);
                 }
             }
         }
